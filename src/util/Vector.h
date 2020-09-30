@@ -3,6 +3,9 @@
 
 #include <ostream>
 
+#define vec2 Vector<2>
+#define vec3 Vector<3>
+
 template <int N>
 class Vector
 {

@@ -114,13 +114,13 @@ Matrix4 Matrix4::operator*(Matrix4 const & rhs) const
     return tmp;
 }
 
-Vector<3> Matrix4::operator*(Vector<3> const & rhs) const
+vec3 Matrix4::operator*(vec3 const & rhs) const
 {
     float x = m[0][0] * rhs[0] + m[0][1] * rhs[1] + m[0][2] * rhs[2] + m[0][3] * 1;
     float y = m[1][0] * rhs[0] + m[1][1] * rhs[1] + m[1][2] * rhs[2] + m[1][3] * 1;
     float z = m[2][0] * rhs[0] + m[2][1] * rhs[1] + m[2][2] * rhs[2] + m[2][3] * 1;
     float w = m[3][0] * rhs[0] + m[3][1] * rhs[1] + m[3][2] * rhs[2] + m[3][3] * 1;
-    return Vector<3> {x / w, y / w, z / w};
+    return vec3 {x / w, y / w, z / w};
 }
 
 Vector<4> Matrix4::operator*(Vector<4> const& rhs) const
@@ -239,13 +239,13 @@ Matrix4 fov_projection_matrix(float fovy, float aspect, float near, float far)
     return result;
 }
 
-Matrix4 look_at(Vector<3> position, Vector<3> look_at, Vector<3> up_vector)
+Matrix4 look_at(vec3 position, vec3 look_at, vec3 up_vector)
 {
-    Vector<3> n {position - look_at};
+    vec3 n {position - look_at};
     n.normalize();
-    Vector<3> u {cross(up_vector, n)};
+    vec3 u {cross(up_vector, n)};
     u.normalize();
-    Vector<3> v {cross(n, u)};
+    vec3 v {cross(n, u)};
 
     Matrix4 rotation
     {
@@ -267,7 +267,7 @@ Matrix4 rotation_matrix(float angle, float x, float y, float z)
 
     float c = (float) cos(angle * 3.1415 / 180);
     float s = (float) sin(angle * 3.1415 / 180);
-    Vector<3> vec {x, y, z};
+    vec3 vec {x, y, z};
     if (vec.length() != 1)
     {
         vec.normalize();

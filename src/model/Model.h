@@ -12,7 +12,7 @@ class Model
 {
 public:
     Model();
-    Model(Vector<3> const& position);
+    Model(vec3 const& position);
     ~Model();
 
     void update(float delta_time);
@@ -44,9 +44,9 @@ private:
 
     std::string file_name {};
 
-    Vector<3> position {};
-    Vector<3> scale {1, 1, 1};
-    Vector<3> rotation {};
+    vec3 position {};
+    vec3 scale {1, 1, 1};
+    vec3 rotation {};
 
     std::vector<float> vertices = {
         // front

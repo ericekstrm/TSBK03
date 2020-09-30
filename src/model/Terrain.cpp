@@ -5,7 +5,7 @@
 #include <random>
 
 Terrain::Terrain()
-    : Model(Vector<3> {0, 0, 0})
+    : Model(vec3 {0, 0, 0})
 {
     generate_terrain();
     load_buffer_data(vertices, texture_coords, indices);

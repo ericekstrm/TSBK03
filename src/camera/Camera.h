@@ -17,11 +17,11 @@ public:
     Matrix4 get_camera_matrix() const;
 
 protected:
-    Vector<3> position {2, 2, 2};
-    Vector<3> direction {-2, -2, -2};
-    Vector<3> up_vector {0, 1, 0};
+    vec3 position {2, 2, 2};
+    vec3 direction {-2, -2, -2};
+    vec3 up_vector {0, 1, 0};
 
-    Vector<3> velocity {};
+    vec3 velocity {};
     float speed = 20;
 
     double cursor_point_x {200};

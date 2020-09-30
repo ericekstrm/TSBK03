@@ -7,16 +7,16 @@
 #include <iostream>
 
 Model::Model()
-    : Model {Vector<3>{0, 0, 0}}
+    : Model {vec3{0, 0, 0}}
 {
 }
 
-Model::Model(Vector<3> const & position)
+Model::Model(vec3 const & position)
     : position {position}
 {
     //TODO: load vertices and indices
 
-    load_texture("container.jpg");
+    load_texture("res/textures/container.jpg");
     load_buffer_data(vertices, texture_coords, indices);
 }
 
@@ -82,7 +82,7 @@ void Model::load_texture(std::string file_name)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-    //ändra dessa för att ta bort flimmer
+    //ï¿½ndra dessa fï¿½r att ta bort flimmer
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
@@ -101,7 +101,7 @@ void Model::load_texture(std::string file_name)
             glGenerateMipmap(GL_TEXTURE_2D);
     } else
     {
-        std::cout << "Failed to load texture:" << file_name <<  std::endl;
+        std::cout << "Failed to load texture: " << file_name <<  std::endl;
     }
     stbi_image_free(data);
 }

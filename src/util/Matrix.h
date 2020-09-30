@@ -5,6 +5,8 @@
 
 #include <vector>
 
+#define mat4 Matrix4
+
 class Matrix4
 {
 public:
@@ -21,7 +23,7 @@ public:
 
     Matrix4 operator*(Matrix4 const&) const;
 
-    Vector<3> operator*(Vector<3> const&) const;
+    vec3 operator*(vec3 const&) const;
     Vector<4> operator*(Vector<4> const&) const;
 
     bool operator==(Matrix4 const&) const;
@@ -43,7 +45,7 @@ std::ostream& operator<<(std::ostream & os, Matrix4 const & rhs);
 Matrix4 frustum_projection_matrix(float near, float far, float right, float left, float top, float bottom);
 Matrix4 fov_projection_matrix(float fovy, float aspect, float near, float far);
 
-Matrix4 look_at(Vector<3> position, Vector<3> look_at, Vector<3> up_vector);
+Matrix4 look_at(vec3 position, vec3 look_at, vec3 up_vector);
 
 Matrix4 rotation_matrix(float angle, float x, float y, float z);
 Matrix4 rotation_matrix(float x, float y, float z);
