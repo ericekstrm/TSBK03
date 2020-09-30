@@ -16,11 +16,11 @@ private:
     // Also then the size in each dimension of the heightmap image file.
     int terrain_resolution = 512;
 
+    float max_height {10};
+
     void generate_terrain();
     void flat_terrain();
-    void random_terrain(float max_height = 1);
     void heightmap_terrain(std::string const& file_name);
-    void test_terrain();
 
     void set_indices();
 

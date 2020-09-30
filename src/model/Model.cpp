@@ -7,17 +7,44 @@
 #include <iostream>
 
 Model::Model()
-    : Model {vec3{0, 0, 0}}
+    : Model {"door", vec3{0, 0, 0}}
 {
 }
 
-Model::Model(vec3 const & position)
+Model::Model(std::string const& file_name, vec3 const & position)
     : position {position}
 {
-    //TODO: load vertices and indices
 
-    load_texture("res/textures/container.jpg");
-    load_buffer_data(vertices, texture_coords, indices);
+    objl::Loader obj_loader {};
+    
+    if (obj_loader.LoadFile("res/objects/" + file_name + "/" + file_name + ".obj"))
+    {
+        std::vector<float> vertices {};
+        std::vector<int> indices {};
+        std::vector<float> texture_coords {};
+
+        for (auto it = obj_loader.LoadedVertices.begin(); it != obj_loader.LoadedVertices.end(); it++)
+        {
+            vertices.push_back(it->Position.X);
+            vertices.push_back(it->Position.Y);
+            vertices.push_back(it->Position.Z);
+            texture_coords.push_back(it->TextureCoordinate.X);
+            texture_coords.push_back(it->TextureCoordinate.Y);
+        }
+
+        for (auto it = obj_loader.LoadedIndices.begin(); it != obj_loader.LoadedIndices.end(); it++)
+        {
+            indices.push_back(*it);
+        }
+
+        objl::Material material = obj_loader.LoadedMaterials[0];
+
+        load_texture("res/objects/" + file_name + "/" + material.map_Kd);
+        load_buffer_data(vertices, texture_coords, indices);
+    } else
+    {
+        throw std::runtime_error("Cound not find file.");
+    }
 }
 
 Model::Model(std::vector<float> vertices, std::vector<float> texture_coords, std::vector<int> indices, objl::Material material)
@@ -35,7 +62,7 @@ void Model::update(float delta_time)
 
 void Model::render() const
 {
-    glBindVertexArray(VAO);
+    glBindVertexArray(vao);
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, textureID);
@@ -59,14 +86,35 @@ void Model::load_buffer_data(std::vector<float> const& vertices,
                              std::vector<float> const& texture_coords,
                              std::vector<int> const& indices)
 {
-    load_VAO();
+    glGenVertexArrays(1, &vao);
+    glBindVertexArray(vao);
 
-    load_vertices_VBO(vertices);
-    load_textures_VBO(texture_coords);
-    load_indices_VBO(indices);
+    int vertices_attrib_array = 0;
+    glGenBuffers(1, &vb);
+    glBindBuffer(GL_ARRAY_BUFFER, vb);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * vertices.size(), &vertices[0], GL_STATIC_DRAW);
+    glVertexAttribPointer(vertices_attrib_array, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*) 0);
+
+    /*int normal_attrib_array = 1;
+    glGenBuffers(1, &VBOnormals);
+    glBindBuffer(GL_ARRAY_BUFFER, VBOnormals);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * texture_coords.size(), &texture_coords[0], GL_STATIC_DRAW);
+    glVertexAttribPointer(texture_attrib_array, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*) 0);*/
+
+    int texture_attrib_array = 1;
+    glGenBuffers(1, &tb);
+    glBindBuffer(GL_ARRAY_BUFFER, tb);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * texture_coords.size(), &texture_coords[0], GL_STATIC_DRAW);
+    glVertexAttribPointer(texture_attrib_array, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*) 0);
+
+    glGenBuffers(1, &ib);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ib);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(float) * indices.size(), &indices[0], GL_STATIC_DRAW);
+    indices_count = indices.size();
     
-    glEnableVertexAttribArray(0);
-    glEnableVertexAttribArray(1);
+    glEnableVertexAttribArray(vertices_attrib_array);
+    //glEnableVertexAttribArray(normal_attrib_array);
+    glEnableVertexAttribArray(texture_attrib_array);
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
@@ -104,36 +152,4 @@ void Model::load_texture(std::string file_name)
         std::cout << "Failed to load texture: " << file_name <<  std::endl;
     }
     stbi_image_free(data);
-}
-
-void Model::load_VAO()
-{
-    glGenVertexArrays(1, &VAO);
-    glBindVertexArray(VAO);
-}
-
-void Model::load_vertices_VBO(std::vector<float> const& vertices)
-{
-    int vertices_attrib_array = 0;
-    glGenBuffers(1, &VBOvertices);
-    glBindBuffer(GL_ARRAY_BUFFER, VBOvertices);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * vertices.size(), &vertices[0], GL_STATIC_DRAW);
-    glVertexAttribPointer(vertices_attrib_array, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*) 0);
-}
-
-void Model::load_textures_VBO(std::vector<float> const & texture_coords)
-{
-    int texture_attrib_array = 1;
-    glGenBuffers(1, &VBOtextures);
-    glBindBuffer(GL_ARRAY_BUFFER, VBOtextures);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * texture_coords.size(), &texture_coords[0], GL_STATIC_DRAW);
-    glVertexAttribPointer(texture_attrib_array, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*) 0);
-}
-
-void Model::load_indices_VBO(std::vector<int> const& indices)
-{
-    glGenBuffers(1, &VBOindices);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, VBOindices);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(float) * indices.size(), &indices[0], GL_STATIC_DRAW);
-    indices_count = indices.size();
 }

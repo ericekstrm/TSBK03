@@ -5,10 +5,10 @@
 #include <random>
 
 Terrain::Terrain()
-    : Model(vec3 {0, 0, 0})
 {
     generate_terrain();
     load_buffer_data(vertices, texture_coords, indices);
+    load_texture("res/textures/container.jpg");
 }
 
 Terrain::~Terrain()
@@ -28,24 +28,7 @@ void Terrain::flat_terrain()
     {
         for (int j = -terrain_resolution / 2; j < terrain_resolution / 2 + 1; j++)
         {
-            float r = 0;// ((float) rand() / RAND_MAX) / 2;
-            vertices.push_back(terrain_size / terrain_resolution * i);
-            vertices.push_back(r);
-            vertices.push_back(terrain_size / terrain_resolution * j);
-
-            texture_coords.push_back(static_cast<float>(i) / terrain_resolution);
-            texture_coords.push_back(static_cast<float>(j) / terrain_resolution);
-        }
-    }
-}
-
-void Terrain::random_terrain(float max_height)
-{
-    for (int i = -terrain_resolution / 2; i < terrain_resolution / 2 + 1; i++)
-    {
-        for (int j = -terrain_resolution / 2; j < terrain_resolution / 2 + 1; j++)
-        {
-            float r = ((float) rand() / RAND_MAX) * max_height;
+            float r = 0;
             vertices.push_back(terrain_size / terrain_resolution * i);
             vertices.push_back(r);
             vertices.push_back(terrain_size / terrain_resolution * j);
@@ -95,56 +78,15 @@ void Terrain::heightmap_terrain(std::string const& file_name)
     {
         for (int j = -terrain_resolution / 2; j < terrain_resolution / 2; j++)
         {
-            float r = heightmap_data[k] / 100;
+            float r = heightmap_data[k] / 256;
             vertices.push_back(terrain_size / terrain_resolution * i);
-            vertices.push_back(r);
+            vertices.push_back(r * max_height);
             vertices.push_back(terrain_size / terrain_resolution * j);
 
             texture_coords.push_back(static_cast<float>(i) / terrain_resolution);
             texture_coords.push_back(static_cast<float>(j) / terrain_resolution);
 
             k++;
-        }
-    }
-}
-
-void Terrain::test_terrain()
-{
-    std::vector<float> heightmap_data {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15};
-    int terrain_resolution {4};
-
-    int k {0};
-    for (int i = -terrain_resolution / 2; i < terrain_resolution / 2; i++)
-    {
-        for (int j = -terrain_resolution / 2; j < terrain_resolution / 2 ; j++)
-        {
-            float r = heightmap_data[k];
-            vertices.push_back(terrain_size / terrain_resolution * i);
-            vertices.push_back(r);
-            vertices.push_back(terrain_size / terrain_resolution * j);
-
-            texture_coords.push_back(static_cast<float>(i) / terrain_resolution);
-            texture_coords.push_back(static_cast<float>(j) / terrain_resolution);
-
-            k++;
-        }
-    }
-
-    for (int i = 0; i < terrain_resolution - 1; i++)
-    {
-        for (int j = 0; j < terrain_resolution - 1; j++)
-        {
-            int topLeft = i * (terrain_resolution) + j;
-            int topRight = topLeft + 1;
-            int bottomLeft = (i + 1) * (terrain_resolution) + j;
-            int bottomRight = bottomLeft + 1;
-
-            indices.push_back(topRight);
-            indices.push_back(bottomLeft);
-            indices.push_back(topLeft);
-            indices.push_back(bottomRight);
-            indices.push_back(bottomLeft);
-            indices.push_back(topRight);
         }
     }
 }

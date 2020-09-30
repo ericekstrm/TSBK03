@@ -18,7 +18,7 @@ void Skybox::render() const
 {
     glDisable(GL_DEPTH_TEST);
 
-    glBindVertexArray(VAO);
+    glBindVertexArray(vao);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_CUBE_MAP, cubemap_id);
     glDrawElements(GL_TRIANGLES, indices_count, GL_UNSIGNED_INT, 0);
@@ -56,14 +56,24 @@ void Skybox::load_cube_map(std::vector<std::string> texture_files)
 
 void Skybox::load_buffer_data()
 {
-    load_VAO();
+    glGenVertexArrays(1, &vao);
+    glBindVertexArray(vao);
 
-    load_vertices_VBO(vertices);
+    int vertices_attrib_array = 0;
+    glGenBuffers(1, &vb);
+    glBindBuffer(GL_ARRAY_BUFFER, vb);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * vertices.size(), &vertices[0], GL_STATIC_DRAW);
+    glVertexAttribPointer(vertices_attrib_array, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*) 0);
+
     std::vector<int> i(vertices.size());
     std::generate(i.begin(), i.end(), [i = 0]() mutable {
         return i++;
     });
-    load_indices_VBO(i);
+
+    glGenBuffers(1, &ib);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ib);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(float) * i.size(), &i[0], GL_STATIC_DRAW);
+    indices_count = i.size();
 
     glEnableVertexAttribArray(0);
     glEnableVertexAttribArray(1);

@@ -1,5 +1,4 @@
 #include "RunState.h"
-#include "Loader.h"
 #include "Flying_Camera.h"
 #include "Third_Person_Camera.h"
 
@@ -9,9 +8,11 @@ RunState::RunState()
 {
     for (float i = 1; i < 10; i++)
     {
-        models.push_back(Model {vec3 {0, 0, i * 10}});
+        models.push_back(Model {"crate", vec3 {0, 0, i * 10}});
     }
-    models.push_back(Loader::load_model("door"));
+    models.push_back(Model {"door", vec3 {0, 0, 0}});
+    models.push_back(Model {"chair", vec3 {0, 0, 5}});
+
 
     camera = std::make_unique<Flying_Camera>();
 }
