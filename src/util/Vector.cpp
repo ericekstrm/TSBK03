@@ -7,3 +7,4 @@ Vector<3> cross(Vector<3> const & lhs, Vector<3> const & rhs)
     float z = lhs[0] * rhs[1] - lhs[1] * rhs[0];
     return Vector<3> {x, y, z};
 }
+

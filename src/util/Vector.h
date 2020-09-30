@@ -3,8 +3,11 @@
 
 #include <ostream>
 
+#include "OBJ_Loader.h"
+
 #define vec2 Vector<2>
 #define vec3 Vector<3>
+#define vec4 Vector<4>
 
 template <int N>
 class Vector
@@ -15,6 +18,7 @@ public:
     Vector(std::initializer_list<float> list);
     ~Vector();
     Vector<N> operator=(Vector<N> const&);
+    vec3& operator=(objl::Vector3 const&);
 
     Vector<N> operator+(Vector<N> const&) const;
     Vector<N> operator+=(Vector<N> const&);

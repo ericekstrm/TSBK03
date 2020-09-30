@@ -79,6 +79,16 @@ Vector<N> Vector<N>::operator=(Vector<N> const & rhs)
 }
 
 template<int N>
+vec3& Vector<N>::operator=(objl::Vector3 const& rhs)
+{
+	x[0] = rhs.X;
+	x[1] = rhs.Y;
+	x[2] = rhs.Z;
+
+	return *this;
+}
+
+template<int N>
 Vector<N> Vector<N>::operator+(Vector<N> const & rhs) const
 {
     float tmp[N];
