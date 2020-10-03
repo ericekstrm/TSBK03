@@ -4,6 +4,7 @@
 #include "Vector.h"
 #include "Matrix.h"
 #include "OBJ_Loader.h"
+#include "Shader.h"
 
 #include <vector>
 #include <string>
@@ -16,7 +17,7 @@ public:
     ~Model();
 
     void update(float delta_time);
-    virtual void render() const;
+    virtual void render(Model_Shader const& shader) const;
 
     Matrix4 const get_model_matrix() const;
 

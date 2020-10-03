@@ -1,5 +1,5 @@
 #include "Game.h"
-#include "RunState.h"
+#include "Game_State.h"
 #include <GLFW/glfw3.h>
 #include <ctime>
 #include <ratio>
@@ -9,7 +9,7 @@ Game::Game()
 {
     init_openGL();
 
-    all_states.push_back(std::make_unique<RunState>());
+    all_states.push_back(std::make_unique<Game_State>());
     current_state = all_states.front().get();
 }
 

@@ -7,7 +7,7 @@
 #include <iterator>
 
 Shader::Shader()
-    : Shader("test.vert", "test.frag")
+    : Shader("pass.vert", "pass.frag")
 {
 }
 
@@ -23,9 +23,8 @@ Shader::Shader(std::string const& vertex_file, std::string const& fragment_file)
     glDeleteShader(vertexID);
     glDeleteShader(fragmentID);
 
-    get_all_uniform_locations();
-
-    connect_texture_units();
+    location_projection_matrix = get_uniform_location("projection");
+    location_camera_matrix = get_uniform_location("camera_matrix");
 }
 
 Shader::~Shader()
@@ -40,15 +39,6 @@ void Shader::start() const
 void Shader::stop() const
 {
     glUseProgram(0);
-}
-
-void Shader::get_all_uniform_locations()
-{
-    location_tex = get_uniform_location("tex");
-
-    location_projection_matrix = get_uniform_location("projection");
-    location_camera_matrix = get_uniform_location("camera_matrix");
-    location_world_matrix = get_uniform_location("world_matrix");
 }
 
 int Shader::get_uniform_location(std::string const& uniform_name) const
@@ -92,22 +82,12 @@ void Shader::load_camera_matrix(Matrix4 const & mat) const
     load_matrix(location_camera_matrix, mat);
 }
 
-void Shader::load_world_matrix(Matrix4 const & mat) const
-{
-    load_matrix(location_world_matrix, mat);
-}
-
-void Shader::connect_texture_units() const
-{
-    load_int(location_tex, 0);
-}
-
 int Shader::load(std::string const & file_name, int type)
 {
     std::ifstream shader_source {"res/shader_files/" + file_name};
     if (!shader_source.is_open())
     {
-        std::cerr << " Shader file not found: " << file_name << std::endl;
+        std::cerr << "Shader file not found: " << file_name << std::endl;
         return 0;
     }
 
@@ -136,4 +116,33 @@ int Shader::load(std::string const & file_name, int type)
         std::copy(errorLog.begin(), errorLog.end(), std::ostream_iterator<GLchar> {std::cerr});
     }
     return shaderID;
+}
+
+//======================
+//===| Model Shader |===
+//======================
+
+Model_Shader::Model_Shader()
+    : Shader{"test.vert", "test.frag"}
+{
+    
+    location_kd_texture = get_uniform_location("kd_texture");
+    location_world_matrix = get_uniform_location("world_matrix");
+
+    connect_texture_units();
+}
+
+Model_Shader::~Model_Shader()
+{
+}
+
+//loads the texture to a specific texture unit
+void Model_Shader::connect_texture_units() const
+{
+    load_int(location_kd_texture, 0);
+}
+
+void Model_Shader::load_world_matrix(Matrix4 const & mat) const
+{
+    load_matrix(location_world_matrix, mat);
 }

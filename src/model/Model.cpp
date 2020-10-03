@@ -60,12 +60,14 @@ void Model::update(float delta_time)
 {
 }
 
-void Model::render() const
+void Model::render(Model_Shader const& shader) const
 {
     glBindVertexArray(vao);
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, textureID);
+
+    shader.load_world_matrix(get_model_matrix());
 
     glDrawElements(GL_TRIANGLES, indices_count, GL_UNSIGNED_INT, 0);
 }
