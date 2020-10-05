@@ -62,9 +62,31 @@ void Shader::load_bool(int location, bool b) const
     glUniform1i(location, b ? 1 : 0);
 }
 
-void Shader::load_matrix(int location, Matrix4 const& matrix) const
+void Shader::load_mat4(int location, mat4 const& value) const
 {
-    glUniformMatrix4fv(location, 1, GL_FALSE, &matrix.transpose().m[0][0]);
+    glUniformMatrix4fv(location, 1, GL_FALSE, &value.transpose().m[0][0]);
+}
+
+void Shader::load_vec3(int location, vec3 const& value) const
+{
+    glUniform3f(location, value[0], value[1], value[2]);
+}
+
+void Shader::load_vec4(int location, vec4 const& value) const
+{
+    glUniform4f(location, value[0], value[1], value[2], value[3]);
+}
+
+void Shader::load_bool_arr(int location, std::vector<int> const& value) const
+{
+    glUniform1iv(location, value.size(), reinterpret_cast<const int *>(value.data()));
+}
+
+void Shader::load_vec3_arr(int location, std::vector<vec3> const& value) const
+{
+    // undrar om detta fungerar som man väntar sig, inte helt säkert eftersom vi har min egen vec3.
+    // Det fungerar med Ingemars vec3 men det är ju verkligen inte en garanti att det fungerar senare, hehe.
+    glUniform3fv(location, value.size(), reinterpret_cast<const float *>(value.data()));
 }
 
 int Shader::get_programID() const
@@ -74,12 +96,12 @@ int Shader::get_programID() const
 
 void Shader::load_projection_matrix(Matrix4 const& mat) const
 {
-    load_matrix(location_projection_matrix, mat);
+    load_mat4(location_projection_matrix, mat);
 }
 
 void Shader::load_camera_matrix(Matrix4 const & mat) const
 {
-    load_matrix(location_camera_matrix, mat);
+    load_mat4(location_camera_matrix, mat);
 }
 
 int Shader::load(std::string const & file_name, int type)
@@ -118,6 +140,15 @@ int Shader::load(std::string const & file_name, int type)
     return shaderID;
 }
 
+//=======================
+//===| Skybox Shader |===
+//=======================
+
+Skybox_Shader::Skybox_Shader()
+    : Shader {"skybox.vert", "skybox.frag"}
+{
+}
+
 //======================
 //===| Model Shader |===
 //======================
@@ -144,5 +175,5 @@ void Model_Shader::connect_texture_units() const
 
 void Model_Shader::load_world_matrix(Matrix4 const & mat) const
 {
-    load_matrix(location_world_matrix, mat);
+    load_mat4(location_world_matrix, mat);
 }

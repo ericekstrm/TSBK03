@@ -23,11 +23,16 @@ public:
 protected:
     int get_uniform_location(std::string const& uniform_name) const;
 
-    void load_int(int location, int value) const;
-    void load_float(int location, float value) const;
-    void load_bool(int location, bool b) const;
-    //void load_vector(int location, Vector vector);
-    void load_matrix(int location, Matrix4 const& matrix) const;
+
+    void load_int  (int location, int         value) const;
+    void load_float(int location, float       value) const;
+    void load_bool (int location, bool        value) const;
+    void load_mat4 (int location, mat4 const& value) const;
+    void load_vec3 (int location, vec3 const& value) const;
+    void load_vec4 (int location, vec4 const& value) const;
+    
+    void load_vec3_arr(int location, std::vector<vec3> const& value) const;
+    void load_bool_arr(int location, std::vector<int>  const& value) const;
 
 private:
 
@@ -44,6 +49,7 @@ private:
 class Skybox_Shader : public Shader
 {
 public:
+    Skybox_Shader();
 
 private:
 
@@ -62,6 +68,6 @@ private:
     void connect_texture_units() const;
 
     int location_kd_texture;
-    
+
     int location_world_matrix;
 };

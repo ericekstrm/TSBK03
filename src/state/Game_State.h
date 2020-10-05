@@ -7,6 +7,7 @@
 #include "Camera.h"
 #include "Terrain.h"
 #include "Skybox.h"
+#include "Light.h"
 
 #include <memory>
 
@@ -29,8 +30,10 @@ private:
     std::unique_ptr<Camera> camera;
     Terrain terrain {};
 
-    Shader skybox_shader {"skybox.vert", "skybox.frag"};
+    Skybox_Shader skybox_shader {};
     Skybox skybox {};
+
+    Light_Container lights {};
 
     Matrix4 projection {fov_projection_matrix(45.0f, 1.0f, 0.1f, 100.0f)};
 };

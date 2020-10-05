@@ -13,8 +13,10 @@ Game_State::Game_State()
     models.push_back(Model {"door", vec3 {0, 0, 0}});
     models.push_back(Model {"chair", vec3 {0, 0, 5}});
 
-
     camera = std::make_unique<Flying_Camera>();
+
+    lights.add_pos_light(vec3{0, 1, 1}, vec3 {0, 1, 0});
+    lights.add_pos_light(vec3{2, 1, 0}, vec3 {1, 0, 0});
 }
 
 Game_State::~Game_State()
@@ -52,6 +54,8 @@ void Game_State::render() const
     terrain.render(shader);
 
     shader.stop();
+
+    lights.render();
 }
 
 void Game_State::check_input(GLFWwindow * window)
