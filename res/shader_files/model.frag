@@ -2,33 +2,80 @@
 
 in vec3 out_normal;
 in vec2 out_tex_coord;
-in vec3 out_surface_position;
+in vec3 out_fragment_position;
 
 out vec4 out_color;
 
-uniform vec3 light_pos;
+// Material
+uniform sampler2D kd_texture;
+uniform sampler2D specularity_map;
+uniform bool use_specularity_map;
+uniform vec3 ka;
+uniform vec3 kd;
+uniform vec3 ks;
+uniform float a;
+
 uniform vec3 camera_pos;
-uniform vec3 light_color;
-uniform vec4 lightning_params;
+
+// Light
+uniform int number_of_lights;
+uniform vec3 light_pos_dir[10];
+uniform vec3 light_color[10];
+uniform vec3 light_attenuation_params[10];
+uniform vec3 light_type[10];
 
 void main(void)
 {
-	float ka = lightning_params.x;
-	float kd = lightning_params.y;
-	float ks = lightning_params.z;
-	float a = lightning_params.w;
+	vec3 temp_color = vec3(0, 0, 0);
+
+	for (int i = 0; i < number_of_lights: i++)
+	{
+		vec3 light_dir = vec3(0, 0, 0);
+		float attenuation;
+
+		if(light_type[i])
+		{
+			light_dir = -normalize(light_pos_dir[i]);
+			attenuation = 1.0;
+		} else
+		{
+			light_dir = normalize(light_pos_dir[i] - out_fragment_position);
+			float constant = light_attenuation_params[i].x;
+ 			float linear = light_attenuation_params[i].y;	
+ 			float quadratic = light_attenuation_params[i].z;
+
+			float distance = distance(light_pos_dir[i], out_fragment_position);
+			attenuation = 1.0 / (constant + linear * distance + quadratic * pow(distance, 2));
+		}
 				
-	vec3 normal = normalize(out_normal);
-	vec3 light_dir = -normalize(light_pos);
-	
-	// Diffuse
-	float diffuse = max(dot(normal, light_dir), 0.0);
+		vec3 normal = normalize(out_normal);
 
-	// Specular
-	vec3 view_dir = normalize(camera_pos - out_surface_position);
-	vec3 reflection = reflect(-light_dir, normal);
-	float specular = max(dot(reflection, view_dir), 0.0);
+		// Ambient
+		vec3 ambient_light = ka / 5 * light_color[i];
+		
+		// Diffuse
+		float diffuse = max(dot(normal, light_dir), 0.0);
+		vec3 diffuse_light = kd * diffuse * light_color[i];
 
-	float shade = ka+kd*diffuse+ks*pow(specular, a);
-	out_color = vec4(shade*light_color, 1.0);
+		// Specular
+		vec3 view_dir = normalize(camera_pos - out_fragment_position);
+		vec3 reflection = reflect(-light_dir, normal);
+		float specular = max(dot(reflection, view_dir), 0.0);
+
+		vec3 specular_light;
+		if(use_specularity_map)
+		{
+			vec3 spec_map = texture(specularity_map, out_tex_coord).rgb;
+			specular_light = ks * pow(specular, a) * spec_map * light_color[i];
+		}
+		else
+		{
+			specular_light = ks * pow(specular, a) * light_color[i];
+		}
+
+		temp_color += (ambient_light + diffuse_light + specular_light) * attenuation;
+	}
+
+	vec4 tex = texture(object_texture, out_tex_coord);
+	out_color = vec4(temp_color, 1.0) * tex;
 }

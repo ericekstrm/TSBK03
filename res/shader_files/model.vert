@@ -6,7 +6,7 @@ in vec2 in_tex_coord;
 
 out vec3 out_normal;
 out vec2 out_tex_coord;
-out vec3 out_surface_position; // Ingemar calls surface, some call fragment position
+out vec3 out_fragment_position;
 
 uniform mat4 model_matrix;
 uniform mat4 world_matrix;

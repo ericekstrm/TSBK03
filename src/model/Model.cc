@@ -14,7 +14,108 @@ Model::Model()
 Model::Model(std::string const& file_name, vec3 const & position)
     : position {position}
 {
+    load_model(file_name);
+}
 
+Model::Model(std::vector<float> vertices, std::vector<float> texture_coords, std::vector<int> indices, objl::Material material)
+{
+    model_data.load_buffer_data(vertices, texture_coords, indices);
+}
+
+Model::~Model()
+{
+}
+
+void Model::update(float delta_time)
+{
+}
+
+void Model::render(Model_Shader const& shader) const
+{
+    glBindVertexArray(model_data.vao);
+
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, model_data.material.texture_id);
+
+    shader.load_model_matrix(get_model_matrix());
+
+    glDrawElements(GL_TRIANGLES, model_data.indices_count, GL_UNSIGNED_INT, 0);
+}
+
+Matrix4 const Model::get_model_matrix() const
+{
+    Matrix4 t {translation_matrix(position[0], position[1], position[2])};
+    Matrix4 s {scale_matrix(scale[0], scale[1], scale[2])};
+    Matrix4 r {
+        rotation_matrix(rotation[0], 1, 0, 0) * 
+        rotation_matrix(rotation[1], 0, 1, 0) *
+        rotation_matrix(rotation[2], 0, 0, 1)};
+
+    return (t * r * s);
+}
+
+Model::Material Model::get_material() const
+{
+    return model_data.material;
+}
+
+unsigned int Model::load_texture(std::string file_name) const
+{
+    unsigned int tex_id {0};
+
+    int width, height, nrChannels;
+    stbi_set_flip_vertically_on_load(true); // tell stb to flip loaded texture's on the y-axis.
+    unsigned char *data = stbi_load(file_name.c_str(), &width, &height, &nrChannels, STBI_rgb);
+    if (data)
+    {
+        glGenTextures(1, &tex_id);
+        glBindTexture(GL_TEXTURE_2D, tex_id);
+
+        if (nrChannels == 3)
+        {
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+        } else if (nrChannels == 4)
+        {
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+        }
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+        //ändra dessa för att ta bort flimmer
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+        glGenerateMipmap(GL_TEXTURE_2D);
+    } else
+    {
+        //TODO: byt till att kasta ett undantag.
+        std::cout << "Failed to load texture: " << file_name <<  std::endl;
+    }
+    stbi_image_free(data);
+
+    return tex_id;
+}
+
+void Model::load_model(std::string const& file_name)
+{
+    Model_Data current_model;
+
+    auto it = models.find(file_name);
+    if ( it != models.end())
+    {
+        current_model = it->second;
+    } else
+    {
+        current_model = load_model_from_file(file_name);
+        models[file_name] = current_model;
+    }
+
+    model_data = current_model;
+}
+
+Model::Model_Data Model::load_model_from_file(std::string const& file_name) const
+{
     objl::Loader obj_loader {};
     
     if (obj_loader.LoadFile("res/objects/" + file_name + "/" + file_name + ".obj"))
@@ -37,54 +138,30 @@ Model::Model(std::string const& file_name, vec3 const & position)
             indices.push_back(*it);
         }
 
-        objl::Material material = obj_loader.LoadedMaterials[0];
+        objl::Material mat = obj_loader.LoadedMaterials[0];
 
-        load_texture("res/objects/" + file_name + "/" + material.map_Kd);
-        load_buffer_data(vertices, texture_coords, indices);
+        bool use_specularity_map {false};
+        unsigned int specularity_map {};
+        unsigned int kd_texture {load_texture("res/objects/" + file_name + "/" + mat.map_Kd)};
+        if (mat.map_Ks != "")
+        {
+            specularity_map = load_texture("res/objects/" + file_name + "/" + mat.map_Ks);
+            use_specularity_map = true;
+        }
+        Material material {kd_texture, specularity_map, use_specularity_map, mat.Ka, mat.Kd, mat.Ks, mat.Ni};
+
+        Model_Data model_data {};
+        model_data.material = material;
+        model_data.load_buffer_data(vertices, texture_coords, indices);
+        return model_data;
+
     } else
     {
-        throw std::runtime_error("Cound not find file.");
+        throw std::runtime_error("Cound not find model: " + file_name);
     }
 }
 
-Model::Model(std::vector<float> vertices, std::vector<float> texture_coords, std::vector<int> indices, objl::Material material)
-{
-    load_buffer_data(vertices, texture_coords, indices);
-}
-
-Model::~Model()
-{
-}
-
-void Model::update(float delta_time)
-{
-}
-
-void Model::render(Model_Shader const& shader) const
-{
-    glBindVertexArray(vao);
-
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, textureID);
-
-    shader.load_world_matrix(get_model_matrix());
-
-    glDrawElements(GL_TRIANGLES, indices_count, GL_UNSIGNED_INT, 0);
-}
-
-Matrix4 const Model::get_model_matrix() const
-{
-    Matrix4 t {translation_matrix(position[0], position[1], position[2])};
-    Matrix4 s {scale_matrix(scale[0], scale[1], scale[2])};
-    Matrix4 r {
-        rotation_matrix(rotation[0], 1, 0, 0) * 
-        rotation_matrix(rotation[1], 0, 1, 0) *
-        rotation_matrix(rotation[2], 0, 0, 1)};
-
-    return (t * r * s);
-}
-
-void Model::load_buffer_data(std::vector<float> const& vertices, 
+void Model::Model_Data::load_buffer_data(std::vector<float> const& vertices, 
                              std::vector<float> const& texture_coords,
                              std::vector<int> const& indices)
 {
@@ -120,38 +197,4 @@ void Model::load_buffer_data(std::vector<float> const& vertices,
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
-}
-
-void Model::load_texture(std::string file_name)
-{
-    // load and create a texture 
-
-    glGenTextures(1, &textureID);
-    glBindTexture(GL_TEXTURE_2D, textureID);
-
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
-    //�ndra dessa f�r att ta bort flimmer
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-    int width, height, nrChannels;
-    stbi_set_flip_vertically_on_load(true); // tell stb to flip loaded texture's on the y-axis.
-    unsigned char *data = stbi_load(file_name.c_str(), &width, &height, &nrChannels, STBI_rgb);
-    if (data)
-    {
-        if (nrChannels == 3)
-        {
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-        } else if (nrChannels == 4)
-        {
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-        }
-            glGenerateMipmap(GL_TEXTURE_2D);
-    } else
-    {
-        std::cout << "Failed to load texture: " << file_name <<  std::endl;
-    }
-    stbi_image_free(data);
 }

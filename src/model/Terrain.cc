@@ -7,8 +7,8 @@
 Terrain::Terrain()
 {
     generate_terrain();
-    load_buffer_data(vertices, texture_coords, indices);
-    load_texture("res/textures/container.jpg");
+    model_data.load_buffer_data(vertices, texture_coords, indices);
+    model_data.material.texture_id = load_texture("res/textures/container.jpg");
 }
 
 Terrain::~Terrain()
@@ -17,8 +17,9 @@ Terrain::~Terrain()
 
 void Terrain::generate_terrain()
 {
-    heightmap_terrain("island3.png");
-
+    //heightmap_terrain("island3.png");
+    flat_terrain();
+    
     set_indices();
 }
 

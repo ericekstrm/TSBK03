@@ -1,8 +1,8 @@
 #version 330 core
 
-in vec3 TexCoords;
+in vec3 out_tex_coords;
 
-uniform samplerCube texUnit;
+uniform samplerCube cube_map;
 uniform vec3 fogColor;
 
 out vec4 outColor;
@@ -12,7 +12,7 @@ const float upperFogLimit = 0.5;
 
 void main()
 {
-    vec4 finalColor = texture(texUnit, TexCoords);
+    vec4 finalColor = texture(cube_map, out_tex_coords);
 	outColor = finalColor;
 
     //float fogFactor = (TexCoords.y - lowerFogLimit) / (upperFogLimit - lowerFogLimit);

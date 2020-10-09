@@ -3,7 +3,12 @@
 #include <string>
 #include <fstream>
 #include <iostream>
+
 #include "Matrix.h"
+#include "Model.h"
+#include "Light.h"
+
+class Model;
 
 class Shader
 {
@@ -22,7 +27,6 @@ public:
 
 protected:
     int get_uniform_location(std::string const& uniform_name) const;
-
 
     void load_int  (int location, int         value) const;
     void load_float(int location, float       value) const;
@@ -43,7 +47,7 @@ private:
     int fragmentID {};
 
     int location_projection_matrix;
-    int location_camera_matrix;
+    int location_world_matrix;
 };
 
 class Skybox_Shader : public Shader
@@ -61,13 +65,32 @@ public:
     Model_Shader();
     ~Model_Shader();
 
-    void load_world_matrix(Matrix4 const& mat) const;
+    void load_model_matrix(Matrix4 const& mat) const;
+
+
+    void load_camera_position  (vec3 const& camera_pos) const;
+    void load_lights(Light_Container const& light_container) const;
+    void load_material_properties(Model const& obj) const;
 
 private:
 
     void connect_texture_units() const;
 
-    int location_kd_texture;
+    int location_model_matrix;
 
-    int location_world_matrix;
+    int location_camera_pos;
+
+    int location_light_pos_dir;
+    int location_light_attenuation_params;
+    int location_light_type;
+    int location_light_color;
+    int location_num_of_lights;
+
+    int location_kd_texture;
+    int location_specularity_map;
+    int location_use_specularity_map;
+    int location_ka;
+    int location_kd;
+    int location_ks;
+    int location_a;
 };

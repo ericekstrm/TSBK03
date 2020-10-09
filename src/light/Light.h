@@ -1,3 +1,5 @@
+#pragma once
+
 #include "Vector.h"
 
 class Pos_Light;

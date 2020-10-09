@@ -20,15 +20,14 @@ public:
     virtual void update(float delta_time);
     virtual void render() const;
     virtual void check_input(GLFWwindow* window);
-    virtual std::string name() const
-    {
-        return "run";
-    };
+    virtual std::string name() const { return "game"; };
+
 private:
     Model_Shader shader {};
     std::vector<Model> models {};
-    std::unique_ptr<Camera> camera;
     Terrain terrain {};
+
+    std::unique_ptr<Camera> camera;
 
     Skybox_Shader skybox_shader {};
     Skybox skybox {};

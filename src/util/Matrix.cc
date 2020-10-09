@@ -123,13 +123,13 @@ vec3 Matrix4::operator*(vec3 const & rhs) const
     return vec3 {x / w, y / w, z / w};
 }
 
-Vector<4> Matrix4::operator*(Vector<4> const& rhs) const
+Vector4 Matrix4::operator*(Vector4 const& rhs) const
 {
     float x = m[0][0] * rhs[0] + m[0][1] * rhs[1] + m[0][2] * rhs[2] + m[0][3] * rhs[3];
     float y = m[1][0] * rhs[0] + m[1][1] * rhs[1] + m[1][2] * rhs[2] + m[1][3] * rhs[3];
     float z = m[2][0] * rhs[0] + m[2][1] * rhs[1] + m[2][2] * rhs[2] + m[2][3] * rhs[3];
     float w = m[3][0] * rhs[0] + m[3][1] * rhs[1] + m[3][2] * rhs[2] + m[3][3] * rhs[3];
-    return Vector<4> {x, y, z, w};
+    return Vector4 {x, y, z, w};
 }
 
 bool Matrix4::operator==(Matrix4 const & rhs) const
@@ -243,9 +243,9 @@ Matrix4 look_at(vec3 position, vec3 look_at, vec3 up_vector)
 {
     vec3 n {position - look_at};
     n.normalize();
-    vec3 u {cross(up_vector, n)};
+    vec3 u {up_vector.cross(n)};
     u.normalize();
-    vec3 v {cross(n, u)};
+    vec3 v {n.cross(u)};
 
     Matrix4 rotation
     {

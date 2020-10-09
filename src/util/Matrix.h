@@ -24,7 +24,7 @@ public:
     Matrix4 operator*(Matrix4 const&) const;
 
     vec3 operator*(vec3 const&) const;
-    Vector<4> operator*(Vector<4> const&) const;
+    Vector4 operator*(Vector4 const&) const;
 
     bool operator==(Matrix4 const&) const;
     bool operator!=(Matrix4 const&) const;

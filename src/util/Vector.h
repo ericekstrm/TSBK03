@@ -5,51 +5,84 @@
 
 #include "OBJ_Loader.h"
 
-#define vec2 Vector<2>
-#define vec3 Vector<3>
-#define vec4 Vector<4>
+#define vec3 Vector3
+#define vec4 Vector4
 
-template <int N>
-class Vector
+class Vector3
 {
 public:
-    Vector();
-    Vector(Vector<N> const&);
-    Vector(std::initializer_list<float> list);
-    ~Vector();
-    Vector<N> operator=(Vector<N> const&);
-    vec3& operator=(objl::Vector3 const&);
+    Vector3();
+    Vector3(Vector3 const&);
+    Vector3(std::initializer_list<float> list);
+    ~Vector3();
+    Vector3 operator=(Vector3 const&);
 
-    Vector<N> operator+(Vector<N> const&) const;
-    Vector<N> operator+=(Vector<N> const&);
-    Vector<N> operator-(Vector<N> const&) const;
-    Vector<N> operator-=(Vector<N> const&);
+    Vector3(objl::Vector3 const&);
+    Vector3& operator=(objl::Vector3 const&);
 
-    Vector<N> operator*(float) const;
-    Vector<N> operator*=(float);
-    Vector<N> operator/(float) const;
-    Vector<N> operator/=(float);
+    Vector3 operator+(Vector3 const&) const;
+    Vector3 operator+=(Vector3 const&);
+    Vector3 operator-(Vector3 const&) const;
+    Vector3 operator-=(Vector3 const&);
+
+    Vector3 operator*(float) const;
+    Vector3 operator*=(float);
+    Vector3 operator/(float) const;
+    Vector3 operator/=(float);
+    Vector3 cross(Vector3 const& rhs);
 
     float& operator[](int);
     float operator[](int) const;
 
     // dot product
-    float operator*(Vector<N> const&);
+    float operator*(Vector3 const&);
 
-    bool operator==(Vector<N> const&) const;
-    bool operator!=(Vector<N> const&) const;
+    bool operator==(Vector3 const&) const;
+    bool operator!=(Vector3 const&) const;
 
     float length() const;
     void normalize();
 
 private:
-    Vector(float tmp[N]);
+    Vector3(float tmp[3]);
 
-    float x[N];
+    float x[3];
 };
 
-Vector<3> cross(Vector<3> const& lhs, Vector<3> const& rhs);
+class Vector4
+{
+public:
+    Vector4();
+    Vector4(Vector4 const&);
+    Vector4(std::initializer_list<float> list);
+    ~Vector4();
+    Vector4 operator=(Vector4 const&);
 
-#include "Vector.tcc"
+    Vector4 operator+(Vector4 const&) const;
+    Vector4 operator+=(Vector4 const&);
+    Vector4 operator-(Vector4 const&) const;
+    Vector4 operator-=(Vector4 const&);
 
+    Vector4 operator*(float) const;
+    Vector4 operator*=(float);
+    Vector4 operator/(float) const;
+    Vector4 operator/=(float);
+
+    float& operator[](int);
+    float operator[](int) const;
+
+    // dot product
+    float operator*(Vector4 const&);
+
+    bool operator==(Vector4 const&) const;
+    bool operator!=(Vector4 const&) const;
+
+    float length() const;
+    void normalize();
+
+private:
+    Vector4(float tmp[4]);
+
+    float x[4];
+};
 #endif

@@ -6,9 +6,9 @@
 
 Game_State::Game_State()
 {
-    for (float i = 1; i < 10; i++)
+    for (float i = 1; i < 100; i++)
     {
-        models.push_back(Model {"crate", vec3 {0, 0, i * 10}});
+        models.push_back(Model {"pine", vec3 {(float) (rand() % 128) - 64, 0, (float) (rand() % 128) - 64}});
     }
     models.push_back(Model {"door", vec3 {0, 0, 0}});
     models.push_back(Model {"chair", vec3 {0, 0, 5}});
