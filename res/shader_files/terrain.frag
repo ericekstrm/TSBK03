@@ -4,9 +4,9 @@ in vec2 texture_coord;
 
 uniform sampler2D kd_texture;
 
-out vec4 outColor;
+out vec4 out_color;
 
 void main()
 {
-	outColor = texture(kd_texture, texture_coord);
+	out_color = texture(kd_texture, texture_coord);
 }
