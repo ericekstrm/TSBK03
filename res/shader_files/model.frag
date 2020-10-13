@@ -55,7 +55,7 @@ void main(void)
 		vec3 diffuse_light = kd * diffuse * light_color[i];
 
 		// Specular
-		/*vec3 view_dir = normalize(camera_pos - out_fragment_position);
+		vec3 view_dir = normalize(camera_pos - out_fragment_position);
 		vec3 reflection = reflect(-light_dir, normal);
 		float specular = max(dot(reflection, view_dir), 0.0);
 
@@ -68,9 +68,9 @@ void main(void)
 		else
 		{
 			specular_light = ks * pow(specular, a) * light_color[i];
-		}*/
+		}
 
-		temp_color += (diffuse_light) * attenuation;
+		temp_color += (diffuse_light + specular_light) * attenuation;
 	}
 
 	temp_color +=  ka / 5;
