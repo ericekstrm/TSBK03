@@ -9,6 +9,7 @@ class Camera
 {
 public:
     Camera();
+    Camera(vec3 const& position);
     ~Camera();
 
     virtual void update(float delta_time);
@@ -18,8 +19,8 @@ public:
     vec3 get_position() const { return position; };
 
 protected:
-    vec3 position {2, 2, 2};
-    vec3 direction {-2, -2, -2};
+    vec3 position {5, 2, 5};
+    vec3 direction {-5, -5, -5};
     vec3 up_vector {0, 1, 0};
 
     vec3 velocity {};
