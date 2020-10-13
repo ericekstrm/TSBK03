@@ -47,7 +47,10 @@ float Vector3::length() const
 
 void Vector3::normalize()
 {
-    operator/=(length());
+    if (length() != 0)
+    {
+        operator/=(length());
+    }
 }
 
 

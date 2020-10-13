@@ -8,7 +8,7 @@ Terrain::Terrain()
 {
     generate_terrain();
     model_data.load_buffer_data(vertices, normals, texture_coords, indices);
-    model_data.material.texture_id = load_texture("res/textures/container.jpg");
+    model_data.material.texture_id = load_texture("res/terrain/textures/grass.jpg");
 }
 
 Terrain::~Terrain()
@@ -17,8 +17,8 @@ Terrain::~Terrain()
 
 void Terrain::generate_terrain()
 {
-    //heightmap_terrain("island3.png");
-    flat_terrain();
+    heightmap_terrain("island3.png");
+    //flat_terrain();
     
     set_indices();
 }
@@ -92,8 +92,8 @@ void Terrain::heightmap_terrain(std::string const& file_name)
             normals.push_back(1);
             normals.push_back(0);
 
-            texture_coords.push_back(static_cast<float>(i) / terrain_resolution);
-            texture_coords.push_back(static_cast<float>(j) / terrain_resolution);
+            texture_coords.push_back(static_cast<float>(i) / terrain_resolution * 20);
+            texture_coords.push_back(static_cast<float>(j) / terrain_resolution * 20);
 
             k++;
         }
