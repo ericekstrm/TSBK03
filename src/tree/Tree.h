@@ -36,10 +36,13 @@ class Node
 {
 public:
     Node();
+    Node(vec3 const& direction);
     Node(Node* main, Node* lateral);
     ~Node();
 
-    std::string print() const;
+    void test_extend();
+
+    std::string to_string() const;
     std::vector<float> generate_skeleton(vec3 const& parent_position) const;
 
 private:
@@ -48,7 +51,7 @@ private:
     //  - length (constant?)
     //  - radius (use later)
 
-    vec3 direction {0, 1, 0};
+    vec3 direction;
     float length {1};
     
     // Bud

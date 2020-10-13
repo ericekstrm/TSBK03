@@ -3,6 +3,8 @@
 #include <iostream>
 #include <sstream>
 
+#include "Matrix.h"
+
 Tree::Tree()
 {
     generate();
@@ -11,7 +13,7 @@ Tree::Tree()
 
 Tree::~Tree()
 {
-
+    delete root;
 }
 
 void Tree::render(Tree_Shader const& shader) const
@@ -25,19 +27,18 @@ void Tree::render(Tree_Shader const& shader) const
 
 void Tree::update(float delta_time)
 {
-
+    root->test_extend();
+    vertices = root->generate_skeleton(position);
+    load_buffer_data();
 }
 
 void Tree::generate()
 {
+    root = new Node(vec3{0,1,0});
 
-    Node* n1 = new Node();
-    Node* n2 = new Node(n1, nullptr);
-    Node* n3 = new Node(n2, nullptr);
+    std::cout << root->to_string() << std::endl;
 
-    std::cout << n3->print();
-
-    vertices = n3->generate_skeleton(position);
+    vertices = root->generate_skeleton(position);
 }
 
 void Tree::load_buffer_data()
@@ -71,10 +72,14 @@ void Tree::load_buffer_data()
 // ===| Node |===
 // ==============
 
-
 Node::Node()
 {
 
+}
+
+Node::Node(vec3 const& direction)
+    : direction {direction}
+{
 }
 
 Node::Node(Node* main, Node* lateral)
@@ -88,19 +93,44 @@ Node::~Node()
     delete lateral_branch;
 }
 
-std::string Node::print() const
+void Node::test_extend()
+{
+    if (main_branch == nullptr)
+    {
+        main_branch = new Node(direction);
+    }
+    else if (lateral_branch == nullptr)
+    {
+        vec3 random_vector {(float) rand() / RAND_MAX - 0.5f, (float)rand() / RAND_MAX - 0.5f, (float)rand() / RAND_MAX - 0.5f};
+        vec3 shifted_direction {rotation_matrix( 30, random_vector) * direction};
+        lateral_branch = new Node(shifted_direction);
+    }
+    else
+    {
+        if (main_branch != nullptr)
+        {
+            main_branch->test_extend();
+        }
+        if (lateral_branch != nullptr)
+        {
+            lateral_branch->test_extend();
+        }
+    }
+}
+
+std::string Node::to_string() const
 {
     std::stringstream output {};
 
     output << "[lateral: ";
     if (lateral_branch != nullptr)
     {
-        output << lateral_branch->print();
+        output << lateral_branch->to_string();
     }
     output << ", main: ";
     if (main_branch != nullptr)
     {
-        output << main_branch->print();
+        output << main_branch->to_string();
     }
     output << "]";
     return output.str();

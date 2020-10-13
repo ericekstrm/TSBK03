@@ -194,7 +194,7 @@ bool Vector3::operator!=(Vector3 const & rhs) const
     return !(*this == rhs);
 }
 
-Vector3 Vector3::cross(Vector3 const & rhs)
+Vector3 Vector3::cross(Vector3 const & rhs) const
 {
     float x = this->x[1] * rhs[2] - this->x[2] * rhs[1];
     float y = this->x[2] * rhs[0] - this->x[0] * rhs[2];

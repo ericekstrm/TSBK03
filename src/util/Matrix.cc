@@ -239,7 +239,7 @@ Matrix4 fov_projection_matrix(float fovy, float aspect, float near, float far)
     return result;
 }
 
-Matrix4 look_at(vec3 position, vec3 look_at, vec3 up_vector)
+Matrix4 look_at(vec3 const& position, vec3 const& look_at, vec3 const& up_vector)
 {
     vec3 n {position - look_at};
     n.normalize();
@@ -288,6 +288,11 @@ Matrix4 rotation_matrix(float angle, float x, float y, float z)
     matrix.m[3][3] = 1;
 
     return matrix;
+}
+
+Matrix4 rotation_matrix(float angle, vec3 const& r)
+{
+    return rotation_matrix(angle, r[0], r[1], r[2]);
 }
 
 Matrix4 rotation_matrix(float x, float y, float z)

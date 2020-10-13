@@ -26,7 +26,7 @@ public:
     Vector3 operator*=(float);
     Vector3 operator/(float) const;
     Vector3 operator/=(float);
-    Vector3 cross(Vector3 const& rhs);
+    Vector3 cross(Vector3 const& rhs) const;
 
     float& operator[](int);
     float operator[](int) const;

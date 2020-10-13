@@ -76,5 +76,10 @@ void Game_State::check_input(GLFWwindow * window)
         glfwSetWindowShouldClose(window, GLFW_TRUE);
     }
 
+    if (glfwGetKey(window, GLFW_KEY_G) == GLFW_PRESS)
+    {
+        tree.update(0);
+    }
+
     camera->check_input(window);
 }

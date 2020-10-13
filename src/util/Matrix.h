@@ -45,9 +45,10 @@ std::ostream& operator<<(std::ostream & os, Matrix4 const & rhs);
 Matrix4 frustum_projection_matrix(float near, float far, float right, float left, float top, float bottom);
 Matrix4 fov_projection_matrix(float fovy, float aspect, float near, float far);
 
-Matrix4 look_at(vec3 position, vec3 look_at, vec3 up_vector);
+Matrix4 look_at(vec3 const& position, vec3 const& look_at, vec3 const& up_vector);
 
 Matrix4 rotation_matrix(float angle, float x, float y, float z);
+Matrix4 rotation_matrix(float angle, vec3 const& r);
 Matrix4 rotation_matrix(float x, float y, float z);
 Matrix4 translation_matrix(float x, float y, float z);
 Matrix4 scale_matrix(float x, float y, float z);
