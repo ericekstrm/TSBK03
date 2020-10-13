@@ -25,8 +25,7 @@ private:
     void set_indices();
 
     std::vector<float> vertices = {};
-
+    std::vector<float> normals {};
     std::vector<float> texture_coords = {};
-
     std::vector<int> indices = {};
 };

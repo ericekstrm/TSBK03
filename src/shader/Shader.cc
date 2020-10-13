@@ -6,6 +6,8 @@
 #include <vector>
 #include <iterator>
 
+#include "Vector.h"
+
 Shader::Shader()
     : Shader("pass.vert", "pass.frag")
 {
@@ -154,7 +156,7 @@ Skybox_Shader::Skybox_Shader()
 //======================
 
 Model_Shader::Model_Shader()
-    : Shader{"test.vert", "test.frag"}
+    : Shader{"model.vert", "model.frag"}
 {
     location_model_matrix = get_uniform_location("model_matrix");
 
@@ -163,7 +165,7 @@ Model_Shader::Model_Shader()
     location_light_color = get_uniform_location("light_color");
     location_light_attenuation_params = get_uniform_location("light_attenuation_params");
     location_light_type = get_uniform_location("light_type");
-    location_num_of_lights = get_uniform_location("num_of_lights");
+    location_num_of_lights = get_uniform_location("number_of_lights");
 
     location_kd_texture = get_uniform_location("kd_texture");
     location_specularity_map = get_uniform_location("specularity_map");
@@ -199,11 +201,11 @@ void Model_Shader::load_camera_position(vec3 const& camera_pos) const
 
 void Model_Shader::load_lights(Light_Container const& light_container) const
 {
-    /*load_vec3_arr(location_light_pos_dir, light_container.get_light_pos_dir_data());
-    load_vec3_arr(location_light_color, light_container.get_light_color_data());
-    load_vec3_arr(location_light_attenuation_params, light_container.get_light_attenuation_data());
+    load_vec3_arr(location_light_pos_dir, light_container.get_pos_dir_data());
+    load_vec3_arr(location_light_color, light_container.get_color_data());
+    load_vec3_arr(location_light_attenuation_params, light_container.get_attenuation_data());
     load_bool_arr(location_light_type, light_container.get_light_type_data());
-    load_int(location_num_of_lights, light_container.get_number_of_active_lights());*/
+    load_int(location_num_of_lights, light_container.get_number_of_lights());
 }
 
 void Model_Shader::load_material_properties(Model const& obj) const

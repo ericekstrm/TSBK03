@@ -49,6 +49,8 @@ private:
     float x[3];
 };
 
+std::ostream& operator<<(std::ostream& os, vec3 const& rhs);
+
 class Vector4
 {
 public:

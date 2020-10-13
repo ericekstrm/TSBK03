@@ -7,7 +7,7 @@
 Terrain::Terrain()
 {
     generate_terrain();
-    model_data.load_buffer_data(vertices, texture_coords, indices);
+    model_data.load_buffer_data(vertices, normals, texture_coords, indices);
     model_data.material.texture_id = load_texture("res/textures/container.jpg");
 }
 
@@ -33,6 +33,10 @@ void Terrain::flat_terrain()
             vertices.push_back(terrain_size / terrain_resolution * i);
             vertices.push_back(r);
             vertices.push_back(terrain_size / terrain_resolution * j);
+
+            normals.push_back(0);
+            normals.push_back(1);
+            normals.push_back(0);
 
             texture_coords.push_back(static_cast<float>(i) / terrain_resolution);
             texture_coords.push_back(static_cast<float>(j) / terrain_resolution);
@@ -83,6 +87,10 @@ void Terrain::heightmap_terrain(std::string const& file_name)
             vertices.push_back(terrain_size / terrain_resolution * i);
             vertices.push_back(r * max_height);
             vertices.push_back(terrain_size / terrain_resolution * j);
+
+            normals.push_back(0);
+            normals.push_back(1);
+            normals.push_back(0);
 
             texture_coords.push_back(static_cast<float>(i) / terrain_resolution);
             texture_coords.push_back(static_cast<float>(j) / terrain_resolution);

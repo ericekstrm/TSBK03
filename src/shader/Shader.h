@@ -67,7 +67,6 @@ public:
 
     void load_model_matrix(Matrix4 const& mat) const;
 
-
     void load_camera_position  (vec3 const& camera_pos) const;
     void load_lights(Light_Container const& light_container) const;
     void load_material_properties(Model const& obj) const;
@@ -78,14 +77,7 @@ private:
 
     int location_model_matrix;
 
-    int location_camera_pos;
-
-    int location_light_pos_dir;
-    int location_light_attenuation_params;
-    int location_light_type;
-    int location_light_color;
-    int location_num_of_lights;
-
+    // Material 
     int location_kd_texture;
     int location_specularity_map;
     int location_use_specularity_map;
@@ -93,4 +85,13 @@ private:
     int location_kd;
     int location_ks;
     int location_a;
+
+    int location_camera_pos;
+
+    // Light
+    int location_num_of_lights;
+    int location_light_pos_dir;
+    int location_light_color;
+    int location_light_attenuation_params;
+    int location_light_type;
 };

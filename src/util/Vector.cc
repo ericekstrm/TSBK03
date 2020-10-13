@@ -191,23 +191,18 @@ bool Vector3::operator!=(Vector3 const & rhs) const
     return !(*this == rhs);
 }
 
-std::ostream& operator<<(std::ostream & os, Vector3 const & rhs)
-{
-    os << "[";
-    for (int i = 0; i < 2; i++)
-    {
-        os << rhs[i] << ", ";
-    }
-    os << rhs[2] << "]";
-    return os;
-}
-
 Vector3 Vector3::cross(Vector3 const & rhs)
 {
     float x = this->x[1] * rhs[2] - this->x[2] * rhs[1];
     float y = this->x[2] * rhs[0] - this->x[0] * rhs[2];
     float z = this->x[0] * rhs[1] - this->x[1] * rhs[0];
     return Vector3 {x, y, z};
+}
+
+std::ostream& operator<<(std::ostream& os, vec3 const& rhs)
+{
+    os << "[" << rhs[0] << ", " << rhs[1] << ", " << rhs[2] << "]";
+    return os;
 }
 
 //=================

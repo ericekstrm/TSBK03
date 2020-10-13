@@ -15,6 +15,7 @@ public:
     virtual void check_input(GLFWwindow* window);
 
     Matrix4 get_camera_matrix() const;
+    vec3 get_position() const { return position; };
 
 protected:
     vec3 position {2, 2, 2};
