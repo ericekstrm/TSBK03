@@ -50,6 +50,10 @@ private:
     int location_world_matrix;
 };
 
+// =======================
+// ===| Skybox Shader |===
+// =======================
+
 class Skybox_Shader : public Shader
 {
 public:
@@ -58,6 +62,10 @@ public:
 private:
 
 };
+
+// ======================
+// ===| Model Shader |===
+// ======================
 
 class Model_Shader : public Shader
 {
@@ -94,4 +102,20 @@ private:
     int location_light_color;
     int location_light_attenuation_params;
     int location_light_type;
+};
+
+// =====================
+// ===| Tree Shader |===
+// =====================
+
+class Tree_Shader : public Shader
+{
+public:
+    Tree_Shader();
+    ~Tree_Shader();
+
+    void load_model_matrix(Matrix4 const& mat) const;
+
+private:
+    int location_model_matrix;
 };

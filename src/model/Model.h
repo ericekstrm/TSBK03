@@ -52,6 +52,10 @@ protected:
 
     Model_Data model_data {};
 
+    vec3 position {};
+    vec3 scale {1, 1, 1};
+    vec3 rotation {};
+
 private:
 
     Model(std::vector<float> vertices, 
@@ -59,10 +63,6 @@ private:
           std::vector<float> texture_coords, 
           std::vector<int> indices,
           objl::Material material);
-
-    vec3 position {};
-    vec3 scale {1, 1, 1};
-    vec3 rotation {};
 
 //For model handler
     inline static std::map<std::string, Model_Data> models {};

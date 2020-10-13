@@ -8,6 +8,7 @@
 #include "Terrain.h"
 #include "Skybox.h"
 #include "Light.h"
+#include "Tree.h"
 
 #include <memory>
 
@@ -33,6 +34,9 @@ private:
     Skybox skybox {};
 
     Light_Container lights {};
+
+    Tree_Shader tree_shader {};
+    Tree tree {};
 
     Matrix4 projection {fov_projection_matrix(45.0f, 1.0f, 0.1f, 100.0f)};
 };

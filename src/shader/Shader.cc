@@ -218,3 +218,22 @@ void Model_Shader::load_material_properties(Model const& obj) const
     load_float(location_a, mat.a);
     load_bool(location_use_specularity_map, mat.use_specularity_map);
 }
+
+// =====================
+// ===| Tree Shader |===
+// =====================
+
+Tree_Shader::Tree_Shader()
+    : Shader{"tree.vert", "tree.frag"}
+{
+    location_model_matrix = get_uniform_location("model_matrix");
+}
+
+Tree_Shader::~Tree_Shader()
+{
+}
+
+void Tree_Shader::load_model_matrix(Matrix4 const & mat) const
+{
+    load_mat4(location_model_matrix, mat);
+}

@@ -1,9 +1,11 @@
 cc = g++ -std=c++17 -Wall -g
-include_directory = -I ./ -I lib -I lib/glad -I lib/glfw -I lib/glfw/include -I src/state -I src/model -I src/shader -I src/camera -I src/light -I src/util
+include_directory = -I ./ -I lib -I lib/glad -I lib/glfw -I lib/glfw/include -I src/state -I src/tree -I src/model -I src/shader -I src/camera -I src/light -I src/util
 libs = -lopengl32 -L lib/glfw/lib-mingw-w64 -lglfw3 -lgdi32
 
-main: main.cc obj/*.o
-	$(cc) -o tsbk main.cc obj/*.o $(include_directory) $(libs)
+ofiles = obj/Game.o obj/Game_State.o obj/Model.o obj/Skybox.o obj/Terrain.o obj/Tree.o obj/Shader.o obj/Camera.o obj/Flying_Camera.o obj/Third_Person_Camera.o obj/Light.o obj/Matrix.o obj/Vector.o obj/glad.o obj/stb_image.o
+
+main: main.cc $(ofiles)
+	$(cc) -o tsbk main.cc $(ofiles) $(include_directory) $(libs)
 
 # State
 
@@ -22,6 +24,11 @@ obj/Skybox.o: src/model/Skybox.cc src/model/Skybox.h
 	$(cc) -c -o $@ $< $(include_directory) $(libs)
 
 obj/Terrain.o: src/model/Terrain.cc src/model/Terrain.h
+	$(cc) -c -o $@ $< $(include_directory) $(libs)
+
+# Tree
+
+obj/Tree.o: src/tree/Tree.cc src/tree/Tree.h
 	$(cc) -c -o $@ $< $(include_directory) $(libs)
 
 # Shader

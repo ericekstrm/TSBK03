@@ -5,9 +5,6 @@
 
 #include "OBJ_Loader.h"
 
-#define vec3 Vector3
-#define vec4 Vector4
-
 class Vector3
 {
 public:
@@ -49,7 +46,7 @@ private:
     float x[3];
 };
 
-std::ostream& operator<<(std::ostream& os, vec3 const& rhs);
+std::ostream& operator<<(std::ostream& os, Vector3 const& rhs);
 
 class Vector4
 {
@@ -87,4 +84,8 @@ private:
 
     float x[4];
 };
+
+typedef Vector3 vec3;
+typedef Vector4 vec4;
+
 #endif

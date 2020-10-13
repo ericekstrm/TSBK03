@@ -6,14 +6,14 @@
 
 Game_State::Game_State()
 {
-    for (float i = 1; i < 100; i++)
+    /*for (float i = 1; i < 100; i++)
     {
         models.push_back(Model {"rock1", vec3{(float) (rand() % 128) - 64, 0, (float) (rand() % 128) - 64}});
     }
     models.push_back(Model {"door", vec3{10, 0, 0}});
-    models.push_back(Model {"chair", vec3{0, 0, 5}});
+    models.push_back(Model {"chair", vec3{0, 0, 5}});*/
 
-    camera = std::make_unique<Flying_Camera>();
+    camera = std::make_unique<Flying_Camera>(vec3{10, 5, 10});
 
     lights.add_dir_light(vec3{-1, -1, 0}, vec3{0.988, 0.831, 0.251});
     lights.add_pos_light(vec3{0, 5, 5}, vec3{1, 1, 1});
@@ -59,6 +59,14 @@ void Game_State::render() const
     shader.stop();
 
     lights.render();
+
+    tree_shader.start();
+    tree_shader.load_projection_matrix(projection);
+    tree_shader.load_camera_matrix(camera->get_camera_matrix());
+
+    tree.render(tree_shader);
+
+    tree_shader.stop();
 }
 
 void Game_State::check_input(GLFWwindow * window)
