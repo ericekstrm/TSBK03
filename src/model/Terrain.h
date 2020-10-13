@@ -16,7 +16,7 @@ private:
     // Also then the size in each dimension of the heightmap image file.
     int terrain_resolution = 512;
 
-    float max_height {2};
+    float max_height {20};
 
     void generate_terrain();
     void flat_terrain();

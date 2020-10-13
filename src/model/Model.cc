@@ -164,12 +164,10 @@ Model::Model_Data Model::load_model_from_file(std::string const& file_name) cons
 }
 
 void Model::Model_Data::load_buffer_data(std::vector<float> const& vertices,
-                             std::vector<float> const& normals,
-                             std::vector<float> const& texture_coords,
-                             std::vector<int> const& indices)
+                                         std::vector<float> const& normals,
+                                         std::vector<float> const& texture_coords,
+                                         std::vector<int> const& indices)
 {
-    std::cout << normals.size() << std::endl;
-
     glGenVertexArrays(1, &vao);
     glBindVertexArray(vao);
 

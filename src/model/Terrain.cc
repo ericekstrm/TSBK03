@@ -17,8 +17,8 @@ Terrain::~Terrain()
 
 void Terrain::generate_terrain()
 {
-    heightmap_terrain("island3.png");
-    //flat_terrain();
+    //heightmap_terrain("island3.png");
+    flat_terrain();
     
     set_indices();
 }
@@ -38,8 +38,8 @@ void Terrain::flat_terrain()
             normals.push_back(1);
             normals.push_back(0);
 
-            texture_coords.push_back(static_cast<float>(i) / terrain_resolution);
-            texture_coords.push_back(static_cast<float>(j) / terrain_resolution);
+            texture_coords.push_back(static_cast<float>(i) / terrain_resolution * 20);
+            texture_coords.push_back(static_cast<float>(j) / terrain_resolution * 20);
         }
     }
 }
@@ -50,7 +50,7 @@ void Terrain::heightmap_terrain(std::string const& file_name)
 
     int width, height, nrChannels;
     stbi_set_flip_vertically_on_load(true); // tell stb to flip loaded texture's on the y-axis.
-    unsigned char* data = stbi_load(("res/heightmaps/" + file_name).c_str(), &width, &height, &nrChannels, STBI_rgb);
+    unsigned char* data = stbi_load(("res/terrain/heightmaps/" + file_name).c_str(), &width, &height, &nrChannels, STBI_rgb);
 
     std::cout << "width: " << width << std::endl;
     std::cout << "height: " << height << std::endl;
