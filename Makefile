@@ -56,7 +56,7 @@ obj/Shader.o: src/shader/Shader.cc src/shader/Shader.h
 
 # State
 
-obj/Game.o: src/state/Game.cc src/state/Game.h
+obj/Game.o: src/state/Game.cc src/state/Game.h src/util/settings.h
 	$(cc) -c -o $@ $< $(include_directory) $(libs)
 
 obj/Game_State.o: src/state/Game_State.cc src/state/Game_State.h

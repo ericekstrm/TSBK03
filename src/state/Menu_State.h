@@ -15,7 +15,7 @@ public:
     virtual std::string name() const { return "menu"; };
 
 private:
-    Font font {"arial", 512};
+    Font font {"arial", 48};
     Text text {"detta vara text!", vec2{-1, -1}, font};
 
     unsigned vao;
