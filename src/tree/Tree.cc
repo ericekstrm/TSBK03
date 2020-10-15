@@ -36,8 +36,6 @@ void Tree::generate()
 {
     root = new Node(vec3{0,1,0});
 
-    std::cout << root->to_string() << std::endl;
-
     vertices = root->generate_skeleton(position);
 }
 

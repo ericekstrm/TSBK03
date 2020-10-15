@@ -1,9 +1,42 @@
-#ifndef VECTOR_H
-#define VECTOR_H
+#pragma once
 
 #include <ostream>
 
 #include "OBJ_Loader.h"
+
+class Vector2
+{
+public:
+    Vector2();
+    Vector2(Vector2 const&);
+    Vector2(float x, float y);
+    Vector2 operator=(Vector2 const&);
+
+    Vector2 operator+(Vector2 const&) const;
+    Vector2 operator+=(Vector2 const&);
+    Vector2 operator-(Vector2 const&) const;
+    Vector2 operator-=(Vector2 const&);
+
+    Vector2 operator*(float) const;
+    Vector2 operator*=(float);
+    Vector2 operator/(float) const;
+    Vector2 operator/=(float);
+
+    // dot product
+    float operator*(Vector2 const&);
+
+    bool operator==(Vector2 const&) const;
+    bool operator!=(Vector2 const&) const;
+    bool operator< (Vector2 const&) const;
+
+    float length() const;
+    void normalize();
+
+    float x;
+    float y;
+};
+
+std::ostream& operator<<(std::ostream& os, Vector2 const& rhs);
 
 class Vector3
 {
@@ -85,7 +118,6 @@ private:
     float x[4];
 };
 
+typedef Vector2 vec2;
 typedef Vector3 vec3;
 typedef Vector4 vec4;
-
-#endif

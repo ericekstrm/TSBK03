@@ -119,3 +119,25 @@ public:
 private:
     int location_model_matrix;
 };
+
+// =====================
+// ===| Text Shader |===
+// =====================
+
+class Text_Shader : public Shader
+{
+public:
+    Text_Shader();
+    ~Text_Shader();
+
+    void load_font_color(vec3 const& color) const;
+    void load_text_pos_matrix(Matrix4 const& mat) const;
+    void load_char_pos_matrix(Matrix4 const& mat) const;
+
+private:
+
+    int location_font_color;
+    int location_text_pos_matrix;
+    int location_char_pos_matrix;
+    int location_tex;
+};

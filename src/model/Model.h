@@ -47,8 +47,6 @@ public:
     Material get_material() const;
 
 protected:
-    //void load_buffer_data(std::vector<float> const&, std::vector<float> const&, std::vector<int> const&);
-    unsigned int load_texture(std::string file_name) const;
 
     Model_Data model_data {};
 

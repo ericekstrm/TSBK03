@@ -1,5 +1,6 @@
 #include "Terrain.h"
 #include "stb_image.h"
+#include "model_util.h"
 
 #include <iostream>
 #include <random>

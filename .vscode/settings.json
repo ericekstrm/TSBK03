@@ -50,6 +50,9 @@
         "xutility": "cpp",
         "map": "cpp",
         "xtree": "cpp",
-        "sstream": "cpp"
+        "sstream": "cpp",
+        "list": "cpp",
+        "unordered_map": "cpp",
+        "xhash": "cpp"
     }
 }

@@ -237,3 +237,37 @@ void Tree_Shader::load_model_matrix(Matrix4 const & mat) const
 {
     load_mat4(location_model_matrix, mat);
 }
+
+// =====================
+// ===| Text Shader |===
+// =====================
+
+Text_Shader::Text_Shader()
+    : Shader{"text.vert", "text.frag"}
+{
+    location_font_color = get_uniform_location("font_color");
+    location_text_pos_matrix = get_uniform_location("text_pos_matrix");
+    location_char_pos_matrix = get_uniform_location("char_pos_matrix");
+
+    location_tex = get_uniform_location("tex");
+    load_int(location_tex, 0);
+}
+
+Text_Shader::~Text_Shader()
+{
+}
+
+void Text_Shader::load_font_color(vec3 const& color) const
+{
+    load_vec3(location_font_color, color);
+}
+
+void Text_Shader::load_text_pos_matrix(Matrix4 const & mat) const
+{
+    load_mat4(location_text_pos_matrix, mat);
+}
+
+void Text_Shader::load_char_pos_matrix(Matrix4 const & mat) const
+{
+    load_mat4(location_char_pos_matrix, mat);
+}

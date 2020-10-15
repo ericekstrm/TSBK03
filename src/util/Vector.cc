@@ -4,6 +4,115 @@
 #include <cmath>
 #include <stdexcept>
 
+Vector2::Vector2()
+    : x {0}, y{0}
+{
+}
+
+Vector2::Vector2(Vector2 const & rhs)
+    : x {rhs.x}, y{rhs.y}
+{
+}
+
+Vector2::Vector2(float x, float y)
+    : x {x}, y {y}
+{
+}
+
+float Vector2::length() const
+{
+    return sqrt(x * x + y * y);
+}
+
+void Vector2::normalize()
+{
+    if (length() != 0)
+    {
+        operator/=(length());
+    }
+}
+
+Vector2 Vector2::operator=(Vector2 const & rhs)
+{
+    Vector2 tmp {rhs};
+    *this = tmp;
+    return *this;
+}
+
+Vector2 Vector2::operator+(Vector2 const & rhs) const
+{
+    return Vector2{x + rhs.x, y + rhs.y};
+}
+
+Vector2 Vector2::operator+=(Vector2 const & rhs)
+{
+    *this = operator+(rhs);
+    return *this;
+}
+
+Vector2 Vector2::operator-(Vector2 const & rhs) const
+{
+    return Vector2{x - rhs.x, y - rhs.y};
+}
+
+Vector2 Vector2::operator-=(Vector2 const & rhs)
+{
+    *this = operator-(rhs);
+    return *this;
+}
+
+Vector2 Vector2::operator*(float f) const
+{
+    return Vector2 {x * f, y * f};
+}
+
+Vector2 Vector2::operator*=(float f)
+{
+    *this = operator*(f);
+    return *this;
+}
+
+Vector2 Vector2::operator/(float f) const
+{
+    return operator*(1.0f / f);
+}
+
+Vector2 Vector2::operator/=(float f)
+{
+    *this = operator/(f);
+    return *this;
+}
+
+float Vector2::operator*(Vector2 const & rhs)
+{
+    return x * rhs.x + y * rhs.y;
+}
+
+bool Vector2::operator==(Vector2 const & rhs) const
+{
+    return x == rhs.x && y == rhs.y;
+}
+
+bool Vector2::operator!=(Vector2 const & rhs) const
+{
+    return !(*this == rhs);
+}
+
+bool Vector2::operator<(Vector2 const& r) const
+{
+     return (x < r.x || (x == r.x && y < r.y));
+}
+
+std::ostream& operator<<(std::ostream& os, Vector2 const& rhs)
+{
+    os << "[" << rhs.x << ", " << rhs.y << "]";
+    return os;
+}
+
+// =================
+// ===| Vector3 |===
+// =================
+
 Vector3::Vector3()
 {
     for (int i = 0; i < 3; i++)

@@ -1,5 +1,8 @@
 #include "Game.h"
 #include "Game_State.h"
+#include "Menu_State.h"
+#include "settings.h"
+
 #include <GLFW/glfw3.h>
 #include <ctime>
 #include <ratio>
@@ -9,6 +12,7 @@ Game::Game()
 {
     init_openGL();
 
+    all_states.push_back(std::make_unique<Menu_State>());
     all_states.push_back(std::make_unique<Game_State>());
     current_state = all_states.front().get();
 }
@@ -57,7 +61,7 @@ void Game::init_openGL()
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_DEPTH_BITS, GL_TRUE);
 
-    window = glfwCreateWindow(640, 640, "Hello World", NULL, NULL);
+    window = glfwCreateWindow(window_width, window_height, "Hello World", NULL, NULL);
     if (!window)
     {
         glfwTerminate();
