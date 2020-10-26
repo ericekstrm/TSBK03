@@ -6,20 +6,19 @@
 class State
 {
 public:
-    State()
-    {
-
-    };
-    ~State()
-    {
-
-    };
+    State() {}
+    virtual ~State() {}
 
     virtual void update(float delta_time) = 0;
     virtual void render() const = 0;
     virtual void check_input(GLFWwindow* window) = 0;
     virtual std::string name() const = 0;
 
+    // Runs right before and after switching state
+    virtual void activate(GLFWwindow* window) {}
+    virtual void deactivate(GLFWwindow* window) {}
+
+    void set_state_flag(std::string const& new_state) { change_state = new_state; }
     std::string update_state()
     {
         std::string tmp {change_state};
@@ -27,6 +26,9 @@ public:
         return tmp;
     }
 
-private:
+protected:
+
+    // Flag for changing state. Set to the name of another 
+    // state to switch state in the next loop.
     std::string change_state {};
 };

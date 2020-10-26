@@ -141,3 +141,21 @@ private:
     int location_char_pos_matrix;
     int location_tex;
 };
+
+// ========================
+// ===| Image2D Shader |===
+// ========================
+
+class Image2D_Shader : public Shader
+{
+public:
+    Image2D_Shader();
+    ~Image2D_Shader();
+
+    void load_pos_matrix(vec2 const& pos) const;
+
+private:
+
+    int location_pos_matrix;
+    int location_tex;
+};

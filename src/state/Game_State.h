@@ -21,7 +21,10 @@ public:
     virtual void update(float delta_time);
     virtual void render() const;
     virtual void check_input(GLFWwindow* window);
-    virtual std::string name() const { return "game"; };
+    virtual std::string name() const { return "game"; }
+
+    void activate(GLFWwindow* window) override;
+    void deactivate(GLFWwindow* window) override;
 
 private:
     Model_Shader shader {};

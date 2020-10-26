@@ -51,6 +51,20 @@ void Game::run()
 void Game::update_states()
 {
     std::string new_state {current_state->update_state()};
+
+    if (new_state != "")
+    {
+        for (auto it = all_states.begin(); it != all_states.end(); it++)
+        {
+            if ((*it)->name() == new_state)
+            {
+                current_state->deactivate(window);
+                current_state = it->get();
+                current_state->activate(window);
+                return;
+            }
+        }
+    }
 }
 
 void Game::init_openGL()
@@ -68,8 +82,6 @@ void Game::init_openGL()
     }
 
     glfwMakeContextCurrent(window);
-    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
-
 
     gladLoadGLLoader((GLADloadproc) glfwGetProcAddress);
 

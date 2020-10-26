@@ -71,9 +71,10 @@ void Game_State::render() const
 
 void Game_State::check_input(GLFWwindow * window)
 {
+
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
     {
-        glfwSetWindowShouldClose(window, GLFW_TRUE);
+        change_state = "menu";
     }
 
     if (glfwGetKey(window, GLFW_KEY_G) == GLFW_PRESS)
@@ -82,4 +83,24 @@ void Game_State::check_input(GLFWwindow * window)
     }
 
     camera->check_input(window);
+}
+void Game_State::activate(GLFWwindow* window)
+{
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+
+    // Exempel av hur man skulle kunna hantera enskilda knapptryckningar
+    /*glfwSetKeyCallback(window, key_callback);
+    glfwSetWindowUserPointer(window, this);
+    glfwSetKeyCallback(window, [](GLFWwindow* window, int key, int scancode, int action, int mode){
+        if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+        {
+            auto self = static_cast<Game_State*>(glfwGetWindowUserPointer(window));
+            self->set_state_flag("menu");
+        }
+    });*/
+}
+
+void Game_State::deactivate(GLFWwindow* window)
+{
+
 }

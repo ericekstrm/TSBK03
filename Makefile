@@ -3,7 +3,7 @@ include_directory = -I ./ -I lib -I lib/glad -I lib/glfw -I lib/glfw/include -I 
 libs = -lopengl32 -L lib/glfw/lib-mingw-w64 -lglfw3 -lgdi32
 
 camera_o = obj/Camera.o obj/Flying_Camera.o obj/Third_Person_Camera.o
-gui_o = obj/Font.o obj/Text.o obj/Word.o
+gui_o = obj/Font.o obj/Text.o obj/Word.o obj/Button.o obj/Image.o
 model_o = obj/Model.o obj/Skybox.o obj/Terrain.o obj/Tree.o
 state_o = obj/Game.o obj/Game_State.o obj/Menu_State.o
 ofiles = $(camera_o) $(gui_o) $(model_o) $(state_o) obj/Shader.o obj/Light.o obj/Matrix.o obj/Vector.o obj/glad.o obj/stb_image.o
@@ -31,6 +31,12 @@ obj/Text.o: src/gui/Text.cc src/gui/Text.h
 	$(cc) -c -o $@ $< $(include_directory) $(libs)
 
 obj/Word.o: src/gui/Word.cc src/gui/Word.h
+	$(cc) -c -o $@ $< $(include_directory) $(libs)
+
+obj/Button.o: src/gui/Button.cc src/gui/Button.h
+	$(cc) -c -o $@ $< $(include_directory) $(libs)
+
+obj/Image.o: src/gui/Image.cc src/gui/Image.h
 	$(cc) -c -o $@ $< $(include_directory) $(libs)
 
 # Light

@@ -17,6 +17,11 @@ class Model
 public:
     Model();
     Model(std::string const& file_name, vec3 const& position);
+    Model(std::vector<float> vertices, 
+        std::vector<float> normals, 
+        std::vector<float> texture_coords, 
+        std::vector<int> indices,
+        objl::Material material);
     ~Model();
 
     void update(float delta_time);
@@ -56,15 +61,8 @@ protected:
 
 private:
 
-    Model(std::vector<float> vertices, 
-          std::vector<float> normals, 
-          std::vector<float> texture_coords, 
-          std::vector<int> indices,
-          objl::Material material);
-
-//For model handler
+    //For model handler
     inline static std::map<std::string, Model_Data> models {};
     void load_model(std::string const& file_name);
     Model_Data load_model_from_file(std::string const& file_name) const;
-
 };

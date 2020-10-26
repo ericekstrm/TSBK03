@@ -189,7 +189,7 @@ void Model_Shader::connect_texture_units() const
     load_int(location_specularity_map, 1);
 }
 
-void Model_Shader::load_model_matrix(Matrix4 const & mat) const
+void Model_Shader::load_model_matrix(Matrix4 const& mat) const
 {
     load_mat4(location_model_matrix, mat);
 }
@@ -233,7 +233,7 @@ Tree_Shader::~Tree_Shader()
 {
 }
 
-void Tree_Shader::load_model_matrix(Matrix4 const & mat) const
+void Tree_Shader::load_model_matrix(Matrix4 const& mat) const
 {
     load_mat4(location_model_matrix, mat);
 }
@@ -262,12 +262,34 @@ void Text_Shader::load_font_color(vec3 const& color) const
     load_vec3(location_font_color, color);
 }
 
-void Text_Shader::load_text_pos_matrix(Matrix4 const & mat) const
+void Text_Shader::load_text_pos_matrix(Matrix4 const& mat) const
 {
     load_mat4(location_text_pos_matrix, mat);
 }
 
-void Text_Shader::load_char_pos_matrix(Matrix4 const & mat) const
+void Text_Shader::load_char_pos_matrix(Matrix4 const& mat) const
 {
     load_mat4(location_char_pos_matrix, mat);
+}
+
+// ========================
+// ===| Image2D Shader |===
+// ========================
+
+Image2D_Shader::Image2D_Shader()
+    : Shader{"image2d.vert", "image2d.frag"}
+{
+    location_pos_matrix = get_uniform_location("pos_matrix");
+
+    location_tex = get_uniform_location("tex");
+    load_int(location_tex, 0);
+}
+
+Image2D_Shader::~Image2D_Shader()
+{
+}
+
+void Image2D_Shader::load_pos_matrix(vec2 const& pos) const
+{
+    load_mat4(location_pos_matrix, translation_matrix(pos.x, pos.y, 0));
 }
