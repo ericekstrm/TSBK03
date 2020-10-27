@@ -1,7 +1,12 @@
 #include "Button.h"
 
-Button::Button(vec2 const& position, vec2 const& size, std::string const& text, std::function<void()> const& callback)
-    : pos {position}, size {size}, text {text, position, font}, callback {callback}
+Button::Button(vec2 const& position, std::string const& text_string, std::function<void()> const& callback)
+    : font {"arial", 48},
+      text {text_string, position + vec2{0.015, 0.015}, font},
+      pos {position}, 
+      size {vec2{text.get_length(), font.get_text_height()}},
+      image {position, size, "res/images/button.png"}, 
+      callback {callback}
 {
 }
 
@@ -25,5 +30,6 @@ void Button::try_click(vec2 const& p)
 
 void Button::render() const
 {
+    image.render();
     text.render();
 }

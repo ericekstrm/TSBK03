@@ -15,6 +15,7 @@ Game::Game()
     all_states.push_back(std::make_unique<Menu_State>());
     all_states.push_back(std::make_unique<Game_State>());
     current_state = all_states.front().get();
+    current_state->activate(window);
 }
 
 Game::~Game()
@@ -54,6 +55,12 @@ void Game::update_states()
 
     if (new_state != "")
     {
+        if (new_state == "quit")
+        {
+            glfwSetWindowShouldClose(window, true);
+            return;
+        }
+
         for (auto it = all_states.begin(); it != all_states.end(); it++)
         {
             if ((*it)->name() == new_state)

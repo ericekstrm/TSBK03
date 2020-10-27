@@ -15,6 +15,8 @@ public:
     Text(std::string const& text_string, Font const& font);
     Text(std::string const& text_string, vec2 const& position, Font const& font);
 
+    float get_length() const { return text_length; }
+
     void render() const;
 
 private:
@@ -24,8 +26,9 @@ private:
     std::string text_string;
 
     vec2 position;
-
     vec3 color;
+
+    float text_length {0};
 
     std::vector<Word> words {};
 

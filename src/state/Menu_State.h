@@ -23,9 +23,8 @@ private:
     Font font {"arial", 48};
     Text text {"Tree Simulator", vec2{-0.9, 0.9}, font};
 
-    Image image1 {vec2{0, 0}, vec2{1, 1}, "res/images/1.png"};
-
-    //Button button {vec2{0, 0}, vec2{0.2, 0.2}, "test!", []() { std::cout << "heeeeeeeeej!!" << std::endl; }};
+    Button tree_growth_button {vec2{-0.9, 0.7}, "Tree Growth", [this]() { this->set_state_flag("game"); }};
+    Button quit_button {vec2{-0.9, 0}, "Quit", [this]() { this->set_state_flag("quit"); }};
 
     unsigned vao;
     unsigned vb;

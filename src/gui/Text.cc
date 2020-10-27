@@ -25,6 +25,9 @@ Text::Text(std::string const& text_string, vec2 const& position, Font const& fon
 
         word_postion.x += font.get_space_length();
         word_postion.x += w.get_length();
+
+        text_length += font.get_space_length();
+        text_length += w.get_length();
     }
 }
 

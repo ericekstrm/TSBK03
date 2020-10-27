@@ -18,6 +18,7 @@ public:
 
     vec3 get_color() const { return color; }
     float get_space_length() const { return space_length; }
+    float get_text_height() const { return 0.1; }  //fix this
     Character get_character(int ascii_id) const;
     Character get_character(char ascii_sign) const;
     unsigned get_texture_id() const { return texture_id; }

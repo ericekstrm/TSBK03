@@ -7,9 +7,6 @@
 
 Menu_State::Menu_State()
 {
-    glDisable(GL_DEPTH_TEST);
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
 Menu_State::~Menu_State()
@@ -26,7 +23,8 @@ void Menu_State::render() const
 
     text.render();
 
-    image1.render();
+    tree_growth_button.render();
+    quit_button.render();
 }
 
 void Menu_State::check_input(GLFWwindow * window)
@@ -38,20 +36,24 @@ void Menu_State::check_input(GLFWwindow * window)
 
     if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
     {
-        std::cout << "helo" << std::endl;
         double xpos, ypos;
         glfwGetCursorPos(window, &xpos, &ypos);
 
         // normalize mouse position
         xpos = xpos / window_width * 2 - 1;
-        ypos = ypos / window_height * 2 - 1;
+        ypos = -(ypos / window_height * 2 - 1);
 
-        //button.try_click(vec2{xpos, ypos});
+        tree_growth_button.try_click(vec2{xpos, ypos});
+        quit_button.try_click(vec2{xpos, ypos});
     }
 }
 
 void Menu_State::activate(GLFWwindow* window)
 {
+    glDisable(GL_DEPTH_TEST);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 }
 
