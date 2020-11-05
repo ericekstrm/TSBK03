@@ -69,4 +69,13 @@ private:
         "res/skybox/grimmnight_bk.tga",
         "res/skybox/grimmnight_ft.tga"
     };
+
+    std::vector<std::string> violentdays {
+        "res/skybox/violentdays_rt.tga",
+        "res/skybox/violentdays_lf.tga",
+        "res/skybox/violentdays_up.tga",
+        "res/skybox/violentdays_dn.tga",
+        "res/skybox/violentdays_bk.tga",
+        "res/skybox/violentdays_ft.tga"
+    };
 };
