@@ -25,11 +25,4 @@ private:
 
     Button tree_growth_button {vec2{-0.9, 0.7}, "Tree Growth", [this]() { this->set_state_flag("game"); }};
     Button quit_button {vec2{-0.9, 0}, "Quit", [this]() { this->set_state_flag("quit"); }};
-
-    unsigned vao;
-    unsigned vb;
-    unsigned ib;
-    int indices_count;
-
-    Shader shader {"pass.vert", "pass.frag"};
 };

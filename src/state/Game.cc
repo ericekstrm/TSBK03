@@ -25,6 +25,7 @@ Game::~Game()
 void Game::run()
 {
     std::chrono::high_resolution_clock::time_point prev_time = std::chrono::high_resolution_clock::now();
+    srand(floor(std::chrono::duration_cast<std::chrono::seconds>( prev_time.time_since_epoch()).count()));
     while (!glfwWindowShouldClose(window))
     {
         //update logic
@@ -82,7 +83,7 @@ void Game::init_openGL()
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_DEPTH_BITS, GL_TRUE);
 
-    window = glfwCreateWindow(window_width, window_height, "Hello World", NULL, NULL);
+    window = glfwCreateWindow(window_width, window_height, "TSBK03 Tree Simulation", NULL, NULL);
     if (!window)
     {
         glfwTerminate();

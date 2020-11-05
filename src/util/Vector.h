@@ -43,7 +43,7 @@ class Vector3
 public:
     Vector3();
     Vector3(Vector3 const&);
-    Vector3(std::initializer_list<float> list);
+    Vector3(float x, float y, float z);
     ~Vector3();
     Vector3 operator=(Vector3 const&);
 
@@ -61,9 +61,6 @@ public:
     Vector3 operator/=(float);
     Vector3 cross(Vector3 const& rhs) const;
 
-    float& operator[](int);
-    float operator[](int) const;
-
     // dot product
     float operator*(Vector3 const&);
 
@@ -71,12 +68,11 @@ public:
     bool operator!=(Vector3 const&) const;
 
     float length() const;
-    void normalize();
+    Vector3 normalize();
 
-private:
-    Vector3(float tmp[3]);
-
-    float x[3];
+    float x;
+    float y;
+    float z;
 };
 
 std::ostream& operator<<(std::ostream& os, Vector3 const& rhs);

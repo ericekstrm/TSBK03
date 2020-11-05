@@ -114,10 +114,14 @@ public:
     Tree_Shader();
     ~Tree_Shader();
 
+    void connect_texture_units() const;
+
     void load_model_matrix(Matrix4 const& mat) const;
 
 private:
     int location_model_matrix;
+
+    int location_kd_texture;
 };
 
 // =====================

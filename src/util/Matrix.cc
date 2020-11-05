@@ -116,10 +116,10 @@ Matrix4 Matrix4::operator*(Matrix4 const & rhs) const
 
 vec3 Matrix4::operator*(vec3 const & rhs) const
 {
-    float x = m[0][0] * rhs[0] + m[0][1] * rhs[1] + m[0][2] * rhs[2] + m[0][3] * 1;
-    float y = m[1][0] * rhs[0] + m[1][1] * rhs[1] + m[1][2] * rhs[2] + m[1][3] * 1;
-    float z = m[2][0] * rhs[0] + m[2][1] * rhs[1] + m[2][2] * rhs[2] + m[2][3] * 1;
-    float w = m[3][0] * rhs[0] + m[3][1] * rhs[1] + m[3][2] * rhs[2] + m[3][3] * 1;
+    float x = m[0][0] * rhs.x + m[0][1] * rhs.y + m[0][2] * rhs.z + m[0][3] * 1;
+    float y = m[1][0] * rhs.x + m[1][1] * rhs.y + m[1][2] * rhs.z + m[1][3] * 1;
+    float z = m[2][0] * rhs.x + m[2][1] * rhs.y + m[2][2] * rhs.z + m[2][3] * 1;
+    float w = m[3][0] * rhs.x + m[3][1] * rhs.y + m[3][2] * rhs.z + m[3][3] * 1;
     return vec3 {x / w, y / w, z / w};
 }
 
@@ -249,13 +249,13 @@ Matrix4 look_at(vec3 const& position, vec3 const& look_at, vec3 const& up_vector
 
     Matrix4 rotation
     {
-        u[0], u[1], u[2], 0,
-        v[0], v[1], v[2], 0,
-        n[0], n[1], n[2], 0,
+        u.x, u.y, u.z, 0,
+        v.x, v.y, v.z, 0,
+        n.x, n.y, n.z, 0,
         0, 0, 0, 1
     };
     
-    Matrix4 translation {translation_matrix(-position[0], -position[1], -position[2])};
+    Matrix4 translation {translation_matrix(-position.x, -position.y, -position.z)};
 
     return (rotation * translation);
 }
@@ -271,9 +271,9 @@ Matrix4 rotation_matrix(float angle, float x, float y, float z)
     if (vec.length() != 1)
     {
         vec.normalize();
-        x = vec[0];
-        y = vec[1];
-        z = vec[2];
+        x = vec.x;
+        y = vec.y;
+        z = vec.z;
     }
 
     matrix.m[0][0] = x * x * (1 - c) + c;
@@ -292,7 +292,7 @@ Matrix4 rotation_matrix(float angle, float x, float y, float z)
 
 Matrix4 rotation_matrix(float angle, vec3 const& r)
 {
-    return rotation_matrix(angle, r[0], r[1], r[2]);
+    return rotation_matrix(angle, r.x, r.y, r.z);
 }
 
 Matrix4 rotation_matrix(float x, float y, float z)

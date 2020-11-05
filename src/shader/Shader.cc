@@ -71,7 +71,7 @@ void Shader::load_mat4(int location, mat4 const& value) const
 
 void Shader::load_vec3(int location, vec3 const& value) const
 {
-    glUniform3f(location, value[0], value[1], value[2]);
+    glUniform3f(location, value.x, value.y, value.z);
 }
 
 void Shader::load_vec4(int location, vec4 const& value) const
@@ -208,9 +208,9 @@ void Model_Shader::load_lights(Light_Container const& light_container) const
     load_int(location_num_of_lights, light_container.get_number_of_lights());
 }
 
-void Model_Shader::load_material_properties(Model const& obj) const
+void Model_Shader::load_material_properties(Model const& model) const
 {
-    auto mat = obj.get_material();
+    auto mat = model.get_material();
 
     load_vec3(location_ka, mat.ka);
     load_vec3(location_kd, mat.kd);
@@ -227,10 +227,18 @@ Tree_Shader::Tree_Shader()
     : Shader{"tree.vert", "tree.frag"}
 {
     location_model_matrix = get_uniform_location("model_matrix");
+    location_kd_texture = get_uniform_location("kd_texture");
+
+    connect_texture_units();
 }
 
 Tree_Shader::~Tree_Shader()
 {
+}
+
+void Tree_Shader::connect_texture_units() const
+{
+    load_int(location_kd_texture, 0);
 }
 
 void Tree_Shader::load_model_matrix(Matrix4 const& mat) const

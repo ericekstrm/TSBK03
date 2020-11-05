@@ -48,12 +48,12 @@ void Model::render(Model_Shader const& shader) const
 
 Matrix4 const Model::get_model_matrix() const
 {
-    Matrix4 t {translation_matrix(position[0], position[1], position[2])};
-    Matrix4 s {scale_matrix(scale[0], scale[1], scale[2])};
+    Matrix4 t {translation_matrix(position.x, position.y, position.z)};
+    Matrix4 s {scale_matrix(scale.x, scale.y, scale.z)};
     Matrix4 r {
-        rotation_matrix(rotation[0], 1, 0, 0) * 
-        rotation_matrix(rotation[1], 0, 1, 0) *
-        rotation_matrix(rotation[2], 0, 0, 1)};
+        rotation_matrix(rotation.x, 1, 0, 0) * 
+        rotation_matrix(rotation.y, 0, 1, 0) *
+        rotation_matrix(rotation.z, 0, 0, 1)};
 
     return (t * r * s);
 }
@@ -159,6 +159,40 @@ void Model::Model_Data::load_buffer_data(std::vector<float> const& vertices,
     glVertexAttribPointer(texture_attrib_array, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*) 0);
 
     glGenBuffers(1, &ib);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ib);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(float) * indices.size(), &indices[0], GL_STATIC_DRAW);
+    indices_count = indices.size();
+    
+    glEnableVertexAttribArray(vertices_attrib_array);
+    glEnableVertexAttribArray(normal_attrib_array);
+    glEnableVertexAttribArray(texture_attrib_array);
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+}
+
+void Model::Model_Data::reload_buffer_data(std::vector<float> const& vertices,
+                                         std::vector<float> const& normals,
+                                         std::vector<float> const& texture_coords,
+                                         std::vector<int> const& indices)
+{
+    glBindVertexArray(vao);
+
+    int vertices_attrib_array = 0;
+    glBindBuffer(GL_ARRAY_BUFFER, vb);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * vertices.size(), &vertices[0], GL_STATIC_DRAW);
+    glVertexAttribPointer(vertices_attrib_array, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*) 0);
+
+    int normal_attrib_array = 1;
+    glBindBuffer(GL_ARRAY_BUFFER, nb);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * normals.size(), &normals[0], GL_STATIC_DRAW);
+    glVertexAttribPointer(normal_attrib_array, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*) 0);
+
+    int texture_attrib_array = 2;
+    glBindBuffer(GL_ARRAY_BUFFER, tb);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * texture_coords.size(), &texture_coords[0], GL_STATIC_DRAW);
+    glVertexAttribPointer(texture_attrib_array, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*) 0);
+
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ib);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(float) * indices.size(), &indices[0], GL_STATIC_DRAW);
     indices_count = indices.size();

@@ -115,60 +115,36 @@ std::ostream& operator<<(std::ostream& os, Vector2 const& rhs)
 
 Vector3::Vector3()
 {
-    for (int i = 0; i < 3; i++)
-    {
-        x[i] = 0;
-    }
+    x = 0;
+    y = 0;
+    z = 0;
 }
 
 Vector3::Vector3(Vector3 const & rhs)
 {
-    for (int i = 0; i < 3; i++)
-    {
-        x[i] = rhs.x[i];
-    }
+    x = rhs.x;
+    y = rhs.y;
+    z = rhs.z;
 }
 
-Vector3::Vector3(std::initializer_list<float> list)
+Vector3::Vector3(float x, float y, float z)
+    : x {x}, y {y}, z {z}
 {
-    if (list.size() != 3)
-    {
-        throw std::domain_error("Dimension missmatch in constructor of Vector.");
-    }
-
-    for (int i = 0; i < 3; i++)
-    {
-        x[i] = *(list.begin() + i);
-    }
 }
 
 float Vector3::length() const
 {
-    float sum {0};
-
-    for (int i = 0; i < 3; i++)
-    {
-        sum += x[i] * x[i];
-    }
-    return sqrt(sum);
+    return sqrt(x * x + y * y + z * z);
 }
 
 
-void Vector3::normalize()
+Vector3 Vector3::normalize()
 {
     if (length() != 0)
     {
         operator/=(length());
     }
-}
-
-
-Vector3::Vector3(float tmp[3])
-{
-    for (int i = 0; i < 3; i++)
-    {
-        x[i] = tmp[i];
-    }
+    return *this;
 }
 
 Vector3::~Vector3()
@@ -177,10 +153,10 @@ Vector3::~Vector3()
 
 Vector3 Vector3::operator=(Vector3 const & rhs)
 {
-    for (int i = 0; i < 3; i++)
-    {
-        x[i] = rhs.x[i];
-    }
+    x = rhs.x;
+    y = rhs.y;
+    z = rhs.z;
+    
     return *this;
 }
 
@@ -191,21 +167,22 @@ Vector3::Vector3(objl::Vector3 const& rhs)
 
 vec3& Vector3::operator=(objl::Vector3 const& rhs)
 {
-	x[0] = rhs.X;
-	x[1] = rhs.Y;
-	x[2] = rhs.Z;
+	x = rhs.X;
+	y = rhs.Y;
+	z = rhs.Z;
 
 	return *this;
 }
 
 Vector3 Vector3::operator+(Vector3 const & rhs) const
 {
-    float tmp[3];
-    for (int i = 0; i < 3; i++)
-    {
-        tmp[i] = x[i] + rhs.x[i];
-    }
-    return Vector3(tmp);
+    Vector3 tmp {};
+    
+    tmp.x = x + rhs.x;
+    tmp.y = y + rhs.y;
+    tmp.z = z + rhs.z;
+    
+    return tmp;
 }
 
 Vector3 Vector3::operator+=(Vector3 const & rhs)
@@ -216,12 +193,13 @@ Vector3 Vector3::operator+=(Vector3 const & rhs)
 
 Vector3 Vector3::operator-(Vector3 const & rhs) const
 {
-    float tmp[3];
-    for (int i = 0; i < 3; i++)
-    {
-        tmp[i] = x[i] - rhs.x[i];
-    }
-    return Vector3(tmp);
+    Vector3 tmp {};
+    
+    tmp.x = x - rhs.x;
+    tmp.y = y - rhs.y;
+    tmp.z = z - rhs.z;
+    
+    return tmp;
 }
 
 Vector3 Vector3::operator-=(Vector3 const & rhs)
@@ -232,12 +210,13 @@ Vector3 Vector3::operator-=(Vector3 const & rhs)
 
 Vector3 Vector3::operator*(float f) const
 {
-    float tmp[3];
-    for (int i = 0; i < 3; i++)
-    {
-        tmp[i] = x[i] * f;
-    }
-    return Vector3 {tmp};
+    Vector3 tmp {};
+    
+    tmp.x = x * f;
+    tmp.y = y * f;
+    tmp.z = z * f;
+    
+    return tmp;
 }
 
 Vector3 Vector3::operator*=(float f)
@@ -257,45 +236,20 @@ Vector3 Vector3::operator/=(float f)
     return *this;
 }
 
-float& Vector3::operator[](int index)
-{
-    if (index >= 3)
-    {
-        throw std::logic_error("index out of bounds in vector.");
-    }
-    return x[index];
-}
-
-float Vector3::operator[](int index) const
-{
-    if (index >= 3)
-    {
-        throw std::logic_error("index out of bounds in vector.");
-    }
-    return x[index];
-}
-
 float Vector3::operator*(Vector3 const & rhs)
 {
     float sum {0};
 
-    for (int i = 0; i < 3; i++)
-    {
-        sum += x[i] * rhs.x[i];
-    }
+    sum += x * rhs.x;
+    sum += y * rhs.y;
+    sum += z * rhs.z;
+    
     return sum;
 }
 
 bool Vector3::operator==(Vector3 const & rhs) const
 {
-    for (int i = 0; i < 3; i++)
-    {
-        if (x[i] != rhs.x[i])
-        {
-            return false;
-        }
-    }
-    return true;
+    return x == rhs.x && y == rhs.y && z == rhs.z;
 }
 
 bool Vector3::operator!=(Vector3 const & rhs) const
@@ -305,15 +259,15 @@ bool Vector3::operator!=(Vector3 const & rhs) const
 
 Vector3 Vector3::cross(Vector3 const & rhs) const
 {
-    float x = this->x[1] * rhs[2] - this->x[2] * rhs[1];
-    float y = this->x[2] * rhs[0] - this->x[0] * rhs[2];
-    float z = this->x[0] * rhs[1] - this->x[1] * rhs[0];
+    float x = y * rhs.z - z * rhs.y;
+    float y = z * rhs.x - x * rhs.z;
+    float z = x * rhs.y - y * rhs.x;
     return Vector3 {x, y, z};
 }
 
 std::ostream& operator<<(std::ostream& os, vec3 const& rhs)
 {
-    os << "[" << rhs[0] << ", " << rhs[1] << ", " << rhs[2] << "]";
+    os << "[" << rhs.x << ", " << rhs.y << ", " << rhs.z << "]";
     return os;
 }
 

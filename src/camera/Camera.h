@@ -4,6 +4,7 @@
 
 #include "Vector.h"
 #include "Matrix.h"
+#include "settings.h"
 
 class Camera
 {
@@ -26,6 +27,6 @@ protected:
     vec3 velocity {};
     float speed = 20;
 
-    double cursor_point_x {200};
-    double cursor_point_y {200};
+    double cursor_point_x { static_cast<double>(window_width / 2.0)};
+    double cursor_point_y {static_cast<double>(window_height / 2.0)};
 };
