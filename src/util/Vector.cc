@@ -259,9 +259,9 @@ bool Vector3::operator!=(Vector3 const & rhs) const
 
 Vector3 Vector3::cross(Vector3 const & rhs) const
 {
-    float x = y * rhs.z - z * rhs.y;
-    float y = z * rhs.x - x * rhs.z;
-    float z = x * rhs.y - y * rhs.x;
+    float x = this->y * rhs.z - this->z * rhs.y;
+    float y = this->z * rhs.x - this->x * rhs.z;
+    float z = this->x * rhs.y - this->y * rhs.x;
     return Vector3 {x, y, z};
 }
 
