@@ -2,41 +2,57 @@
 
 #include <string>
 #include <iostream>
+#include <vector>
 
 #include "glad/glad.h"
 #include "stb_image.h"
+#include "OBJ_Loader.h"
+#include "Vector.h"
 
-inline unsigned int load_texture(std::string file_name, bool flip_y = true)
+namespace model
 {
-    unsigned int tex_id {0};
 
-    int width, height, nrChannels;
-    stbi_set_flip_vertically_on_load(flip_y); // tell stb to flip loaded texture's on the y-axis.
-    unsigned char *data = stbi_load(file_name.c_str(), &width, &height, &nrChannels, STBI_rgb_alpha);
-    if (data)
+    struct Material
     {
-        glGenTextures(1, &tex_id);
-        glBindTexture(GL_TEXTURE_2D, tex_id);
+        unsigned int texture_id {};
+        unsigned int specularity_map_id {};
+        bool use_specularity_map {};
+        vec3 ka {};
+        vec3 kd {};
+        vec3 ks {};
+        float a {};
+    };
 
-        if (nrChannels == 3)
-        {
-            data = stbi_load(file_name.c_str(), &width, &height, &nrChannels, STBI_rgb);
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-        } else if (nrChannels == 4)
-        {
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
-        }
-
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
-        glGenerateMipmap(GL_TEXTURE_2D);
-    } else
+    struct Vao_Data
     {
-        //TODO: byt till att kasta ett undantag.
-        std::cout << "Failed to load texture: " << file_name <<  std::endl;
-    }
-    stbi_image_free(data);
+        void load_buffer_data(std::vector<float> const&, std::vector<float> const&, std::vector<float> const&, std::vector<int> const&);
+        void reload_buffer_data(std::vector<float> const&, std::vector<float> const&, std::vector<float> const&, std::vector<int> const&);
+        unsigned int vao {};
+        unsigned int vb {}, nb {}, tb {}, ib {};
+        unsigned int indices_count {};
+        Material material {};
+    };
 
-    return tex_id;
+    struct Buffer_Data
+    {
+        std::vector<float> vertices {};
+        std::vector<float> normals {};
+        std::vector<float> texture_coords {};
+        std::vector<int> indices {};
+    };
+
+    unsigned int load_texture(std::string file_name, bool flip_y = true);
+
+    /**
+     *  Loads a model from file into a vao by the name of the folder in "res/objects"
+     */
+    Vao_Data load_model_from_file(std::string const& file_name);
+
+    /**
+     *  Loads an obj-file into a vao. 
+     * 
+     *  file_path is given as a relative path to the file. 
+     */
+    Vao_Data load_obj_file(std::string const& file_path);
+
 }

@@ -50,7 +50,7 @@ Font::Font(std::string const& font_name, int font_size, vec3 const& color)
         add_character(line_values, font_image_size, static_cast<float>(font_size) / default_font_size, base_line);
     }
 
-    texture_id = load_texture("res/fonts/" + font_name + ".png", false);
+    texture_id = model::load_texture("res/fonts/" + font_name + ".png", false);
 }
 
 std::map<std::string, int> Font::get__values_from_string(std::string const& line) const

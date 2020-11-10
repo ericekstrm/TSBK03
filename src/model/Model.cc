@@ -2,7 +2,6 @@
 
 #include <GLFW/glfw3.h>
 #include "stb_image.h"
-#include "model_util.h"
 
 #include <string>
 #include <iostream>
@@ -41,7 +40,7 @@ void Model::render(Model_Shader const& shader) const
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
     shader.load_model_matrix(get_model_matrix());
-    shader.load_material_properties(*this);
+    shader.load_material_properties(this->get_material());
 
     glDrawElements(GL_TRIANGLES, model_data.indices_count, GL_UNSIGNED_INT, 0);
 }
@@ -58,14 +57,14 @@ Matrix4 const Model::get_model_matrix() const
     return (t * r * s);
 }
 
-Model::Material Model::get_material() const
+model::Material Model::get_material() const
 {
     return model_data.material;
 }
 
 void Model::load_model(std::string const& file_name)
 {
-    Model_Data current_model;
+    model::Vao_Data current_model;
 
     auto it = models.find(file_name);
     if ( it != models.end())
@@ -73,134 +72,9 @@ void Model::load_model(std::string const& file_name)
         current_model = it->second;
     } else
     {
-        current_model = load_model_from_file(file_name);
+        current_model = model::load_model_from_file(file_name);
         models[file_name] = current_model;
     }
 
     model_data = current_model;
-}
-
-Model::Model_Data Model::load_model_from_file(std::string const& file_name) const
-{
-
-    objl::Loader obj_loader {};
-    
-    if (obj_loader.LoadFile("res/objects/" + file_name + "/" + file_name + ".obj"))
-    {
-        std::vector<float> vertices {};
-        std::vector<float> normals {};
-        std::vector<int> indices {};
-        std::vector<float> texture_coords {};
-
-        for (auto it = obj_loader.LoadedVertices.begin(); it != obj_loader.LoadedVertices.end(); it++)
-        {
-            vertices.push_back(it->Position.X);
-            vertices.push_back(it->Position.Y);
-            vertices.push_back(it->Position.Z);
-            normals.push_back(it->Normal.X);
-            normals.push_back(it->Normal.Y);
-            normals.push_back(it->Normal.Z);
-            texture_coords.push_back(it->TextureCoordinate.X);
-            texture_coords.push_back(it->TextureCoordinate.Y);
-        }
-
-        for (auto it = obj_loader.LoadedIndices.begin(); it != obj_loader.LoadedIndices.end(); it++)
-        {
-            indices.push_back(*it);
-        }
-
-        objl::Material mat = obj_loader.LoadedMaterials[0];
-
-        bool use_specularity_map {false};
-        unsigned int specularity_map {};
-        unsigned int kd_texture {load_texture("res/objects/" + file_name + "/" + mat.map_Kd)};
-        if (mat.map_Ks != "")
-        {
-            specularity_map = load_texture("res/objects/" + file_name + "/" + mat.map_Ks);
-            use_specularity_map = true;
-        }
-        Material material {kd_texture, specularity_map, use_specularity_map, mat.Ka, mat.Kd, mat.Ks, mat.Ni};
-
-        Model_Data model_data {};
-        model_data.material = material;
-        model_data.load_buffer_data(vertices, normals, texture_coords, indices);
-        return model_data;
-
-    } else
-    {
-        throw std::runtime_error("Cound not find model: " + file_name);
-    }
-}
-
-void Model::Model_Data::load_buffer_data(std::vector<float> const& vertices,
-                                         std::vector<float> const& normals,
-                                         std::vector<float> const& texture_coords,
-                                         std::vector<int> const& indices)
-{
-    glGenVertexArrays(1, &vao);
-    glBindVertexArray(vao);
-
-    int vertices_attrib_array = 0;
-    glGenBuffers(1, &vb);
-    glBindBuffer(GL_ARRAY_BUFFER, vb);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * vertices.size(), &vertices[0], GL_STATIC_DRAW);
-    glVertexAttribPointer(vertices_attrib_array, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*) 0);
-
-    int normal_attrib_array = 1;
-    glGenBuffers(1, &nb);
-    glBindBuffer(GL_ARRAY_BUFFER, nb);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * normals.size(), &normals[0], GL_STATIC_DRAW);
-    glVertexAttribPointer(normal_attrib_array, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*) 0);
-
-    int texture_attrib_array = 2;
-    glGenBuffers(1, &tb);
-    glBindBuffer(GL_ARRAY_BUFFER, tb);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * texture_coords.size(), &texture_coords[0], GL_STATIC_DRAW);
-    glVertexAttribPointer(texture_attrib_array, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*) 0);
-
-    glGenBuffers(1, &ib);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ib);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(float) * indices.size(), &indices[0], GL_STATIC_DRAW);
-    indices_count = indices.size();
-    
-    glEnableVertexAttribArray(vertices_attrib_array);
-    glEnableVertexAttribArray(normal_attrib_array);
-    glEnableVertexAttribArray(texture_attrib_array);
-
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
-}
-
-void Model::Model_Data::reload_buffer_data(std::vector<float> const& vertices,
-                                         std::vector<float> const& normals,
-                                         std::vector<float> const& texture_coords,
-                                         std::vector<int> const& indices)
-{
-    glBindVertexArray(vao);
-
-    int vertices_attrib_array = 0;
-    glBindBuffer(GL_ARRAY_BUFFER, vb);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * vertices.size(), &vertices[0], GL_STATIC_DRAW);
-    glVertexAttribPointer(vertices_attrib_array, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*) 0);
-
-    int normal_attrib_array = 1;
-    glBindBuffer(GL_ARRAY_BUFFER, nb);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * normals.size(), &normals[0], GL_STATIC_DRAW);
-    glVertexAttribPointer(normal_attrib_array, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*) 0);
-
-    int texture_attrib_array = 2;
-    glBindBuffer(GL_ARRAY_BUFFER, tb);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * texture_coords.size(), &texture_coords[0], GL_STATIC_DRAW);
-    glVertexAttribPointer(texture_attrib_array, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*) 0);
-
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ib);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(float) * indices.size(), &indices[0], GL_STATIC_DRAW);
-    indices_count = indices.size();
-    
-    glEnableVertexAttribArray(vertices_attrib_array);
-    glEnableVertexAttribArray(normal_attrib_array);
-    glEnableVertexAttribArray(texture_attrib_array);
-
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
 }

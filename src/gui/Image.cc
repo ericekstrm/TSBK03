@@ -5,7 +5,7 @@
 Image::Image(vec2 const& position, vec2 size, std::string image_file)
     : position {position}, size {size}
 {
-    texture_id = load_texture(image_file, false);
+    texture_id = model::load_texture(image_file, false);
 
     create_mesh();
 

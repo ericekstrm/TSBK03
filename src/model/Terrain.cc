@@ -9,7 +9,7 @@ Terrain::Terrain()
 {
     generate_terrain();
     model_data.load_buffer_data(vertices, normals, texture_coords, indices);
-    model_data.material.texture_id = load_texture("res/terrain/textures/grass.jpg");
+    model_data.material.texture_id = model::load_texture("res/terrain/textures/grass.jpg");
 }
 
 Terrain::~Terrain()

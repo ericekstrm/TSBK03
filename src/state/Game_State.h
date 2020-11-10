@@ -39,7 +39,7 @@ private:
     Light_Container lights {};
 
     Tree_Shader tree_shader {};
-    Tree tree {};
+    Tree tree1 {vec3{0,0,10}};
 
     Matrix4 projection {fov_projection_matrix(45.0f, 1.0f, 0.1f, 100.0f)};
 };

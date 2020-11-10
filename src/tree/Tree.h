@@ -5,63 +5,93 @@
 
 #include "Vector.h"
 #include "Model.h"
+#include "Tree_Shadow.h"
 
 class Node;
 
-class Tree : public Model
+class Tree
 {
 public:
-    Tree();
+    Tree(vec3 const& position = vec3{0, 0, 0});
     ~Tree();
 
     void render(Tree_Shader const& shader) const;
     void update(float delta_time);
+
+    void grow();
 
 private:
 
     //tmp function
     void generate();
 
-    void load_buffer_data();
+    // Growth functions
+    float calc_light_res(int current_time);
 
-    std::vector<float> vertices = {};
-    std::vector<float> normals {};
-    std::vector<float> texture_coords = {};
-    std::vector<int> indices = {};
 
-    Node* root;
+    // Model creation
+    void create_buffer_data();
+    void recreate_buffer_data();
+    std::vector<float> vertices {};
+    model::Buffer_Data data {};
+
+    Node* root {nullptr};
+
+    float light_res {};
+
+    int age {0};
+
+    vec3 position;
+    model::Vao_Data vao_data;
 };
 
 class Node
 {
 public:
     Node();
-    Node(vec3 const& direction);
-    Node(Node* main, Node* lateral);
+    Node(vec3 const& direction, vec3 parent_position, int current_time);
     ~Node();
 
-    void test_extend();
+    // Growth functions
+    float calc_light_res(int current_time);
+    void calc_borchert_honda(float recieved_light_res, int current_time);
+    void shoot_main(int nr_new_nodes, int current_time);
+    void shoot_lateral(int nr_new_nodes, int current_time);
+    float calc_branch_radii();
+    void calc_shedding_branches();
+
+    void shed(Node* & branch);
+
+    float get_light_res() const { return main_light_res + lateral_light_res; }
+    int get_supporting_terminals() const;
 
     std::string to_string() const;
-    std::vector<float> generate_skeleton(vec3 const& parent_position) const;
+    void create_buffer_data(model::Buffer_Data & data, vec3 const& parent_position) const;
 
 private:
 
     // Internode
-    //  - length (constant?)
-    //  - radius (use later)
-
+    float radius {tree::default_radius};
     vec3 direction;
-    float length {1};
-    
-    // Bud
-    //  - terminal
-    //  - axillary/lateral
-    bool has_terminal_bud {true};
-    bool has_lateral_bud {false};
+    float length {tree::default_length};
 
-    Node* parent;
+    // Dont really want to have this here, but needed for filling in the shadow-map.
+    vec3 position;
+
+    // Growth res
+    int creation_time; //the year the node was created
+    float main_light_res {}; // The generated light resource for this main_branch node.
+    float lateral_light_res {}; // The generated light resource for this lateral branch node.
+    
+    bool has_apical_bud() const { return main_branch == nullptr; }
+    bool has_lateral_bud() const { return lateral_branch == nullptr; }
+    bool has_main_branch() const { return main_branch != nullptr; }
+    bool has_lateral_branch() const { return lateral_branch != nullptr; }
+
     Node* main_branch {nullptr};
     Node* lateral_branch {nullptr};
+
+public:
+    static Tree_Shadow tree_shadow;
 
 };

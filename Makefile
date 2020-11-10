@@ -3,10 +3,14 @@ include_directory = -I ./ -I lib -I lib/glad -I lib/glfw -I lib/glfw/include -I 
 libs = -lopengl32 -L lib/glfw/lib-mingw-w64 -lglfw3 -lgdi32
 
 camera_o = obj/Camera.o obj/Flying_Camera.o obj/Third_Person_Camera.o
-gui_o = obj/Font.o obj/Text.o obj/Word.o obj/Button.o obj/Image.o
-model_o = obj/Model.o obj/Skybox.o obj/Terrain.o obj/Tree.o
-state_o = obj/Game.o obj/Game_State.o obj/Menu_State.o
-ofiles = $(camera_o) $(gui_o) $(model_o) $(state_o) obj/Shader.o obj/Light.o obj/Matrix.o obj/Vector.o obj/glad.o obj/stb_image.o
+gui_o    = obj/Font.o obj/Text.o obj/Word.o obj/Button.o obj/Image.o
+light_o  =  obj/Light.o
+model_o  = obj/model_util.o obj/Model.o obj/Skybox.o obj/Terrain.o
+shader_o = obj/Shader.o obj/Model_Shader.o
+state_o  = obj/Game.o obj/Game_State.o obj/Menu_State.o
+tree_o   = obj/Tree.o obj/Tree_Shadow.o
+util_o   = obj/Matrix.o obj/Vector.o obj/glad.o obj/stb_image.o
+ofiles = $(camera_o) $(gui_o) $(light_o) $(model_o) $(shader_o) $(state_o) $(tree_o) $(util_o)
 
 main: main.cc $(ofiles)
 	$(cc) -o tsbk main.cc $(ofiles) $(include_directory) $(libs)
@@ -46,6 +50,9 @@ obj/Light.o: src/light/Light.cc src/light/Light.h
 
 # Model
 
+obj/model_util.o: src/model/model_util.cc src/model/model_util.h
+	$(cc) -c -o $@ $< $(include_directory) $(libs)
+
 obj/Model.o: src/model/Model.cc src/model/Model.h
 	$(cc) -c -o $@ $< $(include_directory) $(libs)
 
@@ -56,6 +63,9 @@ obj/Terrain.o: src/model/Terrain.cc src/model/Terrain.h
 	$(cc) -c -o $@ $< $(include_directory) $(libs)
 
 # Shader
+
+obj/Model_Shader.o: src/shader/Model_Shader.cc src/shader/Model_Shader.h
+	$(cc) -c -o $@ $< $(include_directory) $(libs)
 
 obj/Shader.o: src/shader/Shader.cc src/shader/Shader.h
 	$(cc) -c -o $@ $< $(include_directory) $(libs)
@@ -73,7 +83,10 @@ obj/Menu_State.o: src/state/Menu_State.cc src/state/Menu_State.h
 
 # Tree
 
-obj/Tree.o: src/tree/Tree.cc src/tree/Tree.h
+obj/Tree.o: src/tree/Tree.cc src/tree/Tree.h src/tree/tree_params.h
+	$(cc) -c -o $@ $< $(include_directory) $(libs)
+
+obj/Tree_Shadow.o: src/tree/Tree_Shadow.cc src/tree/Tree_Shadow.h src/tree/tree_params.h
 	$(cc) -c -o $@ $< $(include_directory) $(libs)
 
 # Util

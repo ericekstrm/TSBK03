@@ -17,11 +17,11 @@ Game_State::Game_State()
     m.set_scale(vec3{0.01, 0.01, 0.01});
     models.push_back(m);
 
-    camera = std::make_unique<Flying_Camera>(vec3{2, 2, 2});
+    camera = std::make_unique<Flying_Camera>(vec3{20, 30, 20});
 
     lights.add_dir_light(vec3{-1, -1, 0}, vec3{0.988, 0.831, 0.251});
-    //lights.add_pos_light(vec3{0, 5, 5}, vec3{1, 1, 1});
-    //lights.add_pos_light(vec3{50, 3, 0}, vec3{1, 0, 0});
+    lights.add_pos_light(vec3{0, 5, 5}, vec3{1, 1, 1});
+    lights.add_pos_light(vec3{50, 3, 0}, vec3{1, 0, 0});
 }
 
 Game_State::~Game_State()
@@ -58,8 +58,6 @@ void Game_State::render() const
         it->render(shader);
     }
 
-    lights.render();
-
     terrain.render(shader);
 
     shader.stop();
@@ -68,9 +66,11 @@ void Game_State::render() const
     tree_shader.load_projection_matrix(projection);
     tree_shader.load_camera_matrix(camera->get_camera_matrix());
 
-    tree.render(tree_shader);
+    tree1.render(tree_shader);
 
     tree_shader.stop();
+
+    lights.render(projection, camera->get_camera_matrix());
 }
 
 void Game_State::check_input(GLFWwindow * window)
@@ -83,7 +83,7 @@ void Game_State::check_input(GLFWwindow * window)
 
     if (glfwGetKey(window, GLFW_KEY_G) == GLFW_PRESS)
     {
-        tree.update(0);
+        tree1.update(0);
     }
 
     camera->check_input(window);

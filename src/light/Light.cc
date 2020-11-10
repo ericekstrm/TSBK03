@@ -10,9 +10,22 @@ void Light_Container::add_dir_light(vec3 const& direction, vec3 const& color)
     dir_lights.push_back(Dir_Light {direction, color});
 }
 
-void Light_Container::render() const
+void Light_Container::render(mat4 const& proj_matrix, mat4 const& camera_matrix) const
 {
-    
+    light_shader.start();
+    light_shader.load_projection_matrix(proj_matrix);
+    light_shader.load_camera_matrix(camera_matrix);
+    for (auto it = pos_lights.begin(); it != pos_lights.end(); it++)
+    {
+        glBindVertexArray(pos_light_vao_data.vao);
+
+        light_shader.load_position(it->get_position());
+        light_shader.load_color(it->get_color());
+
+        glDrawElements(GL_TRIANGLES, pos_light_vao_data.indices_count, GL_UNSIGNED_INT, 0);
+    }
+
+    light_shader.stop();
 }
 
 

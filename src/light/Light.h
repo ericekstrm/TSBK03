@@ -1,6 +1,8 @@
 #pragma once
 
 #include "Vector.h"
+#include "model_util.h"
+#include "Shader.h"
 
 class Pos_Light;
 class Dir_Light;
@@ -11,7 +13,7 @@ public:
     void add_pos_light(vec3 const& position,  vec3 const& color);
     void add_dir_light(vec3 const& direction, vec3 const& color);
 
-    void render() const;
+    void render(mat4 const& proj_matrix, mat4 const& camera_matrix) const;
 
     int get_number_of_lights() const {return pos_lights.size() + dir_lights.size(); }
     
@@ -23,6 +25,9 @@ public:
 private:
     std::vector<Pos_Light> pos_lights {};
     std::vector<Dir_Light> dir_lights {};
+
+    Color_Point_Shader light_shader {};
+    model::Vao_Data pos_light_vao_data {model::load_obj_file("res/objects/light.obj")};
 };
 
 class Pos_Light
