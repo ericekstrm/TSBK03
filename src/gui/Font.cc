@@ -1,6 +1,11 @@
 #include "Font.h"
 
-#include "glad/glad.h"
+#ifdef WIN32
+    #include "glad/glad.h"
+#else
+    #include "GL/gl.h"
+#endif
+
 #include "model_util.h"
 #include <string>
 #include <fstream>

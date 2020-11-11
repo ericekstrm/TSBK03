@@ -3,7 +3,12 @@
 #include <iostream>
 
 #include "settings.h"
-#include "glad/glad.h"
+
+#ifdef WIN32
+    #include "glad/glad.h"
+#else
+    #include "GL/gl.h"
+#endif
 
 Menu_State::Menu_State()
 {

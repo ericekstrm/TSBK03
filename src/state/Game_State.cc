@@ -67,6 +67,7 @@ void Game_State::render() const
     tree_shader.load_camera_matrix(camera->get_camera_matrix());
 
     tree1.render(tree_shader);
+    tree2.render(tree_shader);
 
     tree_shader.stop();
 
@@ -84,6 +85,7 @@ void Game_State::check_input(GLFWwindow * window)
     if (glfwGetKey(window, GLFW_KEY_G) == GLFW_PRESS)
     {
         tree1.update(0);
+        tree2.update(0);
     }
 
     camera->check_input(window);

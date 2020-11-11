@@ -1,6 +1,11 @@
 #pragma once
 
-#include "glad/glad.h"
+#ifdef WIN32
+    #include "glad/glad.h"
+#else
+    #include "GL/gl.h"
+#endif
+
 #include "GLFW/glfw3.h"
 #include <vector>
 #include "State.h"

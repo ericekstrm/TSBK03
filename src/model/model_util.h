@@ -4,7 +4,12 @@
 #include <iostream>
 #include <vector>
 
-#include "glad/glad.h"
+#ifdef WIN32
+    #include "glad/glad.h"
+#else
+    #include "GL/gl.h"
+#endif
+
 #include "stb_image.h"
 #include "OBJ_Loader.h"
 #include "Vector.h"

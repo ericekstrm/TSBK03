@@ -1,6 +1,8 @@
-cc = g++ -std=c++17 -Wall -g -D GLFW_INCLUDE_NONE 
+cc = g++ -std=c++17 -Wall -g -D GLFW_INCLUDE_NONE -D GL_GLEXT_PROTOTYPES
 include_directory = -I ./ -I lib -I lib/glad -I lib/glfw -I lib/glfw/include -I src/state -I src/gui -I src/tree -I src/model -I src/shader -I src/camera -I src/light -I src/util
-libs = -lopengl32 -L lib/glfw/lib-mingw-w64 -lglfw3 -lgdi32
+
+libs_windows = -lopengl32 -L lib/glfw/lib-mingw-w64 -lglfw3 -lgdi32
+libs_linux = -lGL -lglfw
 
 camera_o = obj/Camera.o obj/Flying_Camera.o obj/Third_Person_Camera.o
 gui_o    = obj/Font.o obj/Text.o obj/Word.o obj/Button.o obj/Image.o
@@ -9,8 +11,20 @@ model_o  = obj/model_util.o obj/Model.o obj/Skybox.o obj/Terrain.o
 shader_o = obj/Shader.o obj/Model_Shader.o
 state_o  = obj/Game.o obj/Game_State.o obj/Menu_State.o
 tree_o   = obj/Tree.o obj/Tree_Shadow.o
-util_o   = obj/Matrix.o obj/Vector.o obj/glad.o obj/stb_image.o
-ofiles = $(camera_o) $(gui_o) $(light_o) $(model_o) $(shader_o) $(state_o) $(tree_o) $(util_o)
+util_o   = obj/Matrix.o obj/Vector.o obj/stb_image.o
+glad_o   = obj/glad.o
+
+ifeq ($(os), Windows_NT)
+	libs = $(libs_windows)
+	ofiles = $(camera_o) $(gui_o) $(light_o) $(model_o) $(shader_o) $(state_o) $(tree_o) $(util_o) $(glad_o)
+	clean_command = del obj\*.o; del tsbk.exe
+
+else
+	libs = $(libs_linux)
+	ofiles = $(camera_o) $(gui_o) $(light_o) $(model_o) $(shader_o) $(state_o) $(tree_o) $(util_o)
+	clean_command = rm obj/*.o; rm tsbk
+
+endif
 
 main: main.cc $(ofiles)
 	$(cc) -o tsbk main.cc $(ofiles) $(include_directory) $(libs)
@@ -108,5 +122,4 @@ obj/stb_image.o: lib/stb_image.cc lib/stb_image.h
 # Clean
 
 clean :
-	del obj\*.o
-	del tsbk.exe
+	$(clean_command)

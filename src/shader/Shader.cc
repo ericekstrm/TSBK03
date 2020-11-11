@@ -1,6 +1,11 @@
 #include "Shader.h"
 
-#include "glad/glad.h"
+#ifdef WIN32
+    #include "glad/glad.h"
+#else
+    #include "GL/gl.h"
+#endif
+
 #include <GLFW/glfw3.h>
 #include <iostream>
 #include <vector>
@@ -66,7 +71,8 @@ void Shader::load_bool(int location, bool b) const
 
 void Shader::load_mat4(int location, mat4 const& value) const
 {
-    glUniformMatrix4fv(location, 1, GL_FALSE, &value.transpose().m[0][0]);
+    mat4 tmp {value.transpose()};
+    glUniformMatrix4fv(location, 1, GL_FALSE, &tmp.m[0][0]);
 }
 
 void Shader::load_vec3(int location, vec3 const& value) const

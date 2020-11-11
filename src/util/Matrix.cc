@@ -171,7 +171,7 @@ Matrix4 Matrix4::transpose() const
             tmp[j][i] = m[i][j];
         }
     }
-    return Matrix4 {tmp};
+    return Matrix4{tmp};
 }
 
 Matrix4 Matrix4::remove_translation()

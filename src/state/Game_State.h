@@ -1,6 +1,11 @@
 #pragma once
 
-#include "glad/glad.h"
+#ifdef WIN32
+    #include "glad/glad.h"
+#else
+    #include "GL/gl.h"
+#endif
+
 #include "State.h"
 #include "Model.h"
 #include "Shader.h"
@@ -40,6 +45,7 @@ private:
 
     Tree_Shader tree_shader {};
     Tree tree1 {vec3{0,0,10}};
+    Tree tree2 {vec3{0,0,0}};
 
     Matrix4 projection {fov_projection_matrix(45.0f, 1.0f, 0.1f, 100.0f)};
 };

@@ -91,8 +91,10 @@ void Game::init_openGL()
 
     glfwMakeContextCurrent(window);
 
-    gladLoadGLLoader((GLADloadproc) glfwGetProcAddress);
-
+    #ifdef WIN32
+        gladLoadGLLoader((GLADloadproc) glfwGetProcAddress);
+    #endif
+    
     glClearColor(0.2f, 0.3f, 0.5f, 1.0f);
     glEnable(GL_DEPTH_TEST);
 }
