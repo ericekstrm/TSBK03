@@ -2,6 +2,19 @@
 
 #include "Model.h"
 
+class Heightmap
+{
+public:
+    Heightmap(std::string const& file_name);
+    float get_height(int x, int z) const;
+    vec3 get_normal(int x, int z) const;
+    
+private:
+    int width;
+    int height;
+    std::vector<float> heightmap_data {};
+};
+
 class Terrain : public Model
 {
 public:

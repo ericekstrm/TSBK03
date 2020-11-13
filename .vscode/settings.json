@@ -54,6 +54,19 @@
         "list": "cpp",
         "unordered_map": "cpp",
         "xhash": "cpp",
-        "functional": "cpp"
+        "functional": "cpp",
+        "array": "cpp",
+        "string_view": "cpp",
+        "bit": "cpp",
+        "clocale": "cpp",
+        "cstdarg": "cpp",
+        "cwctype": "cpp",
+        "deque": "cpp",
+        "memory_resource": "cpp",
+        "numeric": "cpp",
+        "optional": "cpp",
+        "cinttypes": "cpp",
+        "set": "cpp",
+        "iomanip": "cpp"
     }
 }

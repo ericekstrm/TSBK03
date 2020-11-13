@@ -5,6 +5,65 @@
 #include <iostream>
 #include <random>
 
+Heightmap::Heightmap(std::string const& file_name)
+{
+    int nrChannels;
+    stbi_set_flip_vertically_on_load(true); // tell stb to flip loaded texture's on the y-axis.
+    unsigned char* data = stbi_load(("res/terrain/heightmaps/" + file_name).c_str(), &width, &height, &nrChannels, STBI_rgb);
+
+    if (data)
+    {
+        for (int i = 0; i < width; i++)
+        {
+            for (int j = 0; j < height; j++)
+            {
+
+                unsigned bytePerPixel = 3;
+                unsigned char* pixelOffset = data + (i + (width) * j) * bytePerPixel;
+                unsigned char r = pixelOffset[0];
+                //unsigned char g = pixelOffset[1];
+                //unsigned char b = pixelOffset[2];
+                //unsigned char a = nrChannels >= 4 ? pixelOffset[3] : 0xff;
+
+                heightmap_data.push_back(static_cast<float>(r));
+            }
+        }
+    } else
+    {
+        std::cout << "Failed to load heightmap: " << file_name << std::endl;
+    }
+    stbi_image_free(data);
+}
+
+float Heightmap::get_height(int x, int z) const
+{
+    x = x % width;
+    z = z % height;
+    while(x < 0)
+    {
+        x += width;
+    }
+    
+    while(z < 0)
+    {
+        z += height;
+    }
+    return heightmap_data.at(x * width + z);
+}
+
+vec3 Heightmap::get_normal(int x, int z) const
+{
+    float L = get_height(x - 1, z);
+    float R = get_height(x + 1, z);
+    float T = get_height(x, z - 1);
+    float B = get_height(x, z + 1);
+    return vec3{(R - L), 2, (B - T)}.normalize(); 
+}
+
+// =================
+// ===| Terrain |===
+// =================
+
 Terrain::Terrain()
 {
     generate_terrain();
@@ -18,8 +77,8 @@ Terrain::~Terrain()
 
 void Terrain::generate_terrain()
 {
-    //heightmap_terrain("island3.png");
-    flat_terrain();
+    heightmap_terrain("island3.png");
+    //flat_terrain();
     //generate_perlin_terrain();
 
     set_indices();
@@ -69,56 +128,24 @@ void Terrain::flat_terrain()
 
 void Terrain::heightmap_terrain(std::string const& file_name)
 {
-    std::vector<float> heightmap_data {};
+    Heightmap hm {file_name};
 
-    int width, height, nrChannels;
-    stbi_set_flip_vertically_on_load(true); // tell stb to flip loaded texture's on the y-axis.
-    unsigned char* data = stbi_load(("res/terrain/heightmaps/" + file_name).c_str(), &width, &height, &nrChannels, STBI_rgb);
-
-    std::cout << "width: " << width << std::endl;
-    std::cout << "height: " << height << std::endl;
-    std::cout << "nr of channels: " << nrChannels << std::endl;
-    if (data)
-    {
-        for (int i = 0; i < width; i++)
-        {
-            for (int j = 0; j < height; j++)
-            {
-
-                unsigned bytePerPixel = 3;
-                unsigned char* pixelOffset = data + (i + (width) * j) * bytePerPixel;
-                unsigned char r = pixelOffset[0];
-                //unsigned char g = pixelOffset[1];
-                //unsigned char b = pixelOffset[2];
-                //unsigned char a = nrChannels >= 4 ? pixelOffset[3] : 0xff;
-
-                heightmap_data.push_back((float) r);
-            }
-        }
-    } else
-    {
-        std::cout << "Failed to load heightmap: " << file_name << std::endl;
-    }
-    stbi_image_free(data);
-
-    int k {0};
     for (int i = -terrain_resolution / 2; i < terrain_resolution / 2; i++)
     {
         for (int j = -terrain_resolution / 2; j < terrain_resolution / 2; j++)
         {
-            float r = heightmap_data[k] / 256;
+            float r = hm.get_height(i, j) / 256;
             vertices.push_back(terrain_size / terrain_resolution * i);
-            vertices.push_back(r * max_height);
+            vertices.push_back((r - 0.5) * max_height);
             vertices.push_back(terrain_size / terrain_resolution * j);
 
-            normals.push_back(0);
-            normals.push_back(1);
-            normals.push_back(0);
+            vec3 normal {hm.get_normal(i, j)}; 
+            normals.push_back(normal.x);
+            normals.push_back(normal.y);
+            normals.push_back(normal.z);
 
             texture_coords.push_back(static_cast<float>(i) / terrain_resolution * 20);
             texture_coords.push_back(static_cast<float>(j) / terrain_resolution * 20);
-
-            k++;
         }
     }
 }

@@ -13,6 +13,8 @@
 
 #include "Vector.h"
 
+#include "settings.h"
+
 Shader::Shader()
     : Shader("pass.vert", "pass.frag")
 {
@@ -20,8 +22,8 @@ Shader::Shader()
 
 Shader::Shader(std::string const& vertex_file, std::string const& fragment_file)
 {
-    vertexID = load(vertex_file, GL_VERTEX_SHADER);
-    fragmentID = load(fragment_file, GL_FRAGMENT_SHADER);
+    int vertexID = load(vertex_file, GL_VERTEX_SHADER);
+    int fragmentID = load(fragment_file, GL_FRAGMENT_SHADER);
     programID = glCreateProgram();
     glAttachShader(programID, vertexID);
     glAttachShader(programID, fragmentID);
@@ -36,6 +38,7 @@ Shader::Shader(std::string const& vertex_file, std::string const& fragment_file)
 
 Shader::~Shader()
 {
+    glDeleteProgram(programID);
 }
 
 void Shader::start() const
@@ -102,9 +105,9 @@ int Shader::get_programID() const
     return programID;
 }
 
-void Shader::load_projection_matrix(Matrix4 const& mat) const
+void Shader::load_projection_matrix() const
 {
-    load_mat4(location_projection_matrix, mat);
+    load_mat4(location_projection_matrix, projection);
 }
 
 void Shader::load_camera_matrix(Matrix4 const & mat) const

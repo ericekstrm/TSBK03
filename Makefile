@@ -1,12 +1,13 @@
 cc = g++ -std=c++17 -Wall -g -D GLFW_INCLUDE_NONE -D GL_GLEXT_PROTOTYPES
-include_directory = -I ./ -I lib -I lib/glad -I lib/glfw -I lib/glfw/include -I src/state -I src/gui -I src/tree -I src/model -I src/shader -I src/camera -I src/light -I src/util
+include_directory_win = -I ./ -I lib -I lib/glad -I lib/glfw -I lib/glfw/include -I src/state -I src/gui -I src/tree -I src/model -I src/shader -I src/camera -I src/light -I src/util
+include_directory_linux = -I ./ -I lib -I src/state -I src/gui -I src/tree -I src/model -I src/shader -I src/camera -I src/light -I src/util
 
 libs_windows = -lopengl32 -L lib/glfw/lib-mingw-w64 -lglfw3 -lgdi32
-libs_linux = -lGL -lglfw
+libs_linux = -lGL -L/usr/local/lib -lglfw3 -lrt -lm -ldl -lpthread
 
 camera_o = obj/Camera.o obj/Flying_Camera.o obj/Third_Person_Camera.o
 gui_o    = obj/Font.o obj/Text.o obj/Word.o obj/Button.o obj/Image.o
-light_o  =  obj/Light.o
+light_o  =  obj/Light.o obj/Shadowmap.o
 model_o  = obj/model_util.o obj/Model.o obj/Skybox.o obj/Terrain.o
 shader_o = obj/Shader.o obj/Model_Shader.o
 state_o  = obj/Game.o obj/Game_State.o obj/Menu_State.o
@@ -16,11 +17,13 @@ glad_o   = obj/glad.o
 
 ifeq ($(os), Windows_NT)
 	libs = $(libs_windows)
+	include_directory = $(include_directory_win)
 	ofiles = $(camera_o) $(gui_o) $(light_o) $(model_o) $(shader_o) $(state_o) $(tree_o) $(util_o) $(glad_o)
 	clean_command = del obj\*.o; del tsbk.exe
 
 else
 	libs = $(libs_linux)
+	include_directory = $(include_directory_linux)
 	ofiles = $(camera_o) $(gui_o) $(light_o) $(model_o) $(shader_o) $(state_o) $(tree_o) $(util_o)
 	clean_command = rm obj/*.o; rm tsbk
 
@@ -60,6 +63,9 @@ obj/Image.o: src/gui/Image.cc src/gui/Image.h
 # Light
 
 obj/Light.o: src/light/Light.cc src/light/Light.h
+	$(cc) -c -o $@ $< $(include_directory) $(libs)
+
+obj/Shadowmap.o: src/light/Shadowmap.cc src/light/Shadowmap.h
 	$(cc) -c -o $@ $< $(include_directory) $(libs)
 
 # Model
@@ -118,6 +124,17 @@ obj/glad.o: lib/glad/glad.c lib/glad/glad.h
 
 obj/stb_image.o: lib/stb_image.cc lib/stb_image.h
 	$(cc) -c -o $@ $< $(include_directory) $(libs)
+
+# Testing
+
+test: obj/test.o obj/test_main.o $(ofiles)
+	g++ -std=c++17 -Wall -o tsbk_test obj/test.o obj/test_main.o $(ofiles) $(include_directory) $(libs)
+
+obj/test.o: src/testing/test.cc
+	g++ -std=c++17 -Wall -c -o $@ -I src/testing $< $(include_directory) $(libs)
+
+obj/test_main.o: src/testing/test_main.cc
+	g++ -std=c++17 -Wall -c -o $@ -I src/testing $<
 
 # Clean
 

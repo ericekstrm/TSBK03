@@ -41,14 +41,25 @@ void Game_State::render() const
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+    //render to shadowmap
+    shadowmap.activate();
+    shadowmap.render(terrain);
+    for (auto it = models.begin(); it != models.end(); it++)
+    {
+        shadowmap.render(*it);
+    }
+    shadowmap.render(terrain);
+    shadowmap.render(tree1, tree_shader);
+    shadowmap.deactivate();
+
     skybox_shader.start();
-    skybox_shader.load_projection_matrix(projection);
+    skybox_shader.load_projection_matrix();
     skybox_shader.load_camera_matrix(camera->get_camera_matrix().remove_translation());
     skybox.render();
     skybox_shader.stop();
 
     shader.start();
-    shader.load_projection_matrix(projection);
+    shader.load_projection_matrix();
     shader.load_camera_matrix(camera->get_camera_matrix());
     shader.load_camera_position(camera->get_position());
     shader.load_lights(lights);
@@ -63,7 +74,7 @@ void Game_State::render() const
     shader.stop();
 
     tree_shader.start();
-    tree_shader.load_projection_matrix(projection);
+    tree_shader.load_projection_matrix();
     tree_shader.load_camera_matrix(camera->get_camera_matrix());
 
     tree1.render(tree_shader);
@@ -72,6 +83,8 @@ void Game_State::render() const
     tree_shader.stop();
 
     lights.render(projection, camera->get_camera_matrix());
+
+    shadow_map_image.render();
 }
 
 void Game_State::check_input(GLFWwindow * window)

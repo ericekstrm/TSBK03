@@ -11,6 +11,12 @@ Image::Image(vec2 const& position, vec2 size, std::string image_file)
 
 }
 
+Image::Image(vec2 const& position, vec2 size, unsigned texture_id)
+    : position {position}, size {size}, texture_id {texture_id}
+{
+    create_mesh();
+}
+
 void Image::render() const
 {
     shader.start();

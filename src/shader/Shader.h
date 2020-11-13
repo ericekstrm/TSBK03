@@ -19,7 +19,7 @@ public:
 
     int get_programID() const;
 
-    void load_projection_matrix(Matrix4 const& mat) const;
+    void load_projection_matrix() const;
     void load_camera_matrix(Matrix4 const& mat) const;
 
 protected:
@@ -40,11 +40,9 @@ private:
     int load(std::string const& file_name, int type);
 
     int programID {};
-    int vertexID {};
-    int fragmentID {};
 
-    int location_projection_matrix;
-    int location_world_matrix;
+    int location_projection_matrix {};
+    int location_world_matrix {};
 };
 
 // =======================

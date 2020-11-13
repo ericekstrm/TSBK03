@@ -28,6 +28,8 @@ void main(void)
 {
 	vec3 temp_color = vec3(0, 0, 0);
 
+	vec3 normal = normalize(out_normal);
+
 	for (int i = 0; i < number_of_lights; i++)
 	{
 		vec3 light_dir;
@@ -47,8 +49,6 @@ void main(void)
 			float distance = distance(light_pos_dir[i], out_fragment_position);
 			attenuation = 1.0 / (constant + linear * distance + quadratic * pow(distance, 2));
 		}
-				
-		vec3 normal = normalize(out_normal);
 		
 		// Diffuse
 		float diffuse = max(dot(normal, light_dir), 0.0);

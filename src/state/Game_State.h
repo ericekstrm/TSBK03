@@ -14,6 +14,8 @@
 #include "Skybox.h"
 #include "Light.h"
 #include "Tree.h"
+#include "Shadowmap.h"
+#include "Image.h"
 
 #include <memory>
 
@@ -33,6 +35,7 @@ public:
 
 private:
     Model_Shader shader {};
+    Model_Shader shader2 {"shadow.vert", "shadow.frag"};
     std::vector<Model> models {};
     Terrain terrain {};
 
@@ -45,7 +48,10 @@ private:
 
     Tree_Shader tree_shader {};
     Tree tree1 {vec3{0,0,10}};
+
     Tree tree2 {vec3{0,0,0}};
 
-    Matrix4 projection {fov_projection_matrix(45.0f, 1.0f, 0.1f, 100.0f)};
+    Shadowmap shadowmap {vec3{20,20,20}, vec3{}};
+
+    Image shadow_map_image {vec2{0.5,0.5}, vec2{0.5,0.5}, shadowmap.get_texture_id()};
 };

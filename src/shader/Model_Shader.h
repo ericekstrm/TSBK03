@@ -7,6 +7,7 @@ class Model_Shader : public Shader
 {
 public:
     Model_Shader();
+    Model_Shader(std::string const& vertex_file, std::string const& fragment_file);
     ~Model_Shader();
 
     void load_model_matrix(Matrix4 const& mat) const;

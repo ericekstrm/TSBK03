@@ -7,6 +7,7 @@ class Image
 {
 public:
     Image(vec2 const& position, vec2 size, std::string image_file);
+    Image(vec2 const& position, vec2 size, unsigned texture_id);
 
     void render() const;
 
