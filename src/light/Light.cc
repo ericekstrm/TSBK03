@@ -62,7 +62,7 @@ std::vector<vec3> Light_Container::get_attenuation_data() const
     std::vector<vec3> attenuation_data {};
     for (auto it = pos_lights.begin(); it != pos_lights.end(); it++)
     {
-        attenuation_data.push_back(it->get_attenuation());
+        attenuation_data.push_back(vec3{it->get_attenuation_constant(), it->get_attenuation_linear(), it->get_attenuation_quadratic()});
     }
     for (auto it = dir_lights.begin(); it != dir_lights.end(); it++)
     {

@@ -57,7 +57,7 @@ vec3 Heightmap::get_normal(int x, int z) const
     float R = get_height(x + 1, z);
     float T = get_height(x, z - 1);
     float B = get_height(x, z + 1);
-    return vec3{(R - L), 2, (B - T)}.normalize(); 
+    return vec3{(L - R), 2, (T - B)}.normalize(); 
 }
 
 // =================

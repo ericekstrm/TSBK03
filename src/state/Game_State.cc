@@ -19,7 +19,7 @@ Game_State::Game_State()
 
     camera = std::make_unique<Flying_Camera>(vec3{20, 30, 20});
 
-    lights.add_dir_light(vec3{-1, -1, 0}, vec3{0.988, 0.831, 0.251});
+    lights.add_dir_light(vec3{-1, -1, 0}, vec3{0.988 / 2, 0.831 / 2, 0.251 / 2});
     lights.add_pos_light(vec3{0, 5, 5}, vec3{1, 1, 1});
     lights.add_pos_light(vec3{50, 3, 0}, vec3{1, 0, 0});
 }

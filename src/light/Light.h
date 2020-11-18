@@ -22,6 +22,9 @@ public:
     std::vector<vec3> get_attenuation_data() const;
     std::vector<int> get_light_type_data() const;
 
+    std::vector<Pos_Light> get_pos_lights() const { return pos_lights; }
+    std::vector<Dir_Light> get_dir_lights() const { return dir_lights; }
+
 private:
     std::vector<Pos_Light> pos_lights {};
     std::vector<Dir_Light> dir_lights {};
@@ -34,16 +37,20 @@ class Pos_Light
 {
 public:
     Pos_Light(vec3 const& pos, vec3 const& color)
-        : pos {pos}, color {color}, attenuation{1.0, 0.045, 0.0075} {}
+        : pos {pos}, color {color}, attenuation_constant{1.0}, attenuation_linear {0.045}, attenuation_quadratic {0.0075} {}
 
     vec3 get_position() const { return pos; }
     vec3 get_color() const { return color; }
-    vec3 get_attenuation() const { return attenuation; }
+    float get_attenuation_constant() const { return attenuation_constant; }
+    float get_attenuation_linear() const { return attenuation_linear; }
+    float get_attenuation_quadratic() const { return attenuation_quadratic; }
 
 private:
     vec3 pos;
     vec3 color {1, 1, 1};
-    vec3 attenuation;
+    float attenuation_constant;
+    float attenuation_linear;
+    float attenuation_quadratic;
 };
 
 class Dir_Light

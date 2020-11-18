@@ -25,7 +25,7 @@ Game::~Game()
 void Game::run()
 {
     std::chrono::high_resolution_clock::time_point prev_time = std::chrono::high_resolution_clock::now();
-    srand(floor(std::chrono::duration_cast<std::chrono::seconds>( prev_time.time_since_epoch()).count()));
+    //srand(floor(std::chrono::duration_cast<std::chrono::seconds>( prev_time.time_since_epoch()).count()));
     while (!glfwWindowShouldClose(window))
     {
         //update logic
