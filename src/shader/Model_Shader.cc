@@ -1,26 +1,8 @@
 #include "Model_Shader.h"
 
 Model_Shader::Model_Shader()
-    : Shader{"model.vert", "model.frag"}
+    : Model_Shader{"model.vert", "model.frag"}
 {
-    location_model_matrix = get_uniform_location("model_matrix");
-
-    location_camera_pos = get_uniform_location("camera_pos");
-    location_light_pos_dir = get_uniform_location("light_pos_dir");
-    location_light_color = get_uniform_location("light_color");
-    location_light_attenuation_params = get_uniform_location("light_attenuation_params");
-    location_light_type = get_uniform_location("light_type");
-    location_num_of_lights = get_uniform_location("number_of_lights");
-
-    location_kd_texture = get_uniform_location("kd_texture");
-    location_specularity_map = get_uniform_location("specularity_map");
-    location_use_specularity_map = get_uniform_location("use_specularity_map");
-    location_ka = get_uniform_location("ka");
-    location_kd = get_uniform_location("kd");
-    location_ks = get_uniform_location("ks");
-    location_a = get_uniform_location("specular_exponent");
-
-    connect_texture_units();
 }
 
 Model_Shader::Model_Shader(std::string const& vertex_file, std::string const& fragment_file)
@@ -41,7 +23,7 @@ Model_Shader::Model_Shader(std::string const& vertex_file, std::string const& fr
     location_ka = get_uniform_location("ka");
     location_kd = get_uniform_location("kd");
     location_ks = get_uniform_location("ks");
-    location_a = get_uniform_location("a");
+    location_a = get_uniform_location("specular_exponent");
 
     connect_texture_units();
 }
