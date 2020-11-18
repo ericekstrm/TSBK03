@@ -3,10 +3,6 @@
 #include "Shader.h"
 #include "Light.h"
 
-#include <array>
-
-const std::size_t MAX_LIGHTS = 10;
-
 class Model_Shader : public Shader
 {
 public:
@@ -39,18 +35,8 @@ private:
 
     // Light
     int location_num_of_lights;
-   
     int location_light_pos_dir;
     int location_light_color;
     int location_light_attenuation_params;
     int location_light_type;
-
-    /*std::array<int, MAX_LIGHTS> location_pos_light_position;
-    std::array<int, MAX_LIGHTS> location_pos_light_color;
-    std::array<int, MAX_LIGHTS> location_pos_light_attenuation_constant;
-    std::array<int, MAX_LIGHTS> location_pos_light_attenuation_linear;
-    std::array<int, MAX_LIGHTS> location_pos_light_attenuation_quadratic;
-
-    std::array<int, 10> location_dir_light_direction;
-    std::array<int, 10> location_dir_light_color;*/
 };
