@@ -47,11 +47,9 @@ private:
     Light_Container lights {};
 
     Tree_Shader tree_shader {};
-    Tree tree1 {vec3{0,0,10}};
+    Tree tree1 {vec3{0,0,0}};
 
-    Tree tree2 {vec3{0,0,0}};
-
-    Shadowmap shadowmap {vec3{20,20,20}, vec3{}};
+    Shadowmap shadowmap {vec3{5, 5, 5}};
 
     Image shadow_map_image {vec2{0.5,0.5}, vec2{0.5,0.5}, shadowmap.get_texture_id()};
 };

@@ -19,6 +19,7 @@ uniform vec3 ks;
 uniform float specular_exponent;
 
 uniform vec3 camera_pos;
+uniform sampler2D shadow_map;
 
 /*uniform POS_LIGHT {
 	vec3 position;
@@ -42,6 +43,7 @@ uniform bool light_type[10];
 
 //forward declarations
 vec3 calc_light(vec3, vec3, vec3, vec3);
+float calc_shadow();
 
 void main(void)
 {
@@ -70,9 +72,9 @@ void main(void)
 		{
 			vec3 light_dir = -normalize(light_pos_dir[i]);
 
-			//float shadow = calc_shadow(fragment_position_light_space);
+			float shadow = 0; //calc_shadow();
 		
-			output += calc_light(normal, light_dir, light_color[i], view_dir);
+			output += (1 - shadow) * calc_light(normal, light_dir, light_color[i], view_dir);
 		} else
 		{
 			vec3 light_dir = normalize(light_pos_dir[i] - fs_in.fragment_position);
@@ -105,76 +107,48 @@ vec3 calc_light(vec3 normal, vec3 light_dir, vec3 light_color, vec3 view_dir)
     return (diffuse + specular);
 }
 
-/*vec3 calc_light(vec3 mat_diffuse, vec3 mat_specular, vec3 normal, vec3 light_dir, vec3 light_color, vec3 view_dir)
+float calc_shadow()
 {
-    //diffuse lighting
-    float diff = max(0.0, dot(normal, light_dir));
-    
-    //specular lighting
-    vec3 reflectDir = reflect(-light_dir, normal);
-    float spec = pow(max(0.0, dot(view_dir, reflect_dir)), specular_exponent);
+    /*float offset = 0.0004;
 
-    vec3 diffuse = light_color * diff * mat_diffuse * kd;
-    vec3 specular = light_color * spec * mat_specular;
-    return (diffuse + specular);
-}*/
+    // perform perspective divide
+    vec3 proj_coords = fs_in.fragment_position_light_space.xyz / fs_in.fragment_position_light_space.w;
+
+    // transform to [0,1] range
+    proj_coords = proj_coords * 0.5 + 0.5;
+
+    // get closest depth value from light's perspective (using [0,1] range fragPosLight as coords)
+    float closest_depth = texture(shadow_map, proj_coords.xy).r; 
+
+    // get depth of current fragment from light's perspective
+    float current_depth = proj_coords.z;
+
+    // check whether current frag pos is in shadow
+    float shadow = 0.0;
+    vec2 texel_size = 1.0 / textureSize(shadow_map, 0);
+    for(int x = -1; x <= 1; ++x)
+    {
+        for(int y = -1; y <= 1; ++y)
+        {
+            float pcf_depth = texture(shadow_map, proj_coords.xy + vec2(x, y) * texel_size).r; 
+            shadow += current_depth - offset > pcf_depth ? 1.0 : 0.0;        
+        }
+    }
+    shadow /= 9.0;
+
+    return shadow;*/
 
 
+	// perform perspective divide
+    vec3 projCoords = fs_in.fragment_position_light_space.xyz / fs_in.fragment_position_light_space.w;
+    // transform to [0,1] range
+    projCoords = projCoords * 0.5 + 0.5;
+    // get closest depth value from light's perspective (using [0,1] range fragPosLight as coords)
+    float closestDepth = texture(shadow_map, projCoords.xy).r; 
+    // get depth of current fragment from light's perspective
+    float currentDepth = projCoords.z;
+    // check whether current frag pos is in shadow
+    float shadow = currentDepth > closestDepth  ? 1.0 : 0.0;
 
-
-/* =================| old |====================
-
-
-	vec3 temp_color = vec3(0, 0, 0);
-
-	vec3 normal = normalize(fs_in.normal);
-
-	for (int i = 0; i < number_of_lights; i++)
-	{
-		vec3 light_dir;
-		float attenuation = 1;
-		
-		if(light_type[i])
-		{
-			light_dir = -normalize(light_pos_dir[i]);
-			attenuation = 1.0;
-		} else
-		{
-			light_dir = normalize(light_pos_dir[i] - fs_in.fragment_position);
-			float constant = light_attenuation_params[i].x;
- 			float linear = light_attenuation_params[i].y;	
- 			float quadratic = light_attenuation_params[i].z;
-
-			float distance = distance(light_pos_dir[i], fs_in.fragment_position);
-			attenuation = 1.0 / (constant + linear * distance + quadratic * pow(distance, 2));
-		}
-		
-		// Diffuse
-		float diffuse = max(dot(normal, light_dir), 0.0);
-		vec3 diffuse_light = kd * diffuse * light_color[i];
-
-		// Specular
-		vec3 view_dir = normalize(camera_pos - fs_in.fragment_position);
-		vec3 reflection = reflect(-light_dir, normal);
-		float specular = max(dot(reflection, view_dir), 0.0);
-
-		vec3 specular_light = vec3(0,0,0);
-		if(use_specularity_map)
-		{
-			vec3 spec_map = texture(specularity_map, fs_in.tex_coord).rgb;
-			specular_light = ks * pow(specular, specular_exponent) * spec_map * light_color[i];
-		}
-		else
-		{
-			specular_light = ks * pow(specular, specular_exponent) * light_color[i];
-		}
-
-		temp_color += (diffuse_light + specular_light) * attenuation;
-	}
-
-	temp_color +=  ka / 5;
-
-	vec4 tex = texture(kd_texture, fs_in.tex_coord);
-	out_color = vec4(temp_color, 1.0) * tex;
-
-	*/
+    return shadow;
+}

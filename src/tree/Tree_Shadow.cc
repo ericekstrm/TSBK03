@@ -109,6 +109,42 @@ void Tree_Shadow::add_node(vec3 const& pos)
     }
 }
 
+void Tree_Shadow::remove_node(vec3 const& pos)
+{
+    vec3 grid_pos = to_grid_pos(pos);
+    int node_x = roundf(grid_pos.x);
+    int node_y = roundf(grid_pos.y);
+    int node_z = roundf(grid_pos.z);
+
+    int lower_limit = 10;
+    if ( node_y - lower_limit < 0)
+    {
+        lower_limit = node_y;
+    }
+
+    for (int i = 0; i < lower_limit; i++)
+    {
+        for (int j = -i; j <= i; j++)
+        {
+            for (int k = -i; k <= i; k++)
+            {
+                int I = node_x + j;
+                int J = node_y - i;
+                int K = node_z + k;
+
+                if (I < 0 || J < 0 || K < 0 || 
+                    I >= grid_size || J >= grid_size || K >= grid_size)
+                {
+                    //outside the shadow_box. cant change value here
+                    continue;
+                }
+
+                grid[I + J * grid_size + K * grid_size * grid_size] -= tree::a * pow(tree::b, -i);
+            }
+        }
+    }
+}
+
 vec3 Tree_Shadow::to_grid_pos(vec3 const& world_position) const
 {
     float grid_space_x = roundf(world_position.x / cell_size + grid_size / 2.0);

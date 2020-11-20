@@ -39,6 +39,11 @@ void model::Vao_Data::load_buffer_data(std::vector<float> const& vertices,
     glBindVertexArray(0);
 }
 
+void model::Vao_Data::load_buffer_data(Buffer_Data const& data)
+{
+    load_buffer_data(data.vertices, data.normals, data.texture_coords, data.indices);
+}
+
 void model::Vao_Data::reload_buffer_data(std::vector<float> const& vertices,
                                     std::vector<float> const& normals,
                                     std::vector<float> const& texture_coords,
@@ -71,6 +76,11 @@ void model::Vao_Data::reload_buffer_data(std::vector<float> const& vertices,
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
+}
+
+void model::Vao_Data::reload_buffer_data(Buffer_Data const& data)
+{
+    reload_buffer_data(data.vertices, data.normals, data.texture_coords, data.indices);
 }
 
 unsigned int model::load_texture(std::string file_name, bool flip_y)

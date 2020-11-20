@@ -10,9 +10,15 @@
 Tree_Shadow Node::tree_shadow = {};
 
 Tree::Tree(vec3 const& in_position)
+    : position {in_position}
 {
-    position = in_position;
+    leaf_vao = model::load_model_from_file("rock1");
     generate();
+
+    /*for (float i = 1; i < leaf_count; i++)
+    {
+        leaf_transforms.push_back(translation_matrix((float) (rand() % 128) - 64, 0.0f, (float) (rand() % 128) - 64).transpose());
+    }*/
 }
 
 Tree::~Tree()
@@ -33,6 +39,29 @@ void Tree::render(Tree_Shader const& shader) const
     //shader.load_material_properties(*this);
 
     glDrawElements(GL_TRIANGLES, vao_data.indices_count, GL_UNSIGNED_INT, 0);
+}
+
+void Tree::render_leafs(Camera const * camera, Light_Container const * lights) const
+{
+    glBindVertexArray(leaf_vao.vao);
+
+    leaf_shader.start();
+    leaf_shader.load_camera_matrix(camera->get_camera_matrix());
+    leaf_shader.load_camera_position(camera->get_position());
+    //leaf_shader.load_instance_transforms(leaf_transforms);
+    //leaf_shader.load_light_space_matrix();
+    leaf_shader.load_lights(*lights);
+    leaf_shader.load_material_properties(leaf_vao.material);
+    leaf_shader.load_projection_matrix();
+
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, leaf_vao.material.texture_id);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    glDrawElementsInstanced(GL_TRIANGLES, leaf_vao.indices_count, GL_UNSIGNED_INT, 0, leaf_transforms.size());
+
+    leaf_shader.stop();
 }
 
 void Tree::update(float delta_time)
@@ -77,9 +106,31 @@ void Tree::grow()
 void Tree::create_buffer_data()
 {
     root->create_buffer_data(data, position);
-    vao_data.load_buffer_data(data.vertices, data.normals, data.texture_coords, data.indices);
-
+    vao_data.load_buffer_data(data);
     vao_data.material.texture_id = model::load_texture("res/tree/oak_texture/Wood_Bark_006_basecolor.jpg");
+
+    glGenBuffers(1, &leaf_buffer);
+    glBindBuffer(GL_ARRAY_BUFFER, leaf_buffer);
+    root->create_leaf_buffer_data(leaf_transforms);
+    glBufferData(GL_ARRAY_BUFFER, leaf_transforms.size() * sizeof(mat4), &leaf_transforms[0], GL_STATIC_DRAW);
+
+    glBindVertexArray(leaf_vao.vao);
+
+    glEnableVertexAttribArray(3);
+    glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(mat4), (void*)0);
+    glEnableVertexAttribArray(4);
+    glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(mat4), (void*)(sizeof(vec4)));
+    glEnableVertexAttribArray(5);
+    glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, sizeof(mat4), (void*)(2 * sizeof(vec4)));
+    glEnableVertexAttribArray(6);
+    glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, sizeof(mat4), (void*)(3 * sizeof(vec4)));
+
+    glVertexAttribDivisor(3, 1);
+    glVertexAttribDivisor(4, 1);
+    glVertexAttribDivisor(5, 1);
+    glVertexAttribDivisor(6, 1);
+
+    glBindVertexArray(0);
 }
 
 void Tree::recreate_buffer_data()
@@ -88,8 +139,14 @@ void Tree::recreate_buffer_data()
     data.normals.clear();
     data.texture_coords.clear();
     data.indices.clear();
+    leaf_transforms.clear();
+
     root->create_buffer_data(data, position);
-    vao_data.reload_buffer_data(data.vertices, data.normals, data.texture_coords, data.indices);
+    vao_data.reload_buffer_data(data);
+
+    root->create_leaf_buffer_data(leaf_transforms);
+    glBindBuffer(GL_ARRAY_BUFFER, leaf_buffer);
+    glBufferData(GL_ARRAY_BUFFER, leaf_transforms.size() * sizeof(mat4), &leaf_transforms[0], GL_STATIC_DRAW);
 }
 
 // ==============
@@ -108,7 +165,7 @@ Node::Node(vec3 const& direction, vec3 parent_position, int current_time)
 
 Node::~Node()
 {
-    //TODO remove node from shadow_map
+    tree_shadow.remove_node(position);
 
     delete main_branch;
     delete lateral_branch;
@@ -130,12 +187,12 @@ float Node::calc_light_res(int current_time)
         float light_exposure {std::max(tree::full_exposure_light - tree_shadow.get_value(position) + tree::a, 0.0f)};
         main_light_res = pow(light_exposure, pow(current_time - creation_time, tree::sigma));
     }
-    
+
     if (lateral_branch != nullptr)
     {
         lateral_light_res += lateral_branch->calc_light_res(current_time);
     }
-    else
+    else if (main_branch != nullptr)
     {
         // calc res for lateral bud
         float light_exposure {std::max(tree::full_exposure_light - tree_shadow.get_value(position) + tree::a, 0.0f)};
@@ -391,5 +448,24 @@ void Node::create_buffer_data(model::Buffer_Data & data, vec3 const& parent_posi
     if (main_branch != nullptr)
     {
         main_branch->create_buffer_data(data, current_node_postion);
+    }
+}
+
+void Node::create_leaf_buffer_data(std::vector<mat4> & transforms) const
+{
+    //TODO: only add leaf where it actually exists a leaf.
+    if (!has_main_branch() || !has_lateral_branch())
+    {
+        transforms.push_back((translation_matrix(position) * scale_matrix(0.5, 0.5, 0.5)).transpose());
+    }
+
+    if (has_lateral_branch())
+    {
+        lateral_branch->create_leaf_buffer_data(transforms);
+    }
+
+    if (has_main_branch())
+    {
+        main_branch->create_leaf_buffer_data(transforms);
     }
 }

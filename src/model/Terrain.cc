@@ -77,8 +77,8 @@ Terrain::~Terrain()
 
 void Terrain::generate_terrain()
 {
-    heightmap_terrain("island3.png");
-    //flat_terrain();
+    //heightmap_terrain("island3.png");
+    flat_terrain();
     //generate_perlin_terrain();
 
     set_indices();

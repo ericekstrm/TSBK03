@@ -30,7 +30,7 @@ void Model::update(float delta_time)
 {
 }
 
-void Model::render(Model_Shader const& shader) const
+void Model::render(Model_Shader const * shader) const
 {
     glBindVertexArray(model_data.vao);
 
@@ -39,8 +39,8 @@ void Model::render(Model_Shader const& shader) const
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-    shader.load_model_matrix(get_model_matrix());
-    shader.load_material_properties(this->get_material());
+    shader->load_model_matrix(get_model_matrix());
+    shader->load_material_properties(this->get_material());
 
     glDrawElements(GL_TRIANGLES, model_data.indices_count, GL_UNSIGNED_INT, 0);
 }

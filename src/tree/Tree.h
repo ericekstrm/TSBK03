@@ -6,6 +6,9 @@
 #include "Vector.h"
 #include "Model.h"
 #include "Tree_Shadow.h"
+#include "Model_Instance_Shader.h"
+#include "Camera.h"
+#include "Light.h"
 
 class Node;
 
@@ -16,6 +19,7 @@ public:
     ~Tree();
 
     void render(Tree_Shader const& shader) const;
+    void render_leafs(Camera const * camera, Light_Container const * lights) const;
     void update(float delta_time);
 
     void grow();
@@ -28,12 +32,16 @@ private:
     // Growth functions
     float calc_light_res(int current_time);
 
-
     // Model creation
     void create_buffer_data();
     void recreate_buffer_data();
-    std::vector<float> vertices {};
     model::Buffer_Data data {};
+    model::Vao_Data vao_data;
+
+    model::Vao_Data leaf_vao;
+    std::vector<mat4> leaf_transforms {};
+    Model_Instance_Shader leaf_shader {};
+    unsigned int leaf_buffer;
 
     Node* root {nullptr};
 
@@ -42,7 +50,6 @@ private:
     int age {0};
 
     vec3 position;
-    model::Vao_Data vao_data;
 };
 
 class Node
@@ -67,6 +74,7 @@ public:
 
     std::string to_string() const;
     void create_buffer_data(model::Buffer_Data & data, vec3 const& parent_position) const;
+    void create_leaf_buffer_data(std::vector<mat4> & transforms) const;
 
 private:
 
@@ -80,8 +88,8 @@ private:
 
     // Growth res
     int creation_time; //the year the node was created
-    float main_light_res {}; // The generated light resource for this main_branch node.
-    float lateral_light_res {}; // The generated light resource for this lateral branch node.
+    float main_light_res {}; // The generated light resource from main_branch node.
+    float lateral_light_res {}; // The generated light resource from lateral branch node.
     
     bool has_apical_bud() const { return main_branch == nullptr; }
     bool has_lateral_bud() const { return lateral_branch == nullptr; }

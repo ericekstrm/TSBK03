@@ -8,3 +8,4 @@ static int window_height = 720;
 
 // OpenGL projection matrix
 static mat4 projection {fov_projection_matrix(45.0f, 1.0f, 0.1f, 100.0f)};
+static mat4 light_projection {ortho_projection_matrix(-10.0f, 10.0f, -10.0f, 10.0f, 1.0f, 10.0f)};

@@ -10,7 +10,7 @@
 class Shadowmap
 {
 public:
-    Shadowmap(vec3 const& light_position, vec3 const& lookat);
+    Shadowmap(vec3 const& light_position);
 
     void activate() const;
     void deactivate() const;
@@ -20,6 +20,7 @@ public:
     void render(Model const& model) const;
 
     unsigned get_texture_id() const { return depth_map; }
+    vec3 get_position() const { return light_position; }
 
 private:
 
@@ -29,7 +30,7 @@ private:
     unsigned depth_map_fbo {0};
     unsigned depth_map {0};
 
-    mat4 light_space_matrix {};
+    vec3 light_position {};
 
     Model_Shader shader {"shadow.vert", "shadow.frag"};
 };

@@ -1,5 +1,7 @@
 #include "Model_Shader.h"
 
+#include "settings.h"
+
 Model_Shader::Model_Shader()
     : Model_Shader{"model.vert", "model.frag"}
 {
@@ -11,6 +13,9 @@ Model_Shader::Model_Shader(std::string const& vertex_file, std::string const& fr
     location_model_matrix = get_uniform_location("model_matrix");
 
     location_camera_pos = get_uniform_location("camera_pos");
+    location_light_space_matrix = get_uniform_location("light_space_matrix");
+    location_shadow_map = get_uniform_location("shadow_map");
+
     location_light_pos_dir = get_uniform_location("light_pos_dir");
     location_light_color = get_uniform_location("light_color");
     location_light_attenuation_params = get_uniform_location("light_attenuation_params");
@@ -37,6 +42,8 @@ void Model_Shader::connect_texture_units() const
 {
     load_int(location_kd_texture, 0);
     load_int(location_specularity_map, 1);
+
+    load_int(location_shadow_map, 5);
 }
 
 void Model_Shader::load_model_matrix(Matrix4 const& mat) const
@@ -47,6 +54,14 @@ void Model_Shader::load_model_matrix(Matrix4 const& mat) const
 void Model_Shader::load_camera_position(vec3 const& camera_pos) const
 {
     load_vec3(location_camera_pos, camera_pos);
+}
+
+void Model_Shader::load_light_space_matrix(vec3 const& light_pos) const
+{
+    vec3 center_pos {0,0,0};
+    mat4 light_view {look_at(light_pos, center_pos, vec3{0, 1, 0})};
+
+    load_mat4(location_light_space_matrix, light_projection * light_view);
 }
 
 void Model_Shader::load_lights(Light_Container const& light_container) const

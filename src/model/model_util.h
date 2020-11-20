@@ -28,22 +28,24 @@ namespace model
         float a {};
     };
 
-    struct Vao_Data
-    {
-        void load_buffer_data(std::vector<float> const&, std::vector<float> const&, std::vector<float> const&, std::vector<int> const&);
-        void reload_buffer_data(std::vector<float> const&, std::vector<float> const&, std::vector<float> const&, std::vector<int> const&);
-        unsigned int vao {};
-        unsigned int vb {}, nb {}, tb {}, ib {};
-        unsigned int indices_count {};
-        Material material {};
-    };
-
     struct Buffer_Data
     {
         std::vector<float> vertices {};
         std::vector<float> normals {};
         std::vector<float> texture_coords {};
         std::vector<int> indices {};
+    };
+
+    struct Vao_Data
+    {
+        void load_buffer_data(std::vector<float> const&, std::vector<float> const&, std::vector<float> const&, std::vector<int> const&);
+        void load_buffer_data(Buffer_Data const& data);
+        void reload_buffer_data(std::vector<float> const&, std::vector<float> const&, std::vector<float> const&, std::vector<int> const&);
+        void reload_buffer_data(Buffer_Data const& data);
+        unsigned int vao {};
+        unsigned int vb {}, nb {}, tb {}, ib {};
+        unsigned int indices_count {};
+        Material material {};
     };
 
     unsigned int load_texture(std::string file_name, bool flip_y = true);

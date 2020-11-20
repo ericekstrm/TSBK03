@@ -233,10 +233,28 @@ Matrix4 fov_projection_matrix(float fovy, float aspect, float near, float far)
     Matrix4 result {};
     result.m[0][0] = 1 / (aspect * tanHalfFovy);
     result.m[1][1] = 1 / (tanHalfFovy);
-    result.m[2][2] = - (far + near) / (far - near);
-    result.m[3][2] = - 1;
-    result.m[2][3] = - (2 * far * near) / (far - near);
+    result.m[2][2] = -(far + near) / (far - near);
+    result.m[3][2] = -1;
+    result.m[2][3] = -(2 * far * near) / (far - near);
     return result;
+}
+
+Matrix4 ortho_projection_matrix(float left, float right, float bottom, float top, float near, float far)
+{
+    Matrix4 ortho {};
+
+    float tx = -(right + left) / (right - left);
+    float ty = -(top + bottom) / (top - bottom);
+    float tz = -(far + near) / (far - near);
+
+    ortho.m[0][0] = 2.0f / (right - left);
+    ortho.m[1][1] = 2.0f / (top - bottom);
+    ortho.m[2][2] = -2.0f / (far - near);
+    ortho.m[0][3] = tx;
+    ortho.m[1][3] = ty;
+    ortho.m[2][3] = tz;
+
+    return ortho;
 }
 
 Matrix4 look_at(vec3 const& position, vec3 const& look_at, vec3 const& up_vector)
@@ -315,6 +333,11 @@ Matrix4 translation_matrix(float x, float y, float z)
     matrix.m[2][3] = z;
 
     return matrix;
+}
+
+Matrix4 translation_matrix(vec3 const& pos)
+{
+    return translation_matrix(pos.x, pos.y, pos.z);
 }
 
 Matrix4 scale_matrix(float x, float y, float z)

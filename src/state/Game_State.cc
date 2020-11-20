@@ -14,7 +14,6 @@ Game_State::Game_State()
     models.push_back(Model {"door", vec3{10, 0, 0}});
     models.push_back(Model {"chair", vec3{0, 0, 5}});*/
     Model m {"rock1"};
-    m.set_scale(vec3{0.01, 0.01, 0.01});
     models.push_back(m);
 
     camera = std::make_unique<Flying_Camera>(vec3{20, 30, 20});
@@ -58,18 +57,25 @@ void Game_State::render() const
     skybox.render();
     skybox_shader.stop();
 
+    //render normal
     shader.start();
     shader.load_projection_matrix();
     shader.load_camera_matrix(camera->get_camera_matrix());
     shader.load_camera_position(camera->get_position());
     shader.load_lights(lights);
 
+    shader.load_light_space_matrix(shadowmap.get_position());
+    glActiveTexture(GL_TEXTURE5);
+    glBindTexture(GL_TEXTURE_2D, shadowmap.get_texture_id());
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
     for (auto it = models.begin(); it != models.end(); it++)
     {
-        it->render(shader);
+        it->render(&shader);
     }
 
-    terrain.render(shader);
+    terrain.render(&shader);
 
     shader.stop();
 
@@ -78,13 +84,14 @@ void Game_State::render() const
     tree_shader.load_camera_matrix(camera->get_camera_matrix());
 
     tree1.render(tree_shader);
-    tree2.render(tree_shader);
 
     tree_shader.stop();
 
+    tree1.render_leafs(camera.get(), &lights);
+
     lights.render(projection, camera->get_camera_matrix());
 
-    shadow_map_image.render();
+    //shadow_map_image.render();
 }
 
 void Game_State::check_input(GLFWwindow * window)
@@ -98,7 +105,6 @@ void Game_State::check_input(GLFWwindow * window)
     if (glfwGetKey(window, GLFW_KEY_G) == GLFW_PRESS)
     {
         tree1.update(0);
-        tree2.update(0);
     }
 
     camera->check_input(window);

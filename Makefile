@@ -9,7 +9,7 @@ camera_o = obj/Camera.o obj/Flying_Camera.o obj/Third_Person_Camera.o
 gui_o    = obj/Font.o obj/Text.o obj/Word.o obj/Button.o obj/Image.o
 light_o  =  obj/Light.o obj/Shadowmap.o
 model_o  = obj/model_util.o obj/Model.o obj/Skybox.o obj/Terrain.o
-shader_o = obj/Shader.o obj/Model_Shader.o
+shader_o = obj/Shader.o obj/Model_Shader.o obj/Model_Instance_Shader.o
 state_o  = obj/Game.o obj/Game_State.o obj/Menu_State.o
 tree_o   = obj/Tree.o obj/Tree_Shadow.o
 util_o   = obj/Matrix.o obj/Vector.o obj/stb_image.o
@@ -84,10 +84,13 @@ obj/Terrain.o: src/model/Terrain.cc src/model/Terrain.h
 
 # Shader
 
+obj/Shader.o: src/shader/Shader.cc src/shader/Shader.h
+	$(cc) -c -o $@ $< $(include_directory) $(libs)
+
 obj/Model_Shader.o: src/shader/Model_Shader.cc src/shader/Model_Shader.h
 	$(cc) -c -o $@ $< $(include_directory) $(libs)
 
-obj/Shader.o: src/shader/Shader.cc src/shader/Shader.h
+obj/Model_Instance_Shader.o: src/shader/Model_Instance_Shader.cc src/shader/Model_Instance_Shader.h
 	$(cc) -c -o $@ $< $(include_directory) $(libs)
 
 # State

@@ -4,8 +4,8 @@
 
 #include <iostream>
 
-Shadowmap::Shadowmap(vec3 const& light_position, vec3 const& lookat)
-    : light_space_matrix {look_at(light_position, lookat, vec3{0,1,0})}
+Shadowmap::Shadowmap(vec3 const& light_position)
+    : light_position {light_position}
 {
 
     glGenFramebuffers(1, &depth_map_fbo);
@@ -48,23 +48,23 @@ void Shadowmap::deactivate() const
 void Shadowmap::render(Tree const& tree, Tree_Shader const& shader) const
 {
 
-    shader.start();
+    /*shader.start();
+    shader.load_camera_matrix(look_at(light_position, vec3{0,0,0}, vec3{0,1,0}));
     shader.load_projection_matrix();
-    shader.load_camera_matrix(light_space_matrix);
+    //shader.load_light_space_matrix();
 
     tree.render(shader);
 
-    shader.stop();
+    shader.stop();*/
 }
 
 void Shadowmap::render(Terrain const& terrain) const
 {
 
     shader.start();
-    shader.load_projection_matrix();
-    shader.load_camera_matrix(light_space_matrix);
+    shader.load_light_space_matrix(light_position);
 
-    terrain.render(shader);
+    terrain.render(&shader);
 
     shader.stop();
 }
@@ -73,10 +73,9 @@ void Shadowmap::render(Model const& model) const
 {
 
     shader.start();
-    shader.load_projection_matrix();
-    shader.load_camera_matrix(light_space_matrix);
+    shader.load_light_space_matrix(light_position);
 
-    model.render(shader);
+    model.render(&shader);
 
     shader.stop();
 }
