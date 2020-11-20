@@ -12,7 +12,7 @@ Tree_Shadow Node::tree_shadow = {};
 Tree::Tree(vec3 const& in_position)
     : position {in_position}
 {
-    leaf_vao = model::load_model_from_file("rock1");
+    leaf_vao = model::load_model_from_file("leaf4");
     generate();
 
     /*for (float i = 1; i < leaf_count; i++)
@@ -456,7 +456,7 @@ void Node::create_leaf_buffer_data(std::vector<mat4> & transforms) const
     //TODO: only add leaf where it actually exists a leaf.
     if (!has_main_branch() || !has_lateral_branch())
     {
-        transforms.push_back((translation_matrix(position) * scale_matrix(0.5, 0.5, 0.5)).transpose());
+        transforms.push_back(translation_matrix(position).transpose());
     }
 
     if (has_lateral_branch())
