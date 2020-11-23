@@ -16,6 +16,7 @@ public:
     ~Matrix4();
     Matrix4 operator=(Matrix4 const&);
 
+    Matrix4 operator+(Matrix4 const&) const;
     Matrix4 operator*(float) const;
     Matrix4 operator*=(float);
     Matrix4 operator/(float) const;
@@ -51,6 +52,7 @@ Matrix4 look_at(vec3 const& position, vec3 const& look_at, vec3 const& up_vector
 Matrix4 rotation_matrix(float angle, float x, float y, float z);
 Matrix4 rotation_matrix(float angle, vec3 const& r);
 Matrix4 rotation_matrix(float x, float y, float z);
+Matrix4 rotation_matrix(vec3 const& a, vec3 const& b);
 Matrix4 translation_matrix(float x, float y, float z);
 Matrix4 translation_matrix(vec3 const& pos);
 Matrix4 scale_matrix(float x, float y, float z);

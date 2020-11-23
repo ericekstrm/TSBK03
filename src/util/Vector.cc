@@ -236,7 +236,7 @@ Vector3 Vector3::operator/=(float f)
     return *this;
 }
 
-float Vector3::operator*(Vector3 const & rhs)
+float Vector3::operator*(Vector3 const & rhs) const
 {
     float sum {0};
 

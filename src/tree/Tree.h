@@ -60,12 +60,16 @@ public:
     ~Node();
 
     // Growth functions
-    float calc_light_res(int current_time);
+    float calc_borchert_light_res(int current_time);
     void calc_borchert_honda(float recieved_light_res, int current_time);
+
     void shoot_main(int nr_new_nodes, int current_time);
     void shoot_lateral(int nr_new_nodes, int current_time);
+    void shoot(int nr_new_nodes, int current_time);
+
     float calc_branch_radii();
     void calc_shedding_branches();
+    vec3 calc_optimal_growth_direction() const;
 
     void shed(Node* & branch);
 
@@ -86,11 +90,11 @@ private:
     // Dont really want to have this here, but needed for filling in the shadow-map.
     vec3 position;
 
-    // Growth res
+    // Growth res (borchert-honda)
     int creation_time; //the year the node was created
     float main_light_res {}; // The generated light resource from main_branch node.
     float lateral_light_res {}; // The generated light resource from lateral branch node.
-    
+
     bool has_apical_bud() const { return main_branch == nullptr; }
     bool has_lateral_bud() const { return lateral_branch == nullptr; }
     bool has_main_branch() const { return main_branch != nullptr; }
@@ -101,5 +105,4 @@ private:
 
 public:
     static Tree_Shadow tree_shadow;
-
 };

@@ -3,6 +3,8 @@
 #include <iostream>
 #include <sstream>
 #include <algorithm>
+#include <array>
+#include <numeric>
 
 #include "model_util.h"
 #include "Matrix.h"
@@ -12,13 +14,8 @@ Tree_Shadow Node::tree_shadow = {};
 Tree::Tree(vec3 const& in_position)
     : position {in_position}
 {
-    leaf_vao = model::load_model_from_file("leaf4");
+    leaf_vao = model::load_model_from_file("leaf1");
     generate();
-
-    /*for (float i = 1; i < leaf_count; i++)
-    {
-        leaf_transforms.push_back(translation_matrix((float) (rand() % 128) - 64, 0.0f, (float) (rand() % 128) - 64).transpose());
-    }*/
 }
 
 Tree::~Tree()
@@ -76,7 +73,7 @@ void Tree::generate()
     root = new Node(vec3{0,1,0}, position, 0);
     root->shoot_main(3, 0);
 
-    for(int i = 0; i < 10; i++)
+    for(int i = 0; i < 18; i++)
     {
         grow();
     }
@@ -86,11 +83,7 @@ void Tree::generate()
 
 float Tree::calc_light_res(int current_time)
 {
-    // There is more work to be done here, but i think this will work for now.
-    //  - Light calculation
-    //  - Switch so that light is calculated for buds, not nodes
-    //  - ???
-    light_res = tree::alpha * root->calc_light_res(current_time);
+    light_res = tree::alpha * root->calc_borchert_light_res(current_time);
     return light_res;
 }
 
@@ -171,7 +164,7 @@ Node::~Node()
     delete lateral_branch;
 }
 
-float Node::calc_light_res(int current_time)
+float Node::calc_borchert_light_res(int current_time)
 {
     main_light_res = 0;
     lateral_light_res = 0;
@@ -179,7 +172,7 @@ float Node::calc_light_res(int current_time)
     // calc res from branches
     if (main_branch != nullptr)
     {
-        main_light_res = main_branch->calc_light_res(current_time);
+        main_light_res = main_branch->calc_borchert_light_res(current_time);
     }
     else
     {
@@ -190,7 +183,7 @@ float Node::calc_light_res(int current_time)
 
     if (lateral_branch != nullptr)
     {
-        lateral_light_res += lateral_branch->calc_light_res(current_time);
+        lateral_light_res += lateral_branch->calc_borchert_light_res(current_time);
     }
     else if (main_branch != nullptr)
     {
@@ -207,7 +200,7 @@ void Node::calc_borchert_honda(float recieved_light_recources, int current_time)
     float vm = recieved_light_recources * ((tree::lambda * main_light_res) / (tree::lambda * main_light_res + (1 - tree::lambda) * lateral_light_res));
     float vl = recieved_light_recources * (((1 - tree::lambda) * lateral_light_res) / (tree::lambda * main_light_res + (1 - tree::lambda) * lateral_light_res));
 
-    if (main_branch != nullptr)
+    if (main_branch != nullptr && vm > 0)
     {
         main_branch->calc_borchert_honda(vm, current_time);
     }
@@ -218,7 +211,7 @@ void Node::calc_borchert_honda(float recieved_light_recources, int current_time)
         shoot_main(nr_new_nodes, current_time);
     }
 
-    if (lateral_branch != nullptr)
+    if (lateral_branch != nullptr && vl > 0)
     {
         lateral_branch->calc_borchert_honda(vl, current_time);
     }
@@ -235,7 +228,7 @@ void Node::shoot_main(int nr_new_nodes, int current_time)
     if (nr_new_nodes > 0)
     {
         main_branch = new Node(direction, position, current_time);
-        main_branch->shoot_main(--nr_new_nodes, current_time);
+        main_branch->shoot(--nr_new_nodes, current_time);
     }
 }
 
@@ -246,7 +239,17 @@ void Node::shoot_lateral(int nr_new_nodes, int current_time)
         vec3 random_vector {(float) rand() / RAND_MAX - 0.5f, (float)rand() / RAND_MAX - 0.5f, (float)rand() / RAND_MAX - 0.5f};
         vec3 shifted_direction {rotation_matrix( 30, random_vector) * direction};
         lateral_branch = new Node(shifted_direction, position, current_time);
-        lateral_branch->shoot_main(--nr_new_nodes, current_time);
+        lateral_branch->shoot(--nr_new_nodes, current_time);
+    }
+}
+
+void Node::shoot(int nr_new_nodes, int current_time)
+{
+    if (nr_new_nodes > 0)
+    {
+        vec3 optimal_direction = (direction * 0.8f + calc_optimal_growth_direction() * 0.2f + vec3{0,-1,0} * tree::tropism).normalize();
+        main_branch = new Node(optimal_direction, position, current_time);
+        main_branch->shoot(--nr_new_nodes, current_time);
     }
 }
 
@@ -293,6 +296,40 @@ void Node::calc_shedding_branches()
             lateral_branch->calc_shedding_branches();
         }
     }
+}
+
+vec3 Node::calc_optimal_growth_direction() const
+{
+    std::vector<vec3> neighbours
+    {
+        vec3{-1,-1,-1}, vec3{-1,-1, 0}, vec3{-1,-1, 1}, 
+        vec3{-1, 0,-1}, vec3{-1, 0, 0}, vec3{-1, 0, 1}, 
+        vec3{-1, 1,-1}, vec3{-1, 1, 0}, vec3{-1, 1, 1}, 
+        vec3{ 0,-1,-1}, vec3{ 0,-1, 0}, vec3{ 0,-1, 1}, 
+        vec3{ 0, 0,-1}, vec3{ 0, 0, 0}, vec3{ 0, 0, 1}, 
+        vec3{ 0, 1,-1}, vec3{ 0, 1, 0}, vec3{ 0, 1, 1}, 
+        vec3{ 1,-1,-1}, vec3{ 1,-1, 0}, vec3{ 1,-1, 1}, 
+        vec3{ 1, 0,-1}, vec3{ 1, 0, 0}, vec3{ 1, 0, 1}, 
+        vec3{ 1, 1,-1}, vec3{ 1, 1, 0}, vec3{ 1, 1, 1}
+    };
+
+    std::vector<vec3> optimal_direction {};
+    float min_shadow {10000};
+    for (size_t i = 0; i < neighbours.size(); i++)
+    {
+        float shadow {tree_shadow.get_value(position + neighbours[i])};
+        if (shadow < min_shadow)
+        {
+            min_shadow = shadow;
+            optimal_direction.clear();
+            optimal_direction.push_back(neighbours[i]);
+        } else if (shadow == min_shadow)
+        {
+            optimal_direction.push_back(neighbours[i]);
+        }
+    }
+
+    return std::accumulate(optimal_direction.begin(), optimal_direction.end(), vec3{}).normalize();
 }
 
 void Node::shed(Node* & branch)
@@ -453,10 +490,17 @@ void Node::create_buffer_data(model::Buffer_Data & data, vec3 const& parent_posi
 
 void Node::create_leaf_buffer_data(std::vector<mat4> & transforms) const
 {
-    //TODO: only add leaf where it actually exists a leaf.
     if (!has_main_branch() || !has_lateral_branch())
     {
-        transforms.push_back(translation_matrix(position).transpose());
+
+        vec3 random_vector {(float) rand() / RAND_MAX - 0.5f, (float)rand() / RAND_MAX - 0.5f, (float)rand() / RAND_MAX - 0.5f};
+        vec3 leaf_direction {rotation_matrix( 30, random_vector) * direction};
+
+        mat4 rotation {rotation_matrix(vec3{0, 1, 0}, leaf_direction) * rotation_matrix(rand() % 180, vec3{0, 1, 0})};
+
+        float scale = 2;
+
+        transforms.push_back((translation_matrix(position) * rotation * scale_matrix(scale, scale, scale)).transpose());
     }
 
     if (has_lateral_branch())

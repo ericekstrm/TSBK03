@@ -12,9 +12,7 @@ Matrix4::Matrix4()
     0,1,0,0,
     0,0,1,0,
     0,0,0,1}
-{
-    
-}
+{}
 
 Matrix4::Matrix4(Matrix4 const & rhs)
 {
@@ -56,6 +54,33 @@ Matrix4 Matrix4::operator=(Matrix4 const & rhs)
         }
     }
     return *this;
+}
+
+Matrix4 Matrix4::operator+(Matrix4 const& rhs) const
+{
+    Matrix4 tmp {};
+
+    tmp.m[0][0] = m[0][0] + rhs.m[0][0];
+    tmp.m[1][0] = m[1][0] + rhs.m[1][0];
+    tmp.m[2][0] = m[2][0] + rhs.m[2][0];
+    tmp.m[3][0] = m[3][0] + rhs.m[3][0];
+
+    tmp.m[0][1] = m[0][1] + rhs.m[0][1];
+    tmp.m[1][1] = m[1][1] + rhs.m[1][1];
+    tmp.m[2][1] = m[2][1] + rhs.m[2][1];
+    tmp.m[3][1] = m[3][1] + rhs.m[3][1];
+
+    tmp.m[0][2] = m[0][2] + rhs.m[0][2];
+    tmp.m[1][2] = m[1][2] + rhs.m[1][2];
+    tmp.m[2][2] = m[2][2] + rhs.m[2][2];
+    tmp.m[3][2] = m[3][2] + rhs.m[3][2];
+
+    tmp.m[0][3] = m[0][3] + rhs.m[0][3];
+    tmp.m[1][3] = m[1][3] + rhs.m[1][3];
+    tmp.m[2][3] = m[2][3] + rhs.m[2][3];
+    tmp.m[3][3] = m[3][3] + rhs.m[3][3];
+
+    return tmp;
 }
 
 Matrix4 Matrix4::operator*(float f) const
@@ -316,8 +341,36 @@ Matrix4 rotation_matrix(float angle, vec3 const& r)
 Matrix4 rotation_matrix(float x, float y, float z)
 {
     return rotation_matrix(x, 1, 0, 0) *
-           rotation_matrix(x, 0, 1, 0) *
-           rotation_matrix(x, 0, 0, 1);
+           rotation_matrix(y, 0, 1, 0) *
+           rotation_matrix(z, 0, 0, 1);
+}
+
+/**
+ *  Gives a rotation matrix that transforms unit vector a into unit vector b.
+ * 
+ */
+Matrix4 rotation_matrix(vec3 const& a, vec3 const& b)
+{
+    if (a == b)
+    {
+        return mat4{};
+    }
+    if (a == b * -1)
+    {
+        return rotation_matrix(180, 0, 1, 0);
+    }
+
+    vec3 v {a.cross(b)};
+    float s {v.length()};
+    float c {a * b};
+    mat4 Vx {
+        0,   -v.z, v.y, 0,
+        v.z,  0, - v.x, 0,
+        -v.y, v.x, 0,   0,
+        0,    0,   0,   1
+    };
+
+    return mat4{} + Vx + Vx * Vx * (1 - c) / (s * s);
 }
 
 Matrix4 translation_matrix(float x, float y, float z)

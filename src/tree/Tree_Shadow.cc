@@ -34,7 +34,7 @@ float Tree_Shadow::get_value(vec3 const& pos)
         grid_pos.x >= grid_size || grid_pos.y >= grid_size || grid_pos.z >= grid_size)
     {
         //outside the shadow_box. assume there is no light here
-        return 100;
+        return 100000;
     }
     return grid[static_cast<int>(grid_pos.x + grid_pos.y * grid_size + grid_pos.z * grid_size * grid_size)];
 }

@@ -62,7 +62,7 @@ public:
     Vector3 cross(Vector3 const& rhs) const;
 
     // dot product
-    float operator*(Vector3 const&);
+    float operator*(Vector3 const&) const;
 
     bool operator==(Vector3 const&) const;
     bool operator!=(Vector3 const&) const;
