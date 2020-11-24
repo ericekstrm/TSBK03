@@ -16,30 +16,4 @@ public:
     void load_light_space_matrix(vec3 const& light_pos) const;
     void load_lights(Light_Container const& light_container) const;
     void load_material_properties(model::Material const& mat) const;
-
-private:
-
-    void connect_texture_units() const;
-
-    int location_model_matrix;
-
-    // Material 
-    int location_kd_texture;
-    int location_specularity_map;
-    int location_use_specularity_map;
-    int location_ka;
-    int location_kd;
-    int location_ks;
-    int location_a;
-
-    int location_camera_pos;
-    int location_light_space_matrix;
-    int location_shadow_map;
-
-    // Light
-    int location_num_of_lights;
-    int location_light_pos_dir;
-    int location_light_color;
-    int location_light_attenuation_params;
-    int location_light_type;
 };

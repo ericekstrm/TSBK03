@@ -25,24 +25,22 @@ public:
 protected:
     int get_uniform_location(std::string const& uniform_name) const;
 
-    void load_int  (int location, int         value) const;
-    void load_float(int location, float       value) const;
-    void load_bool (int location, bool        value) const;
-    void load_mat4 (int location, mat4 const& value) const;
-    void load_vec3 (int location, vec3 const& value) const;
-    void load_vec4 (int location, vec4 const& value) const;
+    void load_int  (std::string const& name, int         value) const;
+    void load_float(std::string const& name, float       value) const;
+    void load_bool (std::string const& name, bool        value) const;
+    void load_mat4 (std::string const& name, mat4 const& value) const;
+    void load_vec2 (std::string const& name, vec2 const& value) const;
+    void load_vec3 (std::string const& name, vec3 const& value) const;
+    void load_vec4 (std::string const& name, vec4 const& value) const;
     
-    void load_vec3_arr(int location, std::vector<vec3> const& value) const;
-    void load_bool_arr(int location, std::vector<int>  const& value) const;
+    void load_vec3_arr(std::string const& name, std::vector<vec3> const& value) const;
+    void load_bool_arr(std::string const& name, std::vector<int>  const& value) const;
 
 private:
 
     int load(std::string const& file_name, int type);
 
     int programID {};
-
-    int location_projection_matrix {};
-    int location_world_matrix {};
 };
 
 // =======================
@@ -53,9 +51,6 @@ class Skybox_Shader : public Shader
 {
 public:
     Skybox_Shader();
-
-private:
-
 };
 
 // =====================
@@ -71,11 +66,6 @@ public:
     void connect_texture_units() const;
 
     void load_model_matrix(Matrix4 const& mat) const;
-
-private:
-    int location_model_matrix;
-
-    int location_kd_texture;
 };
 
 // =====================
@@ -91,13 +81,6 @@ public:
     void load_font_color(vec3 const& color) const;
     void load_text_pos_matrix(Matrix4 const& mat) const;
     void load_char_pos_matrix(Matrix4 const& mat) const;
-
-private:
-
-    int location_font_color;
-    int location_text_pos_matrix;
-    int location_char_pos_matrix;
-    int location_tex;
 };
 
 // ========================
@@ -111,11 +94,6 @@ public:
     ~Image2D_Shader();
 
     void load_pos_matrix(vec2 const& pos) const;
-
-private:
-
-    int location_pos_matrix;
-    int location_tex;
 };
 
 class Color_Point_Shader : public Shader
@@ -124,8 +102,17 @@ public:
     Color_Point_Shader();
     void load_position(vec3 const& pos) const;
     void load_color(vec3 const& color) const;
+};
 
-private:
-    int location_position;
-    int location_color;
+// ==========================
+// ===| Billboard Shader |===
+// ==========================
+
+class Billboard_Shader : public Shader
+{
+public:
+    Billboard_Shader();
+    ~Billboard_Shader();
+
+    void load_model_matrix(Matrix4 const& mat) const;
 };

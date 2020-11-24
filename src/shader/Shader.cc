@@ -31,9 +31,6 @@ Shader::Shader(std::string const& vertex_file, std::string const& fragment_file)
 
     glDeleteShader(vertexID);
     glDeleteShader(fragmentID);
-
-    location_projection_matrix = get_uniform_location("projection_matrix");
-    location_world_matrix = get_uniform_location("world_matrix");
 }
 
 Shader::~Shader()
@@ -57,47 +54,52 @@ int Shader::get_uniform_location(std::string const& uniform_name) const
     return glGetUniformLocation(programID, c);
 }
 
-void Shader::load_int(int location, int value) const
+void Shader::load_int(std::string const& name, int value) const
 {
-    glUniform1i(location, value);
+    glUniform1i(get_uniform_location(name), value);
 }
 
-void Shader::load_float(int location, float value) const
+void Shader::load_float(std::string const& name, float value) const
 {
-    glUniform1f(location, value);
+    glUniform1f(get_uniform_location(name), value);
 }
 
-void Shader::load_bool(int location, bool b) const
+void Shader::load_bool(std::string const& name, bool b) const
 {
-    glUniform1i(location, b ? 1 : 0);
+    glUniform1i(get_uniform_location(name), b ? 1 : 0);
 }
 
-void Shader::load_mat4(int location, mat4 const& value) const
+void Shader::load_mat4(std::string const& name, mat4 const& value) const
 {
     mat4 tmp {value.transpose()};
-    glUniformMatrix4fv(location, 1, GL_FALSE, &tmp.m[0][0]);
+    glUniformMatrix4fv(get_uniform_location(name), 1, GL_FALSE, &tmp.m[0][0]);
 }
 
-void Shader::load_vec3(int location, vec3 const& value) const
+void Shader::load_vec2(std::string const& name, vec2 const& value) const
 {
-    glUniform3f(location, value.x, value.y, value.z);
+    glUniform2f(get_uniform_location(name), value.x, value.y);
 }
 
-void Shader::load_vec4(int location, vec4 const& value) const
+void Shader::load_vec3(std::string const& name, vec3 const& value) const
 {
-    glUniform4f(location, value[0], value[1], value[2], value[3]);
+    glUniform3f(get_uniform_location(name), value.x, value.y, value.z);
 }
 
-void Shader::load_bool_arr(int location, std::vector<int> const& value) const
+void Shader::load_vec4(std::string const& name, vec4 const& value) const
 {
-    glUniform1iv(location, value.size(), reinterpret_cast<const int *>(value.data()));
+    glUniform4f(get_uniform_location(name), value[0], value[1], value[2], value[3]);
 }
 
-void Shader::load_vec3_arr(int location, std::vector<vec3> const& value) const
+void Shader::load_bool_arr(std::string const& name, std::vector<int> const& value) const
+{
+    glUniform1iv(get_uniform_location(name), value.size(), reinterpret_cast<const int *>(value.data()));
+}
+
+void Shader::load_vec3_arr(std::string const& name, std::vector<vec3> const& value) const
 {
     // undrar om detta fungerar som man väntar sig, inte helt säkert eftersom vi har min egen vec3.
     // Det fungerar med Ingemars vec3 men det är ju verkligen inte en garanti att det fungerar senare, hehe.
-    glUniform3fv(location, value.size(), reinterpret_cast<const float *>(value.data()));
+    glUniform3fv(get_uniform_location(name), value.size(), reinterpret_cast<const float *>(value.data()));
 }
 
 int Shader::get_programID() const
@@ -107,12 +109,12 @@ int Shader::get_programID() const
 
 void Shader::load_projection_matrix() const
 {
-    load_mat4(location_projection_matrix, projection);
+    load_mat4("projection_matrix", projection);
 }
 
 void Shader::load_camera_matrix(Matrix4 const & mat) const
 {
-    load_mat4(location_world_matrix, mat);
+    load_mat4("world_matrix", mat);
 }
 
 int Shader::load(std::string const & file_name, int type)
@@ -167,24 +169,16 @@ Skybox_Shader::Skybox_Shader()
 Tree_Shader::Tree_Shader()
     : Shader{"tree.vert", "tree.frag"}
 {
-    location_model_matrix = get_uniform_location("model_matrix");
-    location_kd_texture = get_uniform_location("kd_texture");
-
-    connect_texture_units();
+    load_int("kd_texture", 0);
 }
 
 Tree_Shader::~Tree_Shader()
 {
 }
 
-void Tree_Shader::connect_texture_units() const
-{
-    load_int(location_kd_texture, 0);
-}
-
 void Tree_Shader::load_model_matrix(Matrix4 const& mat) const
 {
-    load_mat4(location_model_matrix, mat);
+    load_mat4("model_matrix", mat);
 }
 
 // =====================
@@ -194,12 +188,7 @@ void Tree_Shader::load_model_matrix(Matrix4 const& mat) const
 Text_Shader::Text_Shader()
     : Shader{"text.vert", "text.frag"}
 {
-    location_font_color = get_uniform_location("font_color");
-    location_text_pos_matrix = get_uniform_location("text_pos_matrix");
-    location_char_pos_matrix = get_uniform_location("char_pos_matrix");
-
-    location_tex = get_uniform_location("tex");
-    load_int(location_tex, 0);
+    load_int("tex", 0);
 }
 
 Text_Shader::~Text_Shader()
@@ -208,17 +197,17 @@ Text_Shader::~Text_Shader()
 
 void Text_Shader::load_font_color(vec3 const& color) const
 {
-    load_vec3(location_font_color, color);
+    load_vec3("font_color", color);
 }
 
 void Text_Shader::load_text_pos_matrix(Matrix4 const& mat) const
 {
-    load_mat4(location_text_pos_matrix, mat);
+    load_mat4("text_pos_matrix", mat);
 }
 
 void Text_Shader::load_char_pos_matrix(Matrix4 const& mat) const
 {
-    load_mat4(location_char_pos_matrix, mat);
+    load_mat4("char_pos_matrix", mat);
 }
 
 // ========================
@@ -228,10 +217,7 @@ void Text_Shader::load_char_pos_matrix(Matrix4 const& mat) const
 Image2D_Shader::Image2D_Shader()
     : Shader{"image2d.vert", "image2d.frag"}
 {
-    location_pos_matrix = get_uniform_location("pos_matrix");
-
-    location_tex = get_uniform_location("tex");
-    load_int(location_tex, 0);
+    load_int("tex", 0);
 }
 
 Image2D_Shader::~Image2D_Shader()
@@ -240,26 +226,45 @@ Image2D_Shader::~Image2D_Shader()
 
 void Image2D_Shader::load_pos_matrix(vec2 const& pos) const
 {
-    load_mat4(location_pos_matrix, translation_matrix(pos.x, pos.y, 0));
+    load_mat4("pos_matrix", translation_matrix(pos.x, pos.y, 0));
 }
 
-// ========================
-// ===| Image2D Shader |===
-// ========================
+// ============================
+// ===| Color Point Shader |===
+// ============================
 
 Color_Point_Shader::Color_Point_Shader()
     : Shader {"color_point.vert", "color_point.frag"}
 {
-    location_position = get_uniform_location("position");
-    location_color = get_uniform_location("color");
 }
 
 void Color_Point_Shader::load_position(vec3 const& pos) const
 {
-    load_vec3(location_position, pos);
+    load_vec3("position", pos);
 }
 
 void Color_Point_Shader::load_color(vec3 const& color) const
 {
-    load_vec3(location_color, color);
+    load_vec3("color", color);
+}
+
+// ==========================
+// ===| Billboard Shader |===
+// ==========================
+
+Billboard_Shader::Billboard_Shader()
+    : Shader {"billboard.vert", "billboard.frag"}
+{
+
+    load_int("tex", 0);
+}
+
+Billboard_Shader::~Billboard_Shader()
+{    
+
+}
+
+void Billboard_Shader::load_model_matrix(Matrix4 const& mat) const
+{
+    load_mat4("model_matrix", mat);
 }

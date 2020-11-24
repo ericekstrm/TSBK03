@@ -12,8 +12,4 @@ public:
     Model_Instance_Shader();
 
     void load_instance_transforms(std::vector<mat4> const& transforms) const;
-
-private:
-    std::array<int, instance_max_count> location_instance_transforms;
-
 };
