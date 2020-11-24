@@ -62,4 +62,6 @@ namespace model
      */
     Vao_Data load_obj_file(std::string const& file_path);
 
+    
+    Vao_Data get_billboard(std::string const& texture);
 }

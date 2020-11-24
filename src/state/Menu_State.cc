@@ -55,6 +55,7 @@ void Menu_State::check_input(GLFWwindow * window)
 
 void Menu_State::activate(GLFWwindow* window)
 {
+    glClearColor(0.2f, 0.3f, 0.5f, 1.0f);
     glDisable(GL_DEPTH_TEST);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

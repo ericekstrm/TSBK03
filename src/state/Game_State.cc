@@ -7,14 +7,9 @@
 
 Game_State::Game_State()
 {
-    /*for (float i = 1; i < 100; i++)
-    {
-        models.push_back(Model {"rock1", vec3{(float) (rand() % 128) - 64, 0, (float) (rand() % 128) - 64}});
-    }
-    models.push_back(Model {"door", vec3{10, 0, 0}});
-    models.push_back(Model {"chair", vec3{0, 0, 5}});*/
     Model m {"rock1"};
     models.push_back(m);
+    models.push_back(Model{"fence"});
 
     camera = std::make_unique<Flying_Camera>(vec3{20, 30, 20});
 
@@ -34,12 +29,12 @@ void Game_State::update(float delta_time)
         it->update(delta_time);
     }
     camera->update(delta_time);
+
+    sun.update(delta_time);
 }
 
 void Game_State::render() const
 {
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
     //render to shadowmap
     shadowmap.activate();
     shadowmap.render(terrain);
@@ -51,11 +46,38 @@ void Game_State::render() const
     shadowmap.render(tree1, tree_shader);
     shadowmap.deactivate();
 
+    main_fbo.bind();
+    render_scene();
+    main_fbo.unbind();
+
+    sun_framebuffer.bind();
+    render_black_scene();
+    sun_framebuffer.unbind();
+
+    render_scene();
+
+    //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    
+    vec3 tmp {projection * camera->get_camera_matrix().remove_translation() * sun.get_position()};
+    vec2 sun_screen_pos {(tmp.x + 1) / 2, (tmp.y + 1) / 2};
+    main_image.render(sun_screen_pos);
+    //sun_image.render();
+
+    //shadow_map_image.render();
+}
+
+void Game_State::render_scene() const
+{
+    glClearColor(0.2f, 0.3f, 0.5f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
     skybox_shader.start();
     skybox_shader.load_projection_matrix();
     skybox_shader.load_camera_matrix(camera->get_camera_matrix().remove_translation());
     skybox.render();
     skybox_shader.stop();
+
+    sun.render(*camera);
 
     //render normal
     shader.start();
@@ -79,19 +101,45 @@ void Game_State::render() const
 
     shader.stop();
 
-    tree_shader.start();
+    /*tree_shader.start();
     tree_shader.load_projection_matrix();
     tree_shader.load_camera_matrix(camera->get_camera_matrix());
-
     tree1.render(tree_shader);
-
     tree_shader.stop();
-
-    tree1.render_leafs(camera.get(), &lights);
+    tree1.render_leafs(camera.get(), &lights);*/
 
     lights.render(projection, camera->get_camera_matrix());
+}
 
-    //shadow_map_image.render();
+void Game_State::render_black_scene() const
+{
+    glClearColor(0, 0, 0, 1);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    sun.render(*camera);
+
+    //render normal
+    god_ray_shader.start();
+    god_ray_shader.load_projection_matrix();
+    god_ray_shader.load_camera_matrix(camera->get_camera_matrix());
+
+    for (auto it = models.begin(); it != models.end(); it++)
+    {
+        it->render(&god_ray_shader);
+    }
+
+    terrain.render(&god_ray_shader);
+
+    god_ray_shader.stop();
+
+    /*tree_shader.start();
+    tree_shader.load_projection_matrix();
+    tree_shader.load_camera_matrix(camera->get_camera_matrix());
+    tree1.render(tree_shader);
+    tree_shader.stop();
+    tree1.render_leafs(camera.get(), &lights);*/
+
+    lights.render(projection, camera->get_camera_matrix());
 }
 
 void Game_State::check_input(GLFWwindow * window)

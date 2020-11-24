@@ -78,4 +78,13 @@ private:
         "res/skybox/violentdays_bk.tga",
         "res/skybox/violentdays_ft.tga"
     };
+
+    std::vector<std::string> bluecloud {
+        "res/skybox/bluecloud_rt.jpg",
+        "res/skybox/bluecloud_lf.jpg",
+        "res/skybox/bluecloud_up.jpg",
+        "res/skybox/bluecloud_dn.jpg",
+        "res/skybox/bluecloud_bk.jpg",
+        "res/skybox/bluecloud_ft.jpg"
+    };
 };

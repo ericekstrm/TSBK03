@@ -208,3 +208,32 @@ model::Vao_Data model::load_obj_file(std::string const& file_path)
         throw std::runtime_error("Cound not find obj-file: " + file_path);
     }
 }
+
+model::Vao_Data model::get_billboard(std::string const& texture)
+{
+
+    std::vector<float> vertices {
+        -0.5, -0.5, 0,
+        -0.5,  0.5, 0,
+         0.5, -0.5, 0,
+         0.5,  0.5, 0,
+    };
+    std::vector<float> normals {
+        0, 0, 1,
+        0, 0, 1,
+        0, 0, 1,
+        0, 0, 1,
+    };
+    std::vector<float> tex_coords {
+        0, 0,
+        0, 1,
+        1, 0,
+        1, 1,
+    };
+    std::vector<int> indices {0,2,1,2,3,1};
+
+    Vao_Data data {};
+    data.load_buffer_data(vertices, normals, tex_coords, indices);
+    data.material.texture_id = load_texture(texture);
+    return data;
+}

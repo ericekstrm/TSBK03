@@ -22,6 +22,10 @@ Model::Model(std::vector<float> vertices, std::vector<float> normals, std::vecto
     model_data.load_buffer_data(vertices, normals, texture_coords, indices);
 }
 
+Model::Model(model::Vao_Data const& vao_data)
+    : model_data {vao_data}
+{}
+
 Model::~Model()
 {
 }

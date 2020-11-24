@@ -95,6 +95,5 @@ void Game::init_openGL()
         gladLoadGLLoader((GLADloadproc) glfwGetProcAddress);
     #endif
     
-    glClearColor(0.2f, 0.3f, 0.5f, 1.0f);
     glEnable(GL_DEPTH_TEST);
 }

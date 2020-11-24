@@ -73,7 +73,7 @@ void Tree::generate()
     root = new Node(vec3{0,1,0}, position, 0);
     root->shoot_main(3, 0);
 
-    for(int i = 0; i < 18; i++)
+    for(int i = 0; i < 10; i++)
     {
         grow();
     }

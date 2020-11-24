@@ -16,6 +16,9 @@
 #include "Tree.h"
 #include "Shadowmap.h"
 #include "Image.h"
+#include "Sun.h"
+#include "Framebuffer.h"
+#include "Main_Image.h"
 
 #include <memory>
 
@@ -34,6 +37,10 @@ public:
     void deactivate(GLFWwindow* window) override;
 
 private:
+
+    void render_scene() const;
+    void render_black_scene() const;
+
     Model_Shader shader {};
     Model_Shader shader2 {"shadow.vert", "shadow.frag"};
     std::vector<Model> models {};
@@ -45,6 +52,12 @@ private:
     Skybox skybox {};
 
     Light_Container lights {};
+    Sun sun {};
+
+    //god ray stuff
+    Framebuffer sun_framebuffer {};
+    Image sun_image {vec2{0.5,0.5}, vec2{0.5,0.5}, sun_framebuffer.get_texture_id()};
+    Model_Shader god_ray_shader {"model.vert", "pass.frag"};
 
     Tree_Shader tree_shader {};
     Tree tree1 {vec3{0,0,0}};
@@ -52,4 +65,7 @@ private:
     Shadowmap shadowmap {vec3{5, 5, 5}};
 
     Image shadow_map_image {vec2{0.5,0.5}, vec2{0.5,0.5}, shadowmap.get_texture_id()};
+
+    Framebuffer main_fbo {};
+    Main_Image main_image {main_fbo.get_texture_id(), sun_framebuffer.get_texture_id()};
 };

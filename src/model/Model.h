@@ -25,6 +25,7 @@ public:
         std::vector<float> texture_coords, 
         std::vector<int> indices,
         objl::Material material);
+    Model(model::Vao_Data const& vao_data);
     ~Model();
 
     void update(float delta_time);

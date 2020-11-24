@@ -9,7 +9,6 @@ Postprocess_Shader::Postprocess_Shader()
 
 Postprocess_Shader::~Postprocess_Shader()
 {
-
 }
 
 void Postprocess_Shader::load_pos_matrix(vec2 const& pos) const

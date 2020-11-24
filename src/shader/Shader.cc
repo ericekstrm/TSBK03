@@ -31,6 +31,8 @@ Shader::Shader(std::string const& vertex_file, std::string const& fragment_file)
 
     glDeleteShader(vertexID);
     glDeleteShader(fragmentID);
+
+    glUseProgram(programID);
 }
 
 Shader::~Shader()

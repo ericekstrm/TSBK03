@@ -6,7 +6,7 @@
 
 Skybox::Skybox()
 {
-    load_cube_map(grimmnight);
+    load_cube_map(bluecloud);
     load_buffer_data();
 }
 

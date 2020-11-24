@@ -46,10 +46,10 @@ void Image::create_mesh()
         size.x, size.y, 0
     };
     std::vector<float> texture_coords {
-        0, 1,
-        1, 1,
         0, 0,
-        1, 0
+        1, 0,
+        0, 1,
+        1, 1
     };
 
     std::vector<int> indices { 0, 1, 2, 1, 2, 3 };
