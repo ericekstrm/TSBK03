@@ -51,7 +51,7 @@ void Game_State::render() const
     main_fbo.unbind();
 
     sun_framebuffer.bind();
-    render_black_scene();
+    render_godray_scene();
     sun_framebuffer.unbind();
 
     render_scene();
@@ -99,26 +99,22 @@ void Game_State::render_scene() const
 
     terrain.render(&shader);
 
+    tree1.render(&shader);
+
     shader.stop();
 
-    /*tree_shader.start();
-    tree_shader.load_projection_matrix();
-    tree_shader.load_camera_matrix(camera->get_camera_matrix());
-    tree1.render(tree_shader);
-    tree_shader.stop();
-    tree1.render_leafs(camera.get(), &lights);*/
+    tree1.render_leafs(camera.get(), &lights);
 
     lights.render(projection, camera->get_camera_matrix());
 }
 
-void Game_State::render_black_scene() const
+void Game_State::render_godray_scene() const
 {
     glClearColor(0, 0, 0, 1);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     sun.render(*camera);
 
-    //render normal
     god_ray_shader.start();
     god_ray_shader.load_projection_matrix();
     god_ray_shader.load_camera_matrix(camera->get_camera_matrix());
@@ -130,16 +126,15 @@ void Game_State::render_black_scene() const
 
     terrain.render(&god_ray_shader);
 
+    tree1.render(&shader);
+
     god_ray_shader.stop();
 
-    /*tree_shader.start();
-    tree_shader.load_projection_matrix();
-    tree_shader.load_camera_matrix(camera->get_camera_matrix());
-    tree1.render(tree_shader);
-    tree_shader.stop();
-    tree1.render_leafs(camera.get(), &lights);*/
-
-    lights.render(projection, camera->get_camera_matrix());
+    god_ray_leaf_shader.start();
+    god_ray_leaf_shader.load_projection_matrix();
+    god_ray_leaf_shader.load_camera_matrix(camera->get_camera_matrix());
+    tree1.render_leafs(&god_ray_leaf_shader);
+    god_ray_leaf_shader.stop();
 }
 
 void Game_State::check_input(GLFWwindow * window)

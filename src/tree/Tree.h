@@ -18,8 +18,9 @@ public:
     Tree(vec3 const& position = vec3{0, 0, 0});
     ~Tree();
 
-    void render(Tree_Shader const& shader) const;
+    void render(Model_Shader const * shader) const;
     void render_leafs(Camera const * camera, Light_Container const * lights) const;
+    void render_leafs(Model_Instance_Shader const * shader) const;
     void update(float delta_time);
 
     void grow();

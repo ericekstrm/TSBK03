@@ -23,7 +23,7 @@ Tree::~Tree()
     delete root;
 }
 
-void Tree::render(Tree_Shader const& shader) const
+void Tree::render(Model_Shader const * shader) const
 {
     glBindVertexArray(vao_data.vao);
 
@@ -32,8 +32,8 @@ void Tree::render(Tree_Shader const& shader) const
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-    shader.load_model_matrix(translation_matrix(position.x, position.y, position.z));
-    //shader.load_material_properties(*this);
+    shader->load_model_matrix(translation_matrix(position.x, position.y, position.z));
+    shader->load_material_properties(vao_data.material);
 
     glDrawElements(GL_TRIANGLES, vao_data.indices_count, GL_UNSIGNED_INT, 0);
 }
@@ -45,11 +45,20 @@ void Tree::render_leafs(Camera const * camera, Light_Container const * lights) c
     leaf_shader.start();
     leaf_shader.load_camera_matrix(camera->get_camera_matrix());
     leaf_shader.load_camera_position(camera->get_position());
-    //leaf_shader.load_instance_transforms(leaf_transforms);
     //leaf_shader.load_light_space_matrix();
     leaf_shader.load_lights(*lights);
-    leaf_shader.load_material_properties(leaf_vao.material);
-    leaf_shader.load_projection_matrix();
+    
+    render_leafs(&leaf_shader);
+
+    leaf_shader.stop();
+}
+
+void Tree::render_leafs(Model_Instance_Shader const * shader) const
+{
+    glBindVertexArray(leaf_vao.vao);
+
+    shader->load_material_properties(leaf_vao.material);
+    shader->load_projection_matrix();
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, leaf_vao.material.texture_id);
@@ -57,8 +66,6 @@ void Tree::render_leafs(Camera const * camera, Light_Container const * lights) c
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
     glDrawElementsInstanced(GL_TRIANGLES, leaf_vao.indices_count, GL_UNSIGNED_INT, 0, leaf_transforms.size());
-
-    leaf_shader.stop();
 }
 
 void Tree::update(float delta_time)
@@ -101,6 +108,10 @@ void Tree::create_buffer_data()
     root->create_buffer_data(data, position);
     vao_data.load_buffer_data(data);
     vao_data.material.texture_id = model::load_texture("res/tree/oak_texture/Wood_Bark_006_basecolor.jpg");
+    vao_data.material.kd = vec3{1,1,1};
+    vao_data.material.ka = vec3{1,1,1};
+    vao_data.material.ks = vec3{1,1,1};
+    vao_data.material.a = 225;
 
     glGenBuffers(1, &leaf_buffer);
     glBindBuffer(GL_ARRAY_BUFFER, leaf_buffer);

@@ -39,7 +39,7 @@ public:
 private:
 
     void render_scene() const;
-    void render_black_scene() const;
+    void render_godray_scene() const;
 
     Model_Shader shader {};
     Model_Shader shader2 {"shadow.vert", "shadow.frag"};
@@ -57,7 +57,8 @@ private:
     //god ray stuff
     Framebuffer sun_framebuffer {};
     Image sun_image {vec2{0.5,0.5}, vec2{0.5,0.5}, sun_framebuffer.get_texture_id()};
-    Model_Shader god_ray_shader {"model.vert", "pass.frag"};
+    Model_Shader god_ray_shader {"model.vert", "godray/darkpass_solid.frag"};
+    Model_Instance_Shader god_ray_leaf_shader {"model_instance.vert", "godray/darkpass_leaf.frag"};
 
     Tree_Shader tree_shader {};
     Tree tree1 {vec3{0,0,0}};
