@@ -56,7 +56,7 @@ private:
     model::Vao_Data billboard {model::get_billboard("res/images/sun.png")};
     Billboard_Shader shader {};
 
-    vec3 pos {5, 0, 0};
+    vec3 pos {40, 5, 0};
     mat4 rot {};
 };
 
@@ -71,6 +71,7 @@ public:
 
     void update(float delta_time);
 
+    vec3 get_sun_position() const { return sun.get_position(); }
     vec2 get_sun_screen_position(Camera const * camera) const;
 
     int get_number_of_lights() const {return pos_lights.size() + dir_lights.size() + 1; }

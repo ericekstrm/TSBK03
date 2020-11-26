@@ -10,10 +10,6 @@ Model_Shader::Model_Shader()
 Model_Shader::Model_Shader(std::string const& vertex_file, std::string const& fragment_file)
     : Shader{vertex_file, fragment_file}
 {
-    load_int("kd_texture", 0);
-    load_int("specularity_map", 1);
-
-    load_int("shadow_map", 5);
 }
 
 Model_Shader::~Model_Shader()

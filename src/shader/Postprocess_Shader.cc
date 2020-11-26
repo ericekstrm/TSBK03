@@ -3,8 +3,6 @@
 Postprocess_Shader::Postprocess_Shader()
     : Shader {"image2d.vert", "postprocess.frag"}
 {
-    load_int("main_pass", 0);
-    load_int("god_ray_pass", 1);
 }
 
 Postprocess_Shader::~Postprocess_Shader()

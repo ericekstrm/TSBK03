@@ -31,19 +31,22 @@ void Game_State::update(float delta_time)
     camera->update(delta_time);
 
     lights.update(delta_time);
+    shadowmap.set_light_position(lights.get_sun_position());
 }
 
 void Game_State::render() const
 {
     //render to shadowmap
     shadowmap.activate();
+    glCullFace(GL_FRONT);
     shadowmap.render(terrain);
     for (auto it = models.begin(); it != models.end(); it++)
     {
         shadowmap.render(*it);
     }
     shadowmap.render(terrain);
-    shadowmap.render(tree1, tree_shader);
+    shadowmap.render(tree1);
+    glCullFace(GL_BACK);
     shadowmap.deactivate();
 
     main_fbo.bind();
@@ -72,7 +75,7 @@ void Game_State::render_scene() const
     skybox.render();
     skybox_shader.stop();
 
-    lights.render_sun(camera.get());
+    //lights.render_sun(camera.get());
 
     //render normal
     shader.start();
@@ -82,10 +85,8 @@ void Game_State::render_scene() const
     shader.load_lights(lights);
     shader.load_light_space_matrix(shadowmap.get_position());
 
-    glActiveTexture(GL_TEXTURE5);
+    glActiveTexture(GL_TEXTURE10);
     glBindTexture(GL_TEXTURE_2D, shadowmap.get_texture_id());
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
     for (auto it = models.begin(); it != models.end(); it++)
     {

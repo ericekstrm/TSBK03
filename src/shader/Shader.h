@@ -54,21 +54,6 @@ public:
 };
 
 // =====================
-// ===| Tree Shader |===
-// =====================
-
-class Tree_Shader : public Shader
-{
-public:
-    Tree_Shader();
-    ~Tree_Shader();
-
-    void connect_texture_units() const;
-
-    void load_model_matrix(Matrix4 const& mat) const;
-};
-
-// =====================
 // ===| Text Shader |===
 // =====================
 

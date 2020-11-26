@@ -1,4 +1,4 @@
-#version 400 core
+#version 420 core
 
 in VS_OUT {
 	vec3 normal;
@@ -10,8 +10,9 @@ in VS_OUT {
 out vec4 out_color;
 
 // Material
-uniform sampler2D kd_texture;
-uniform sampler2D specularity_map;
+layout(binding = 0) uniform sampler2D kd_texture;
+layout(binding = 1) uniform sampler2D specularity_map;
+
 uniform bool use_specularity_map;
 uniform vec3 ka;
 uniform vec3 kd;
@@ -19,7 +20,7 @@ uniform vec3 ks;
 uniform float specular_exponent;
 
 uniform vec3 camera_pos;
-uniform sampler2D shadow_map;
+layout(binding = 10) uniform sampler2D shadow_map;
 
 /*uniform POS_LIGHT {
 	vec3 position;
@@ -72,7 +73,7 @@ void main(void)
 		{
 			vec3 light_dir = -normalize(light_pos_dir[i]);
 
-			float shadow = 0; //calc_shadow();
+			float shadow = calc_shadow();
 		
 			output += (1 - shadow) * calc_light(normal, light_dir, light_color[i], view_dir);
 		} else
@@ -123,6 +124,13 @@ float calc_shadow()
     // get depth of current fragment from light's perspective
     float current_depth = proj_coords.z;
 
+	vec3 normal = normalize(fs_in.normal);
+	vec3 light_dir = -normalize(light_pos_dir[3]);
+	float bias = max(0.05 * (1.0 - dot(normal, light_dir)), 0.0005);
+
+	//float shadow = current_depth - bias > closest_depth  ? 1.0 : 0.0;
+
+
     // check whether current frag pos is in shadow
     float shadow = 0.0;
     vec2 texel_size = 1.0 / textureSize(shadow_map, 0);
@@ -136,19 +144,46 @@ float calc_shadow()
     }
     shadow /= 9.0;
 
+	if(proj_coords.z > 1.0)
+        shadow = 0.0;
+
     return shadow;*/
 
 
-	// perform perspective divide
-    vec3 projCoords = fs_in.fragment_position_light_space.xyz / fs_in.fragment_position_light_space.w;
-    // transform to [0,1] range
-    projCoords = projCoords * 0.5 + 0.5;
-    // get closest depth value from light's perspective (using [0,1] range fragPosLight as coords)
-    float closestDepth = texture(shadow_map, projCoords.xy).r; 
-    // get depth of current fragment from light's perspective
-    float currentDepth = projCoords.z;
-    // check whether current frag pos is in shadow
-    float shadow = currentDepth > closestDepth  ? 1.0 : 0.0;
+	vec3 normal = normalize(fs_in.normal);
+	vec3 light_dir = -normalize(light_pos_dir[3]);
+	float bias = max(0.005 * (1.0 - dot(normal, light_dir)), 0.00005);
 
-    return shadow;
+
+	// perform perspective divide
+    vec3 proj_coords = fs_in.fragment_position_light_space.xyz / fs_in.fragment_position_light_space.w;
+    // transform to [0,1] range
+    proj_coords = proj_coords * 0.5 + 0.5;
+    // get closest depth value from light's perspective (using [0,1] range fragPosLight as coords)
+    float closestDepth = texture(shadow_map, proj_coords.xy).r; 
+    // get depth of current fragment from light's perspective
+    float currentDepth = proj_coords.z;
+    // check whether current frag pos is in shadow
+    
+	// get depth of current fragment from light's perspective
+    float current_depth = proj_coords.z;
+
+	//float shadow = currentDepth - bias > closestDepth  ? 1.0 : 0.0;
+
+	float shadow = 0.0;
+    vec2 texel_size = 1.0 / textureSize(shadow_map, 0);
+    for(int x = -1; x <= 1; ++x)
+    {
+        for(int y = -1; y <= 1; ++y)
+        {
+            float pcf_depth = texture(shadow_map, proj_coords.xy + vec2(x, y) * texel_size).r; 
+            shadow += current_depth - bias > pcf_depth ? 1.0 : 0.0;        
+        }
+    }
+    shadow /= 9.0;
+
+	if(proj_coords.z > 1.0)
+        shadow = 0.0;
+
+	return shadow;
 }

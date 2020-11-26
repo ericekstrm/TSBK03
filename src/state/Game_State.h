@@ -57,10 +57,9 @@ private:
     Model_Shader god_ray_shader {"model.vert", "godray/darkpass_solid.frag"};
     Model_Instance_Shader god_ray_leaf_shader {"model_instance.vert", "godray/darkpass_leaf.frag"};
 
-    Tree_Shader tree_shader {};
     Tree tree1 {vec3{0,0,0}};
 
-    Shadowmap shadowmap {vec3{5, 5, 5}};
+    Shadowmap shadowmap {lights.get_sun_position()};
 
     Image shadow_map_image {vec2{0.5,0.5}, vec2{0.5,0.5}, shadowmap.get_texture_id()};
 

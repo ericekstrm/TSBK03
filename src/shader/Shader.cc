@@ -165,32 +165,12 @@ Skybox_Shader::Skybox_Shader()
 }
 
 // =====================
-// ===| Tree Shader |===
-// =====================
-
-Tree_Shader::Tree_Shader()
-    : Shader{"tree.vert", "tree.frag"}
-{
-    load_int("kd_texture", 0);
-}
-
-Tree_Shader::~Tree_Shader()
-{
-}
-
-void Tree_Shader::load_model_matrix(Matrix4 const& mat) const
-{
-    load_mat4("model_matrix", mat);
-}
-
-// =====================
 // ===| Text Shader |===
 // =====================
 
 Text_Shader::Text_Shader()
     : Shader{"text.vert", "text.frag"}
 {
-    load_int("tex", 0);
 }
 
 Text_Shader::~Text_Shader()
@@ -219,7 +199,6 @@ void Text_Shader::load_char_pos_matrix(Matrix4 const& mat) const
 Image2D_Shader::Image2D_Shader()
     : Shader{"image2d.vert", "image2d.frag"}
 {
-    load_int("tex", 0);
 }
 
 Image2D_Shader::~Image2D_Shader()
@@ -257,8 +236,6 @@ void Color_Point_Shader::load_color(vec3 const& color) const
 Billboard_Shader::Billboard_Shader()
     : Shader {"billboard.vert", "billboard.frag"}
 {
-
-    load_int("tex", 0);
 }
 
 Billboard_Shader::~Billboard_Shader()

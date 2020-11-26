@@ -15,8 +15,10 @@ Shadowmap::Shadowmap(vec3 const& light_position)
     glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, shadow_width, shadow_height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT); 
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER); 
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+    float border_color[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+    glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, border_color);
 
     glBindFramebuffer(GL_FRAMEBUFFER, depth_map_fbo);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depth_map, 0);
@@ -33,9 +35,9 @@ Shadowmap::Shadowmap(vec3 const& light_position)
 
 void Shadowmap::activate() const
 {
+    glViewport(0, 0, shadow_width, shadow_height);
     glBindTexture(GL_TEXTURE_2D, 0);
     glBindFramebuffer(GL_FRAMEBUFFER, depth_map_fbo);
-    glViewport(0, 0, shadow_width, shadow_height);
     glClear(GL_DEPTH_BUFFER_BIT);
 }
 
@@ -45,17 +47,15 @@ void Shadowmap::deactivate() const
     glViewport(0,0, window_width, window_height);
 }
 
-void Shadowmap::render(Tree const& tree, Tree_Shader const& shader) const
+void Shadowmap::render(Tree const& tree) const
 {
 
-    /*shader.start();
-    shader.load_camera_matrix(look_at(light_position, vec3{0,0,0}, vec3{0,1,0}));
-    shader.load_projection_matrix();
-    //shader.load_light_space_matrix();
+    shader.start();
+    shader.load_light_space_matrix(light_position);
 
-    tree.render(shader);
+    tree.render(&shader);
 
-    shader.stop();*/
+    shader.stop();
 }
 
 void Shadowmap::render(Terrain const& terrain) const

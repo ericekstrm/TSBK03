@@ -1,4 +1,4 @@
-#version 400 core
+#version 420 core
 
 in VS_OUT {
 	vec3 normal;
@@ -8,7 +8,7 @@ in VS_OUT {
 
 out vec4 out_color;
 
-uniform sampler2D tex;
+layout(binding = 0) uniform sampler2D tex;
 
 void main(void)
 {

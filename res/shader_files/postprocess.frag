@@ -1,9 +1,9 @@
-#version 400 core
+#version 420 core
 
 in vec2 out_tex_coords;
 
-uniform sampler2D main_pass;
-uniform sampler2D god_ray_pass;
+layout(binding = 0) uniform sampler2D main_pass;
+layout(binding = 1) uniform sampler2D god_ray_pass;
 uniform vec2 sun_pos;
 
 // Godray parameters 

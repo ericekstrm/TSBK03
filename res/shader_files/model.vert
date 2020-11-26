@@ -22,5 +22,5 @@ void main(void)
 	vs_out.tex_coord = in_tex_coord;
 	vs_out.fragment_position = vec3(model_matrix * vec4(in_position, 1.0));
 	vs_out.fragment_position_light_space = light_space_matrix * vec4(vs_out.fragment_position, 1);
-	gl_Position = projection_matrix * world_matrix * model_matrix * vec4(in_position, 1.0);
+	gl_Position = projection_matrix * world_matrix * vec4(vs_out.fragment_position, 1.0);
 }

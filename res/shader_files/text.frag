@@ -1,8 +1,8 @@
-#version 400 core
+#version 420 core
 
 in vec2 out_tex_coords;
 
-uniform sampler2D tex;
+layout(binding = 0) uniform sampler2D tex;
 uniform vec3 font_color;
 
 out vec4 out_color;
