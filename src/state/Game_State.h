@@ -16,7 +16,6 @@
 #include "Tree.h"
 #include "Shadowmap.h"
 #include "Image.h"
-#include "Sun.h"
 #include "Framebuffer.h"
 #include "Main_Image.h"
 
@@ -52,11 +51,9 @@ private:
     Skybox skybox {};
 
     Light_Container lights {};
-    Sun sun {};
 
     //god ray stuff
     Framebuffer sun_framebuffer {};
-    Image sun_image {vec2{0.5,0.5}, vec2{0.5,0.5}, sun_framebuffer.get_texture_id()};
     Model_Shader god_ray_shader {"model.vert", "godray/darkpass_solid.frag"};
     Model_Instance_Shader god_ray_leaf_shader {"model_instance.vert", "godray/darkpass_leaf.frag"};
 

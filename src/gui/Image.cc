@@ -19,6 +19,8 @@ Image::Image(vec2 const& position, vec2 size, unsigned texture_id)
 
 void Image::render() const
 {
+    glDisable(GL_DEPTH_TEST);
+
     shader.start();
     shader.load_pos_matrix(position);
 
@@ -35,6 +37,8 @@ void Image::render() const
     glDrawElements(GL_TRIANGLES, indices_count, GL_UNSIGNED_INT, 0);
 
     shader.stop();
+
+    glEnable(GL_DEPTH_TEST);
 }
 
 void Image::create_mesh()

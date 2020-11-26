@@ -13,7 +13,7 @@ Game_State::Game_State()
 
     camera = std::make_unique<Flying_Camera>(vec3{20, 30, 20});
 
-    lights.add_dir_light(vec3{-1, -1, 0}, vec3{0.988 / 2, 0.831 / 2, 0.251 / 2});
+    //lights.add_dir_light(vec3{-1, -1, 0}, vec3{0.988 / 2, 0.831 / 2, 0.251 / 2});
     lights.add_pos_light(vec3{0, 5, 5}, vec3{1, 1, 1});
     lights.add_pos_light(vec3{50, 3, 0}, vec3{1, 0, 0});
 }
@@ -30,7 +30,7 @@ void Game_State::update(float delta_time)
     }
     camera->update(delta_time);
 
-    sun.update(delta_time);
+    lights.update(delta_time);
 }
 
 void Game_State::render() const
@@ -54,16 +54,11 @@ void Game_State::render() const
     render_godray_scene();
     sun_framebuffer.unbind();
 
-    render_scene();
-
-    //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     
-    vec3 tmp {projection * camera->get_camera_matrix().remove_translation() * sun.get_position()};
-    vec2 sun_screen_pos {(tmp.x + 1) / 2, (tmp.y + 1) / 2};
-    main_image.render(sun_screen_pos);
-    //sun_image.render();
+    main_image.render(lights.get_sun_screen_position(camera.get()));
 
-    //shadow_map_image.render();
+    shadow_map_image.render();
 }
 
 void Game_State::render_scene() const
@@ -77,7 +72,7 @@ void Game_State::render_scene() const
     skybox.render();
     skybox_shader.stop();
 
-    sun.render(*camera);
+    lights.render_sun(camera.get());
 
     //render normal
     shader.start();
@@ -85,8 +80,8 @@ void Game_State::render_scene() const
     shader.load_camera_matrix(camera->get_camera_matrix());
     shader.load_camera_position(camera->get_position());
     shader.load_lights(lights);
-
     shader.load_light_space_matrix(shadowmap.get_position());
+
     glActiveTexture(GL_TEXTURE5);
     glBindTexture(GL_TEXTURE_2D, shadowmap.get_texture_id());
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
@@ -113,7 +108,7 @@ void Game_State::render_godray_scene() const
     glClearColor(0, 0, 0, 1);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    sun.render(*camera);
+    lights.render_sun(camera.get());
 
     god_ray_shader.start();
     god_ray_shader.load_projection_matrix();

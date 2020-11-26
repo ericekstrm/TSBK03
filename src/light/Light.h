@@ -3,35 +3,7 @@
 #include "Vector.h"
 #include "model_util.h"
 #include "Shader.h"
-
-class Pos_Light;
-class Dir_Light;
-
-class Light_Container
-{
-public:
-    void add_pos_light(vec3 const& position,  vec3 const& color);
-    void add_dir_light(vec3 const& direction, vec3 const& color);
-
-    void render(mat4 const& proj_matrix, mat4 const& camera_matrix) const;
-
-    int get_number_of_lights() const {return pos_lights.size() + dir_lights.size(); }
-    
-    std::vector<vec3> get_pos_dir_data() const;
-    std::vector<vec3> get_color_data() const;
-    std::vector<vec3> get_attenuation_data() const;
-    std::vector<int> get_light_type_data() const;
-
-    std::vector<Pos_Light> get_pos_lights() const { return pos_lights; }
-    std::vector<Dir_Light> get_dir_lights() const { return dir_lights; }
-
-private:
-    std::vector<Pos_Light> pos_lights {};
-    std::vector<Dir_Light> dir_lights {};
-
-    Color_Point_Shader light_shader {};
-    model::Vao_Data pos_light_vao_data {model::load_obj_file("res/objects/light.obj")};
-};
+#include "Camera.h"
 
 class Pos_Light
 {
@@ -62,7 +34,61 @@ public:
     vec3 get_direction() const {return dir; }
     vec3 get_color() const { return color; }
 
-private:
+protected:
     vec3 dir;
     vec3 color {1, 1, 1};
+};
+
+class Sun : public Dir_Light
+{
+public:
+
+    Sun();
+    ~Sun();
+
+    void render(Camera const * camera) const;
+    void update(float delta_time);
+
+    vec3 get_position() const { return pos; }
+
+private:
+
+    model::Vao_Data billboard {model::get_billboard("res/images/sun.png")};
+    Billboard_Shader shader {};
+
+    vec3 pos {5, 0, 0};
+    mat4 rot {};
+};
+
+class Light_Container
+{
+public:
+    void add_pos_light(vec3 const& position,  vec3 const& color);
+    void add_dir_light(vec3 const& direction, vec3 const& color);
+
+    void render(mat4 const& proj_matrix, mat4 const& camera_matrix) const;
+    void render_sun(Camera const * camera) const;
+
+    void update(float delta_time);
+
+    vec2 get_sun_screen_position(Camera const * camera) const;
+
+    int get_number_of_lights() const {return pos_lights.size() + dir_lights.size() + 1; }
+    
+    std::vector<vec3> get_pos_dir_data() const;
+    std::vector<vec3> get_color_data() const;
+    std::vector<vec3> get_attenuation_data() const;
+    std::vector<int> get_light_type_data() const;
+
+    std::vector<Pos_Light> get_pos_lights() const { return pos_lights; }
+    std::vector<Dir_Light> get_dir_lights() const { return dir_lights; }
+
+private:
+    std::vector<Pos_Light> pos_lights {};
+    std::vector<Dir_Light> dir_lights {};
+    Sun sun {};
+
+    Color_Point_Shader light_shader {};
+
+    model::Vao_Data pos_light_vao_data {model::load_obj_file("res/objects/light.obj")};
 };

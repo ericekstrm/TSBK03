@@ -8,6 +8,8 @@ Main_Image::Main_Image(unsigned main_pass_id, unsigned god_ray_pass_id)
 
 void Main_Image::render(vec2 const& sun_pos) const
 {
+    glDisable(GL_DEPTH_TEST);
+    
     post_shader.start();
     post_shader.load_pos_matrix(position);
     post_shader.load_sun_pos(sun_pos);
@@ -30,4 +32,5 @@ void Main_Image::render(vec2 const& sun_pos) const
     glDrawElements(GL_TRIANGLES, indices_count, GL_UNSIGNED_INT, 0);
 
     post_shader.stop();
+    glEnable(GL_DEPTH_TEST);
 }

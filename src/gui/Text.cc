@@ -33,6 +33,7 @@ Text::Text(std::string const& text_string, vec2 const& position, Font const& fon
 
 void Text::render() const
 {
+    glDisable(GL_DEPTH_TEST);
     shader.start();
 
     shader.load_font_color(font.get_color());
@@ -44,4 +45,5 @@ void Text::render() const
     }
 
     shader.stop();
+    glEnable(GL_DEPTH_TEST);
 }

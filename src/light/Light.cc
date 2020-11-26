@@ -28,6 +28,21 @@ void Light_Container::render(mat4 const& proj_matrix, mat4 const& camera_matrix)
     light_shader.stop();
 }
 
+void Light_Container::render_sun(Camera const * camera) const
+{
+    sun.render(camera);
+}
+
+void Light_Container::update(float delta_time)
+{
+    sun.update(delta_time);
+}
+
+vec2 Light_Container::get_sun_screen_position(Camera const * camera) const
+{
+    vec3 tmp {projection * camera->get_camera_matrix().remove_translation() * sun.get_position()};
+    return {(tmp.x + 1) / 2, (tmp.y + 1) / 2};
+}
 
 std::vector<vec3> Light_Container::get_pos_dir_data() const
 {
@@ -40,6 +55,7 @@ std::vector<vec3> Light_Container::get_pos_dir_data() const
     {
         pos_dir_data.push_back(it->get_direction());
     }
+    pos_dir_data.push_back(sun.get_direction());
     return pos_dir_data;
 }
 
@@ -54,6 +70,7 @@ std::vector<vec3> Light_Container::get_color_data() const
     {
         color_data.push_back(it->get_color());
     }
+    color_data.push_back(sun.get_color());
     return color_data;
 }
 
@@ -68,6 +85,7 @@ std::vector<vec3> Light_Container::get_attenuation_data() const
     {
         attenuation_data.push_back(vec3{0, 0, 0});
     }
+    attenuation_data.push_back(vec3{0, 0, 0});
     return attenuation_data; 
 }
 
@@ -82,5 +100,51 @@ std::vector<int> Light_Container::get_light_type_data() const
     {
         light_type_data.push_back(1);
     }
+    light_type_data.push_back(1);
     return light_type_data; 
+}
+
+// =============
+// ===| Sun |===
+// =============
+
+Sun::Sun()
+    : Dir_Light(vec3{0,0,0}, vec3{0.494, 0.4155, 0.1255})
+{
+}
+
+Sun::~Sun()
+{
+
+}
+
+void Sun::render(Camera const * camera) const
+{
+    glDisable(GL_DEPTH_TEST);
+
+    shader.start();
+    shader.load_projection_matrix();
+    shader.load_camera_matrix(camera->get_camera_matrix().remove_translation());
+    shader.load_model_matrix(translation_matrix(pos) * rot); //TODO
+
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, billboard.material.texture_id);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    glBindVertexArray(billboard.vao);
+    glDrawElements(GL_TRIANGLES, billboard.indices_count, GL_UNSIGNED_INT, 0);
+
+    shader.stop();
+    glEnable(GL_DEPTH_TEST);
+}
+
+void Sun::update(float delta_time)
+{
+    pos = rotation_matrix(delta_time / 2, vec3{0,0,1}) * pos;
+
+    dir = vec3{-1,-1,0}; //(pos * -1).normalize();
+
+    // Rotate the sun so that it always faces its rotation center
+    rot = rotation_matrix(vec3{0,0,1}, dir);
 }

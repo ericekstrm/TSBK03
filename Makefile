@@ -9,7 +9,7 @@ libs_linux = -lGL -L/usr/local/lib -lglfw3 -lrt -lm -ldl -lpthread
 camera_o    = obj/Camera.o obj/Flying_Camera.o obj/Third_Person_Camera.o
 framebuffer = obj/Framebuffer.o obj/Main_Image.o
 gui_o       = obj/Font.o obj/Text.o obj/Word.o obj/Button.o obj/Image.o
-light_o     =  obj/Light.o obj/Shadowmap.o obj/Sun.o
+light_o     =  obj/Light.o obj/Shadowmap.o
 model_o     = obj/model_util.o obj/Model.o obj/Skybox.o obj/Terrain.o
 shader_o    = obj/Shader.o obj/Model_Shader.o obj/Model_Instance_Shader.o obj/Postprocess_Shader.o
 state_o     = obj/Game.o obj/Game_State.o obj/Menu_State.o
@@ -76,9 +76,6 @@ obj/Light.o: src/light/Light.cc src/light/Light.h
 	$(cc) -c -o $@ $< $(include_directory) $(libs)
 
 obj/Shadowmap.o: src/light/Shadowmap.cc src/light/Shadowmap.h
-	$(cc) -c -o $@ $< $(include_directory) $(libs)
-
-obj/Sun.o: src/light/Sun.cc src/light/Sun.h
 	$(cc) -c -o $@ $< $(include_directory) $(libs)
 
 # Model
