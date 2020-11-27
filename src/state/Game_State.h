@@ -41,9 +41,12 @@ private:
     void render_godray_scene() const;
 
     Model_Shader shader {};
-    Model_Shader shader2 {"shadow.vert", "shadow.frag"};
     std::vector<Model> models {};
     Terrain terrain {};
+    //std::vector<Tree> trees {};
+    Tree tree1 {vec3{0,0,0}};
+    Tree tree2 {vec3{10,0,0}};
+    Tree tree3 {vec3{0,0,10}};
 
     std::unique_ptr<Camera> camera;
 
@@ -57,11 +60,7 @@ private:
     Model_Shader god_ray_shader {"model.vert", "godray/darkpass_solid.frag"};
     Model_Instance_Shader god_ray_leaf_shader {"model_instance.vert", "godray/darkpass_leaf.frag"};
 
-    Tree tree1 {vec3{0,0,0}};
-
     Shadowmap shadowmap {lights.get_sun_position()};
-
-    Image shadow_map_image {vec2{0.5,0.5}, vec2{0.5,0.5}, shadowmap.get_texture_id()};
 
     Framebuffer main_fbo {};
     Main_Image main_image {main_fbo.get_texture_id(), sun_framebuffer.get_texture_id()};

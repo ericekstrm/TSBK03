@@ -23,6 +23,33 @@ Tree::~Tree()
     delete root;
 }
 
+/*Tree::Tree(Tree && rhs)
+{
+    *this = std::move(rhs);
+}
+
+Tree& Tree::operator=(Tree && rhs)
+{
+
+    //self assignment?
+
+    std::swap(root, rhs.root);
+
+    std::swap(data, rhs.data);
+    std::swap(vao_data, rhs.vao_data);
+    
+    std::swap(leaf_vao, rhs.leaf_vao);
+    std::swap(leaf_transforms, rhs.leaf_transforms);
+    std::swap(leaf_shader, rhs.leaf_shader);
+    std::swap(leaf_buffer, rhs.leaf_buffer);
+
+    light_res = rhs.light_res;
+    age = rhs.age;
+    position = rhs.position;
+    
+    return *this;
+}*/
+
 void Tree::render(Model_Shader const * shader) const
 {
     glBindVertexArray(vao_data.vao);
@@ -68,7 +95,7 @@ void Tree::render_leafs(Model_Instance_Shader const * shader) const
     glDrawElementsInstanced(GL_TRIANGLES, leaf_vao.indices_count, GL_UNSIGNED_INT, 0, leaf_transforms.size());
 }
 
-void Tree::update(float delta_time)
+void Tree::update(float)
 {
     grow();
     recreate_buffer_data();

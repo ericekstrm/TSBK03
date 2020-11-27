@@ -26,7 +26,7 @@ protected:
     int indices_count;
 
 private:
-    int texture_id;
+    unsigned texture_id;
 
     Image2D_Shader shader {};
 };

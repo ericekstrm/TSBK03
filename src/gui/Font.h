@@ -60,11 +60,11 @@ public:
     float x_advance;
 
     //opengl 
-    unsigned vao;
-    unsigned vb;
-    unsigned tb;
-    unsigned ib;
-    int indices_count;
+    unsigned vao {};
+    unsigned vb {};
+    unsigned tb {};
+    unsigned ib {};
+    int indices_count {};
 
     void create_mesh();
 };

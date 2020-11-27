@@ -17,9 +17,10 @@ Model::Model(std::string const& file_name, vec3 const & position)
     load_model(file_name);
 }
 
-Model::Model(std::vector<float> vertices, std::vector<float> normals, std::vector<float> texture_coords, std::vector<int> indices, objl::Material material)
+Model::Model(std::vector<float> vertices, std::vector<float> normals, std::vector<float> texture_coords, std::vector<int> indices, objl::Material)
 {
     model_data.load_buffer_data(vertices, normals, texture_coords, indices);
+    //TODO: model_data.material = (objl::)material;
 }
 
 Model::Model(model::Vao_Data const& vao_data)
@@ -30,7 +31,7 @@ Model::~Model()
 {
 }
 
-void Model::update(float delta_time)
+void Model::update(float)
 {
 }
 

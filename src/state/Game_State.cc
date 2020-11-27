@@ -13,7 +13,6 @@ Game_State::Game_State()
 
     camera = std::make_unique<Flying_Camera>(vec3{20, 30, 20});
 
-    //lights.add_dir_light(vec3{-1, -1, 0}, vec3{0.988 / 2, 0.831 / 2, 0.251 / 2});
     lights.add_pos_light(vec3{0, 5, 5}, vec3{1, 1, 1});
     lights.add_pos_light(vec3{50, 3, 0}, vec3{1, 0, 0});
 }
@@ -58,10 +57,7 @@ void Game_State::render() const
     sun_framebuffer.unbind();
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    
     main_image.render(lights.get_sun_screen_position(camera.get()));
-
-    shadow_map_image.render();
 }
 
 void Game_State::render_scene() const
@@ -74,8 +70,6 @@ void Game_State::render_scene() const
     skybox_shader.load_camera_matrix(camera->get_camera_matrix().remove_translation());
     skybox.render();
     skybox_shader.stop();
-
-    //lights.render_sun(camera.get());
 
     //render normal
     shader.start();
@@ -96,12 +90,16 @@ void Game_State::render_scene() const
     terrain.render(&shader);
 
     tree1.render(&shader);
+    tree2.render(&shader);
+    tree3.render(&shader);
 
     shader.stop();
 
     tree1.render_leafs(camera.get(), &lights);
+    tree2.render_leafs(camera.get(), &lights);
+    tree3.render_leafs(camera.get(), &lights);
 
-    lights.render(projection, camera->get_camera_matrix());
+    lights.render(camera->get_camera_matrix());
 }
 
 void Game_State::render_godray_scene() const
@@ -123,6 +121,8 @@ void Game_State::render_godray_scene() const
     terrain.render(&god_ray_shader);
 
     tree1.render(&shader);
+    tree2.render(&shader);
+    tree3.render(&shader);
 
     god_ray_shader.stop();
 
@@ -130,6 +130,8 @@ void Game_State::render_godray_scene() const
     god_ray_leaf_shader.load_projection_matrix();
     god_ray_leaf_shader.load_camera_matrix(camera->get_camera_matrix());
     tree1.render_leafs(&god_ray_leaf_shader);
+    tree2.render_leafs(&god_ray_leaf_shader);
+    tree3.render_leafs(&god_ray_leaf_shader);
     god_ray_leaf_shader.stop();
 }
 
@@ -144,6 +146,8 @@ void Game_State::check_input(GLFWwindow * window)
     if (glfwGetKey(window, GLFW_KEY_G) == GLFW_PRESS)
     {
         tree1.update(0);
+        tree2.update(0);
+        tree3.update(0);
     }
 
     camera->check_input(window);
@@ -165,7 +169,7 @@ void Game_State::activate(GLFWwindow* window)
     });*/
 }
 
-void Game_State::deactivate(GLFWwindow* window)
+void Game_State::deactivate(GLFWwindow*)
 {
 
 }

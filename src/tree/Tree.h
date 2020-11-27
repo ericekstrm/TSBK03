@@ -18,6 +18,11 @@ public:
     Tree(vec3 const& position = vec3{0, 0, 0});
     ~Tree();
 
+    Tree(Tree const&) = delete;
+    //Tree(Tree && rhs);
+    Tree& operator=(Tree const&) = delete;
+    //Tree& operator=(Tree && rhs);
+
     void render(Model_Shader const * shader) const;
     void render_leafs(Camera const * camera, Light_Container const * lights) const;
     void render_leafs(Model_Instance_Shader const * shader) const;

@@ -1,4 +1,4 @@
-cc = g++ -std=c++17 -Wall -g -D GLFW_INCLUDE_NONE -D GL_GLEXT_PROTOTYPES
+cc = g++ -std=c++17 -Wall -Wextra -Wpedantic -g -D GLFW_INCLUDE_NONE -D GL_GLEXT_PROTOTYPES
 include_directory_both = -I src/state -I src/gui -I src/tree -I src/model -I src/shader -I src/camera -I src/light -I src/util -I src/framebuffer
 include_directory_win = -I ./ -I lib -I lib/glad -I lib/glfw -I lib/glfw/include 
 include_directory_linux = -I ./ -I lib

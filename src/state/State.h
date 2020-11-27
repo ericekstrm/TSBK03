@@ -15,8 +15,8 @@ public:
     virtual std::string name() const = 0;
 
     // Runs right before and after switching state
-    virtual void activate(GLFWwindow* window) {}
-    virtual void deactivate(GLFWwindow* window) {}
+    virtual void activate(GLFWwindow*) {}
+    virtual void deactivate(GLFWwindow*) {}
 
     void set_state_flag(std::string const& new_state) { change_state = new_state; }
     std::string update_state()

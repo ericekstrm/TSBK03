@@ -152,9 +152,9 @@ void Terrain::heightmap_terrain(std::string const& file_name)
 
 void Terrain::generate_perlin_terrain()
 {
-    int num_octaves;    //number of noise functions of different density, more octaves means higher level of detail
-    float smoothness;   //between 0-1
-    int seed;           //for the random part, (same seed=same output)
+    //int num_octaves;    //number of noise functions of different density, more octaves means higher level of detail
+    //float smoothness;   //between 0-1
+    //int seed;           //for the random part, (same seed=same output)
 
 
     for (int i = -terrain_resolution / 2; i < terrain_resolution / 2; i++)
@@ -184,7 +184,7 @@ float Terrain::get_perlin_height(int x, int z) const
 
     for (int i = 0; i < 1; i++)
     {
-        float amplitude {pow((1 - smoothness), i)};
+        float amplitude {static_cast<float>(pow((1 - smoothness), i))};
 
         total_height += amplitude * generate_interpolated_height(x * frequency, z * frequency);
 

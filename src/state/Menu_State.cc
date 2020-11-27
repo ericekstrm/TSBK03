@@ -18,7 +18,7 @@ Menu_State::~Menu_State()
 {
 }
 
-void Menu_State::update(float delta_time)
+void Menu_State::update(float)
 {
 }
 
@@ -48,8 +48,8 @@ void Menu_State::check_input(GLFWwindow * window)
         xpos = xpos / window_width * 2 - 1;
         ypos = -(ypos / window_height * 2 - 1);
 
-        tree_growth_button.try_click(vec2{xpos, ypos});
-        quit_button.try_click(vec2{xpos, ypos});
+        tree_growth_button.try_click(vec2{static_cast<float>(xpos), static_cast<float>(ypos)});
+        quit_button.try_click(vec2{static_cast<float>(xpos), static_cast<float>(ypos)});
     }
 }
 
@@ -63,6 +63,6 @@ void Menu_State::activate(GLFWwindow* window)
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 }
 
-void Menu_State::deactivate(GLFWwindow* window)
+void Menu_State::deactivate(GLFWwindow*)
 {
 }

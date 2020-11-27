@@ -66,7 +66,7 @@ public:
     void add_pos_light(vec3 const& position,  vec3 const& color);
     void add_dir_light(vec3 const& direction, vec3 const& color);
 
-    void render(mat4 const& proj_matrix, mat4 const& camera_matrix) const;
+    void render(mat4 const& camera_matrix) const;
     void render_sun(Camera const * camera) const;
 
     void update(float delta_time);
