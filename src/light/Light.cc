@@ -125,7 +125,7 @@ void Sun::render(Camera const * camera) const
     shader.start();
     shader.load_projection_matrix();
     shader.load_camera_matrix(camera->get_camera_matrix().remove_translation());
-    shader.load_model_matrix(translation_matrix(pos) * rot); //TODO
+    shader.load_model_matrix(translation_matrix(pos) * rot * scale_matrix(5,5,5));
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, billboard.material.texture_id);
