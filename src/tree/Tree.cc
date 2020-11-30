@@ -23,7 +23,7 @@ Tree::~Tree()
     delete root;
 }
 
-/*Tree::Tree(Tree && rhs)
+Tree::Tree(Tree && rhs)
 {
     *this = std::move(rhs);
 }
@@ -48,7 +48,7 @@ Tree& Tree::operator=(Tree && rhs)
     position = rhs.position;
     
     return *this;
-}*/
+}
 
 void Tree::render(Model_Shader const * shader) const
 {
@@ -132,7 +132,7 @@ void Tree::grow()
 
 void Tree::create_buffer_data()
 {
-    root->create_buffer_data(data, position);
+    root->create_buffer_data(data, vec3{0,0,0});
     vao_data.load_buffer_data(data);
     vao_data.material.texture_id = model::load_texture("res/tree/oak_texture/Wood_Bark_006_basecolor.jpg");
     vao_data.material.kd = vec3{1,1,1};
@@ -172,7 +172,7 @@ void Tree::recreate_buffer_data()
     data.indices.clear();
     leaf_transforms.clear();
 
-    root->create_buffer_data(data, position);
+    root->create_buffer_data(data, vec3{0,0,0});
     vao_data.reload_buffer_data(data);
 
     root->create_leaf_buffer_data(leaf_transforms);

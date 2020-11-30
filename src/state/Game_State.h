@@ -39,14 +39,12 @@ private:
 
     void render_scene() const;
     void render_godray_scene() const;
+    void render_to_shadowmap() const;
 
     Model_Shader shader {};
     std::vector<Model> models {};
     Terrain terrain {};
-    //std::vector<Tree> trees {};
-    Tree tree1 {vec3{0,0,0}};
-    Tree tree2 {vec3{10,0,0}};
-    Tree tree3 {vec3{0,0,10}};
+    std::vector<Tree> trees {};
 
     std::unique_ptr<Camera> camera;
 

@@ -5,6 +5,8 @@
 
 #include "Light.h"
 
+#include "Model.h"
+
 #include "Shader.h"
 #include "Model_Shader.h"
 
@@ -26,7 +28,7 @@ TEST_CASE("Gui")
 TEST_CASE("Light")
 {
     Light_Container lights {};
-    REQUIRE(lights.get_number_of_lights() == 0);
+    REQUIRE(lights.get_number_of_lights() == 1);
 
     lights.add_dir_light(vec3{10,10,10}, vec3{0,1,1});
     lights.add_dir_light(vec3{15,10,10}, vec3{0,1,1});
@@ -34,12 +36,15 @@ TEST_CASE("Light")
     lights.add_dir_light(vec3{25,10,10}, vec3{0,1,1});
     lights.add_dir_light(vec3{30,10,10}, vec3{0,1,1});
 
-    REQUIRE(lights.get_number_of_lights() == 5);
+    REQUIRE(lights.get_number_of_lights() == 6);
 }
 
 TEST_CASE("Model")
 {
-    
+    SECTION("Copy")
+    {
+        Model m {"rock1"};
+    }
 }
 
 TEST_CASE("Shader")

@@ -8,10 +8,18 @@
 Game_State::Game_State()
 {
     Model m {"rock1"};
+    m.set_position(vec3{10,0,0});
     models.push_back(m);
     models.push_back(Model{"fence"});
 
     camera = std::make_unique<Flying_Camera>(vec3{20, 30, 20});
+
+    trees.push_back(Tree{vec3{10,0,10}});
+    trees.push_back(Tree{vec3{-20,0,-20}});
+    trees.push_back(Tree{vec3{20,0,20}});
+    //trees.push_back(Tree{vec3{40,0,40}});
+    //trees.push_back(Tree{vec3{20,0,-40}});
+    //trees.push_back(Tree{vec3{-40,0,20}});
 
     lights.add_pos_light(vec3{0, 5, 5}, vec3{1, 1, 1});
     lights.add_pos_light(vec3{50, 3, 0}, vec3{1, 0, 0});
@@ -35,18 +43,7 @@ void Game_State::update(float delta_time)
 
 void Game_State::render() const
 {
-    //render to shadowmap
-    shadowmap.activate();
-    glCullFace(GL_FRONT);
-    shadowmap.render(terrain);
-    for (auto it = models.begin(); it != models.end(); it++)
-    {
-        shadowmap.render(*it);
-    }
-    shadowmap.render(terrain);
-    shadowmap.render(tree1);
-    glCullFace(GL_BACK);
-    shadowmap.deactivate();
+    render_to_shadowmap();
 
     main_fbo.bind();
     render_scene();
@@ -89,15 +86,17 @@ void Game_State::render_scene() const
 
     terrain.render(&shader);
 
-    tree1.render(&shader);
-    tree2.render(&shader);
-    tree3.render(&shader);
+    for (auto it = trees.begin(); it != trees.end(); it++)
+    {
+        it->render(&shader);
+    }
 
     shader.stop();
 
-    tree1.render_leafs(camera.get(), &lights);
-    tree2.render_leafs(camera.get(), &lights);
-    tree3.render_leafs(camera.get(), &lights);
+    for (auto it = trees.begin(); it != trees.end(); it++)
+    {
+        it->render_leafs(camera.get(), &lights);
+    }
 
     lights.render(camera->get_camera_matrix());
 }
@@ -120,19 +119,41 @@ void Game_State::render_godray_scene() const
 
     terrain.render(&god_ray_shader);
 
-    tree1.render(&shader);
-    tree2.render(&shader);
-    tree3.render(&shader);
+    for (auto it = trees.begin(); it != trees.end(); it++)
+    {
+        it->render(&god_ray_shader);
+    }
 
     god_ray_shader.stop();
 
     god_ray_leaf_shader.start();
     god_ray_leaf_shader.load_projection_matrix();
     god_ray_leaf_shader.load_camera_matrix(camera->get_camera_matrix());
-    tree1.render_leafs(&god_ray_leaf_shader);
-    tree2.render_leafs(&god_ray_leaf_shader);
-    tree3.render_leafs(&god_ray_leaf_shader);
+    for (auto it = trees.begin(); it != trees.end(); it++)
+    {
+        it->render_leafs(&god_ray_leaf_shader);
+    }
     god_ray_leaf_shader.stop();
+}
+
+void Game_State::render_to_shadowmap() const
+{
+    shadowmap.activate();
+    glCullFace(GL_FRONT);
+    shadowmap.render(terrain);
+    for (auto it = models.begin(); it != models.end(); it++)
+    {
+        shadowmap.render(*it);
+    }
+    shadowmap.render(terrain);
+
+    for (auto it = trees.begin(); it != trees.end(); it++)
+    {
+        shadowmap.render(*it);
+    }
+    
+    glCullFace(GL_BACK);
+    shadowmap.deactivate();
 }
 
 void Game_State::check_input(GLFWwindow * window)
@@ -145,9 +166,10 @@ void Game_State::check_input(GLFWwindow * window)
 
     if (glfwGetKey(window, GLFW_KEY_G) == GLFW_PRESS)
     {
-        tree1.update(0);
-        tree2.update(0);
-        tree3.update(0);
+        for (auto it = trees.begin(); it != trees.end(); it++)
+        {
+            it->update(0);
+        }
     }
 
     camera->check_input(window);

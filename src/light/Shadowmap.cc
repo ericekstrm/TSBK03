@@ -56,6 +56,12 @@ void Shadowmap::render(Tree const& tree) const
     tree.render(&shader);
 
     shader.stop();
+
+    instance_shader.start();
+    instance_shader.load_light_space_matrix(light_position);
+
+    tree.render_leafs(&instance_shader);
+    instance_shader.stop();
 }
 
 void Shadowmap::render(Terrain const& terrain) const

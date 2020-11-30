@@ -34,4 +34,5 @@ private:
     vec3 light_position {};
 
     Model_Shader shader {"shadow.vert", "shadow.frag"};
+    Model_Instance_Shader instance_shader {"shadow_instance.vert", "shadow.frag"};
 };
