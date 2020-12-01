@@ -15,8 +15,8 @@ Game_State::Game_State()
     camera = std::make_unique<Flying_Camera>(vec3{20, 30, 20});
 
     trees.push_back(Tree{vec3{10,0,10}});
-    trees.push_back(Tree{vec3{-20,0,-20}});
-    trees.push_back(Tree{vec3{20,0,20}});
+    //trees.push_back(Tree{vec3{-20,0,-20}});
+    //trees.push_back(Tree{vec3{20,0,20}});
     //trees.push_back(Tree{vec3{40,0,40}});
     //trees.push_back(Tree{vec3{20,0,-40}});
     //trees.push_back(Tree{vec3{-40,0,20}});

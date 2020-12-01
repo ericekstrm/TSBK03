@@ -465,7 +465,14 @@ void Node::create_buffer_data(model::Buffer_Data & data, vec3 const& parent_posi
     data.normals.push_back(0);
 
     //upper surounding points
-    point = current_node_postion + perpendicular_dir * radius;
+    if (has_main_branch())
+    {
+        point = current_node_postion + perpendicular_dir * main_branch->radius;
+    } else
+    {
+        point = current_node_postion + perpendicular_dir * radius;
+    }
+    
     for (int i = 0; i < nr_points; i++)
     {
         point = rot_mat * (point - current_node_postion) + current_node_postion;
@@ -500,19 +507,19 @@ void Node::create_buffer_data(model::Buffer_Data & data, vec3 const& parent_posi
         data.indices.push_back(nr_previously_added_vertices + tr);
     }
 
-    //point that wraps around
-    float br = nr_points;
-    float bl = 1;
-    float tr = br + nr_points + 1;
-    float tl = bl + nr_points + 1;
+    // //point that wraps around
+    // float br = nr_points;
+    // float bl = 1;
+    // float tr = br + nr_points + 1;
+    // float tl = bl + nr_points + 1;
 
-    data.indices.push_back(nr_previously_added_vertices + bl);
-    data.indices.push_back(nr_previously_added_vertices + tr);
-    data.indices.push_back(nr_previously_added_vertices + tl);
+    // data.indices.push_back(nr_previously_added_vertices + bl);
+    // data.indices.push_back(nr_previously_added_vertices + tr);
+    // data.indices.push_back(nr_previously_added_vertices + tl);
 
-    data.indices.push_back(nr_previously_added_vertices + bl);
-    data.indices.push_back(nr_previously_added_vertices + br);
-    data.indices.push_back(nr_previously_added_vertices + tr);
+    // data.indices.push_back(nr_previously_added_vertices + bl);
+    // data.indices.push_back(nr_previously_added_vertices + br);
+    // data.indices.push_back(nr_previously_added_vertices + tr);
 
     // == Add Child Data == 
     if (lateral_branch != nullptr)

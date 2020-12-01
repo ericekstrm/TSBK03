@@ -7,16 +7,11 @@ layout(binding = 1) uniform sampler2D god_ray_pass;
 uniform vec2 sun_pos;
 
 // Godray parameters 
-const float exposure = 0.1f;
-const float decay = 0.97815;
-const float density  = 0.926;
-const float weight  = 0.587;
-const int NUM_SAMPLES = 120;
-// const float exposure = 0.1f;
-// const float decay = 0.96815;
-// const float density  = 0.926;
-// const float weight  = 0.587;
-// const int NUM_SAMPLES = 80;
+const float exposure = 0.05f;
+const float decay = 0.99;
+const float density  = 0.9;
+const float weight  = 0.6;
+const int NUM_SAMPLES = 170;
 
 out vec4 out_color;
 

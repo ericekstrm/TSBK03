@@ -233,6 +233,12 @@ void Color_Point_Shader::load_color(vec3 const& color) const
 // ===| Billboard Shader |===
 // ==========================
 
+Billboard_Shader::Billboard_Shader(std::string const& vertex_file, std::string const& fragment_file)
+    : Shader(vertex_file, fragment_file)
+{
+
+}
+
 Billboard_Shader::Billboard_Shader()
     : Shader {"billboard.vert", "billboard.frag"}
 {
@@ -246,4 +252,9 @@ Billboard_Shader::~Billboard_Shader()
 void Billboard_Shader::load_model_matrix(Matrix4 const& mat) const
 {
     load_mat4("model_matrix", mat);
+}
+
+void Billboard_Shader::load_color(vec3 const& color) const
+{
+    load_vec3("color", color);
 }

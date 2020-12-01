@@ -97,7 +97,9 @@ class Billboard_Shader : public Shader
 {
 public:
     Billboard_Shader();
+    Billboard_Shader(std::string const& vertex_file, std::string const& fragment_file);
     ~Billboard_Shader();
 
     void load_model_matrix(Matrix4 const& mat) const;
+    void load_color(vec3 const& color) const;
 };

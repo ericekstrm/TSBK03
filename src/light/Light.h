@@ -54,7 +54,7 @@ public:
 private:
 
     model::Vao_Data billboard {model::get_billboard("res/images/sun.png")};
-    Billboard_Shader shader {};
+    Billboard_Shader shader {"billboard.vert", "godray/sun.frag"};
 
     vec3 pos {40, 5, 0};
     mat4 rot {};
