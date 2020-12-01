@@ -427,9 +427,11 @@ void Node::create_buffer_data(model::Buffer_Data & data, vec3 const& parent_posi
     mat4 rot_mat {rotation_matrix(radians_per_point, direction)};
     vec3 perpendicular_dir = direction.cross(direction.y != 0 ? vec3{1,0,0} : vec3{0,1,0}).normalize();
     vec3 point = parent_position + perpendicular_dir * radius;
+    vec3 normal = perpendicular_dir;
     for (int i = 0; i < nr_points + 1; i++)
     {
         point = rot_mat * (point - parent_position) + parent_position;
+        normal = rot_mat * normal;
 
         data.vertices.push_back(point.x);
         data.vertices.push_back(point.y);
@@ -438,9 +440,9 @@ void Node::create_buffer_data(model::Buffer_Data & data, vec3 const& parent_posi
         data.texture_coords.push_back(i / static_cast<float>(nr_points));
         data.texture_coords.push_back(0);
 
-        data.normals.push_back(0);
-        data.normals.push_back(0);
-        data.normals.push_back(0);
+        data.normals.push_back(normal.x);
+        data.normals.push_back(normal.y);
+        data.normals.push_back(normal.z);
     }
 
     //upper midpoint
@@ -454,10 +456,12 @@ void Node::create_buffer_data(model::Buffer_Data & data, vec3 const& parent_posi
     {
         point = current_node_postion + perpendicular_dir * radius;
     }
+    normal = perpendicular_dir;
     
     for (int i = 0; i < nr_points + 1; i++)
     {
         point = rot_mat * (point - current_node_postion) + current_node_postion;
+        normal = rot_mat * normal;
 
         data.vertices.push_back(point.x);
         data.vertices.push_back(point.y);
@@ -465,10 +469,10 @@ void Node::create_buffer_data(model::Buffer_Data & data, vec3 const& parent_posi
 
         data.texture_coords.push_back(i / static_cast<float>(nr_points));
         data.texture_coords.push_back(1);
-
-        data.normals.push_back(0);
-        data.normals.push_back(0);
-        data.normals.push_back(0);
+        
+        data.normals.push_back(normal.x);
+        data.normals.push_back(normal.y);
+        data.normals.push_back(normal.z);
     }
 
     // == Add Indices Data ==

@@ -1,6 +1,6 @@
 # Blender v2.91.0 OBJ File: ''
 # www.blender.org
-mtllib leaf1.mtl
+mtllib leaf1_thick.mtl
 o Plane
 v -0.002239 -0.014413 -0.000362
 v 0.004910 0.022484 -0.010108
