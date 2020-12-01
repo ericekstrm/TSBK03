@@ -422,22 +422,12 @@ void Node::create_buffer_data(model::Buffer_Data & data, vec3 const& parent_posi
 
     // == Add Vertex and Texture Data ==
 
-    //lower midpoint
-    data.vertices.push_back(parent_position.x);
-    data.vertices.push_back(parent_position.y);
-    data.vertices.push_back(parent_position.z);
-    data.texture_coords.push_back(0);
-    data.texture_coords.push_back(0);
-    data.normals.push_back(0);
-    data.normals.push_back(0);
-    data.normals.push_back(0);
-
     //lower surounding points
     float radians_per_point = 360 / nr_points;
     mat4 rot_mat {rotation_matrix(radians_per_point, direction)};
     vec3 perpendicular_dir = direction.cross(direction.y != 0 ? vec3{1,0,0} : vec3{0,1,0}).normalize();
     vec3 point = parent_position + perpendicular_dir * radius;
-    for (int i = 0; i < nr_points; i++)
+    for (int i = 0; i < nr_points + 1; i++)
     {
         point = rot_mat * (point - parent_position) + parent_position;
 
@@ -455,14 +445,6 @@ void Node::create_buffer_data(model::Buffer_Data & data, vec3 const& parent_posi
 
     //upper midpoint
     vec3 current_node_postion {parent_position + direction * length};
-    data.vertices.push_back(current_node_postion.x);
-    data.vertices.push_back(current_node_postion.y);
-    data.vertices.push_back(current_node_postion.z);
-    data.texture_coords.push_back(0);
-    data.texture_coords.push_back(0);
-    data.normals.push_back(0);
-    data.normals.push_back(0);
-    data.normals.push_back(0);
 
     //upper surounding points
     if (has_main_branch())
@@ -473,7 +455,7 @@ void Node::create_buffer_data(model::Buffer_Data & data, vec3 const& parent_posi
         point = current_node_postion + perpendicular_dir * radius;
     }
     
-    for (int i = 0; i < nr_points; i++)
+    for (int i = 0; i < nr_points + 1; i++)
     {
         point = rot_mat * (point - current_node_postion) + current_node_postion;
 
@@ -491,9 +473,9 @@ void Node::create_buffer_data(model::Buffer_Data & data, vec3 const& parent_posi
 
     // == Add Indices Data ==
 
-    for (int i = 0; i < nr_points - 1; i++)
+    for (int i = 0; i < nr_points; i++)
     {
-        float br = i + 1; // first point is the middle
+        float br = i; // first point is the middle
         float bl = br + 1; // next in the circle
         float tr = br + nr_points + 1; // 1 lap later + the top middle point 
         float tl = tr + 1; // next in the circle
@@ -506,20 +488,6 @@ void Node::create_buffer_data(model::Buffer_Data & data, vec3 const& parent_posi
         data.indices.push_back(nr_previously_added_vertices + br);
         data.indices.push_back(nr_previously_added_vertices + tr);
     }
-
-    // //point that wraps around
-    // float br = nr_points;
-    // float bl = 1;
-    // float tr = br + nr_points + 1;
-    // float tl = bl + nr_points + 1;
-
-    // data.indices.push_back(nr_previously_added_vertices + bl);
-    // data.indices.push_back(nr_previously_added_vertices + tr);
-    // data.indices.push_back(nr_previously_added_vertices + tl);
-
-    // data.indices.push_back(nr_previously_added_vertices + bl);
-    // data.indices.push_back(nr_previously_added_vertices + br);
-    // data.indices.push_back(nr_previously_added_vertices + tr);
 
     // == Add Child Data == 
     if (lateral_branch != nullptr)
