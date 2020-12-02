@@ -2,6 +2,7 @@
 
 \setlength{\parindent}{0pt}
 \usepackage[round]{natbib}
+\usepackage{listings}
 
 \usepackage{graphicx}
 \graphicspath{ {./images/} }
@@ -27,6 +28,7 @@
   		 
   	\section{Background}
   		
+  		TODO!
   		
   		\subsection{Tree Structure and Terminology}
   			This section covers the terminology used when describing trees. The choice of language is based on the description of trees by \citep{barthelemy2007plant}. \\
@@ -59,18 +61,180 @@
   	\section{Method}
   		\subsection{Tree Generation}
   			
+  			TODO: vad är ett träd dååå
+  			
+  			\subsubsection*{Algorthim outline}
+  			
+  			The tree generation algorithm used the same basic steps as described by Wojciech Palubicki. \citep{palubicki2009self}
+  			
+  			\begin{enumerate}
+  				\item Calculate the amount of light resources available in the tree.
+  				\item Redistribute light resource and create new nodes.
+  				\item Update the branch radii for each node.
+  				\item Calculate which nodes are a liability, and shed these.
+  			\end{enumerate}
+  		
+  			\subsubsection*{Calculation of light resources}
+  			
+  				Light resources are collected from each node and saved in the base of the tree. Each node contribute with resources if it has either a lateral or apical bud. The size of the contribution is calculated according to Equation \ref{eq:lightres} as proposed by \cite{yi2018tree}. \textit{T} and \textit{$T_0$} is the current time and the creation time of the node respectively, \textit{l} is the light that hits the current node based on conditions around it and $\sigma$ is a controllable parameter.
+  				
+  				\begin{equation}
+  					\label{eq:lightres}
+  					Q = l^{{(T-T_0)}^\sigma}
+  				\end{equation}
+  				
+  				TODO: vilket sigma gör vad? \\
+  				
+  				Each node also has a cost associated with it. This is the amount of resources it takes to keep the node alive as discribed by \cite{mvech1996visual}. The equation for calculating this factor is shown in Equation \ref{eq:nodecost}. \textit{BM} and BE are control parameters. This factor is subtracted from the light resources in each node before the result is propagated to the supporting node. 
+  				
+  				\begin{equation}
+  					\label{eq:nodecost}
+  					BM * {\frac{radius}{default\_radius}}^{BE}
+  				\end{equation}
+  				
+  			\subsubsection*{Shadow propogation for node light calculation}
+  				
+  				The variable \textit{l} in equation \ref{eq:lightres} is the amount if light that reach a node and is calculated by considering the nodes already around it. This is done by dividing the space into \textit{voxels} of fixed size. Each voxel saves a float value describing how shadowed the point is. When a new node is added to the tree, it also updated the voxels around it. Specifically, a pyramid of voxels with the voxel containing the new node are updated according to Equation \ref{eq:shadowprop}. \textit{a} and \textit{b} are controllable parameters and \textit{q} is the number of voxels down from the top of the pyramid. \citep{palubicki2009self}
+  				
+  				\begin{equation}
+  					\label{eq:shadowprop}
+  					s = s_{prev} + a*b^{-q}
+  				\end{equation}
+  			
+  			\subsubsection*{Redistribution of light resources}
+  				An adapted version of the Borchert-Honda (BH) model \citep{borchert1984control} was used to redistribute resources to each node. The BH model was originally developed to control distribution of growth-inducing resources. \cite{palubicki2009self} adapted the BH model by using the collected light resources to guide the redistribution of resources. Equation \ref{eq:vm} and \ref{eq:vl} show how the light resources are distributed between the main branch and the lateral branch  based on the amount of resources collected by each node. $Q_m$ and $Q_l$ is the amount of light resources collected by each of the branches and $\lambda$ is a parameter that can be set by the user.
+  			
+	  			\begin{equation}
+	  				\label{eq:vm}
+	  				v_m = v\frac{\lambda Q_m}{\lambda Q_m + (1 - \lambda)Q_l}
+	  			\end{equation}
+	  			
+	  			\begin{equation}
+	  				\label{eq:vl}
+	  				v_l = v\frac{(1 - \lambda) Q_l}{\lambda Q_m + (1 - \lambda)Q_l}
+	  			\end{equation}
+	  			
+	  			The number of new metamers created from a bud is the integer part of the amount of resources that reach the bud. \cite{palubicki2009self} \\
+	  			
+	  			TODO: vilket lambda gör vad?
+	  			
+	  			TODO: optimal growth direction
+	  			
+	  		\subsubsection*{Update branch radii}
+	  			
+	  		\subsubsection*{Calculate shedding branches}
+  			
   		\subsection{Volumetric Light Scattering}
   		
-  		\subsection{Shadow Mapping}
+  			Volumetric light scattering was done as a post-process shader using the method described by Kenny Mitchell \citep{mitchell}. \\
   			
+  			The post-process shader combines the normal render pass with a render pass where the sun is rendered as a single color, and all other objects are then rendered black. This gives an image with color only where the sun is visible from the cameras perspective. \\
+  			
+  			The post-process shader sums samples of the volumetric light scattering pass from the current fragment point to the position of the sun. The samples are exponentially weighted where the samples close to the sun are weighted higher. The equation used for weighting samples is shows in Equation \ref{eq:godray}. 
+  			
+  			\begin{equation}
+  				\label{eq:godray}
+  				L = exposure * \sum_{i = 0}^{n} decay^i * weight * \frac{sample}{n}
+  			\end{equation}
+  			
+  			\textit{n} is the number of samples between the fragment position and the sun position, \textit{decay} is the exponentially decaying factor that dissipated the contribution from each sample. The \textit{exposure} and \textit{weight} factors are simply scale factors that increase or decrease the final light. \\
+  			
+  			The final factor \textit{L} for each pixel is then added to the final color of the normal pass for that pixel. The shader code used for volumetric light scattering can be found in appendix \ref{appendix:godray}.
+  		
+  		\subsection{Shadow Mapping}
+  			Shadow mapping is a popular technique for generating good shadows in a scene. It works in two steps; first render the scene from the perspective of the light source, then render the scene as normal using the first render to calculate which fragments are in shadow. \citep{ragnemalm2015so} \\
+  			
+  			The purpose of the first render pass is to generate a map of depth values for each point that the camera can see. These depth values are then used in the second pass to calculate shadows. If the distance to the camera from the current fragment is greater then the depth value saved in the depth map, there is another fragment somewhere in between the fragment and the sun and the fragment is therefor in shadow. \citep{ragnemalm2015so}
+  			
+  			\subsubsection*{Implementation}
+  				
+  				A framebuffer with only a depth attachment was used to generate the depth map. Since the only part of interest is the depth values, the used fragment shader can be empty and just write the depth values to the z-buffer. The vertex shader is the same as would be used in a normal scene. \\
+  				
+  				The implementation for this project only create shadows from directional light sources. Because of this, a orthographic projection matrix was used. This gives a more realistic result by pretending that all light hits the scene as parallel lines. The position of the light source still have to de specified since it is needed to calculate the distance from a fragment. \\
+  				
+  				This method will generate a number of different artifacts that have to be addressed. The first and most obvious is "shadow acne". This is caused by the fact that the resolution of the shadow map is limited and there is more than one fragment on a surface that sample from the same point in the shadow map. Even though all the fragment on a surface should be lit, only the fragments that happen to have its distance saved in the shadow map are actually lit. This can be solved by adding a small offset when comparing the distance with the depth map. \\
+  				
+  				The next problem that has to be handled is the fragments that are outside the depth map. here we simply set the texture as "clamp to edge" and set the border of the depth texture to 1. The same problem arise when a fragment is beyond the outer limit of the projection matrix. The solution is to set the shadow to 0 if the distance is greater than the furthest allowed distance.
+  				
+  				For a full implementation of the shader code used for shadow mapping, see appendix \ref{appendix:shadow}.
+  				
   	\section{Result}
   		
   	\section{Discussion}
+  	
+  	
+  	
+  	
+  	
+  	
+  	
+  	
+  		shadow map - resolution
   		
   	\subsection{Improvements}
 
 	\newpage
 	\bibliographystyle{plainnat}
 	\bibliography{ref}{}
-  		
+	
+	\newpage
+	\appendix
+	\section{Shader code for volumetric light scattering}
+	\label{appendix:godray}
+		
+	\begin{lstlisting}[basicstyle=\ttfamily\footnotesize, tabsize=4]
+	vec2 delta_tex_coord = vec2(out_tex_coords - sun_pos);
+	delta_tex_coord *= 1.0 / float(NUM_SAMPLES) * density;
+	
+	vec2 tex_coord = out_tex_coords;
+	
+	float illumination_decay = 1.0;
+	vec4 godray_color = vec4(0,0,0,0);
+	
+	for(int i = 0; i < NUM_SAMPLES; i++)
+	{
+		tex_coord -= delta_tex_coord;
+		
+		vec4 s = texture(god_ray_pass, tex_coord);
+		
+		s *= illumination_decay * weight;
+		
+		godray_color += s;
+		
+		// Update exponential decay factor.
+		illumination_decay *= decay;
+	}
+	
+	return godray_color * exposure;
+	\end{lstlisting}
+		
+	\section{Shader code for shadow map calculation}
+	\label{appendix:shadow}
+		
+	\begin{lstlisting}[basicstyle=\ttfamily\footnotesize, tabsize=4]
+	vec3 proj_coords = frag_pos_light_space.xyz / frag_pos_light_space.w;
+	proj_coords = proj_coords * 0.5 + 0.5;
+
+	float current_depth = proj_coords.z;
+	
+	float bias = max(0.005 * (1.0 - dot(normal, light_dir)), 0.00005);
+	float shadow = 0.0;
+	vec2 texel_size = 1.0 / textureSize(shadow_map, 0);
+	for(int x = -1; x <= 1; ++x)
+	{
+		for(int y = -1; y <= 1; ++y)
+		{
+			float depth = texture(shadow_map, proj_coords.xy + vec2(x, y) * texel_size).r; 
+			shadow += current_depth - bias > depth ? 1.0 : 0.0;        
+		}
+	}
+	shadow /= 9.0;
+	
+	if(proj_coords.z > 1.0)
+		shadow = 0.0;
+	
+	return shadow;
+		
+	\end{lstlisting}
+  	
 \end{document}

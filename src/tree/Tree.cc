@@ -127,7 +127,7 @@ void Tree::grow()
     calc_light_res(age);
     root->calc_borchert_honda(light_res, age);
     root->calc_branch_radii();
-    root->calc_shedding_branches();
+    root->calc_shedding_branches(); //switch place with branch radius
 }
 
 void Tree::create_buffer_data()

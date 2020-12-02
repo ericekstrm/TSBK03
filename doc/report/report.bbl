@@ -1,4 +1,4 @@
-\begin{thebibliography}{3}
+\begin{thebibliography}{7}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{\texttt{#1}}
 \expandafter\ifx\csname urlstyle\endcsname\relax
@@ -11,16 +11,41 @@ Daniel Barth{\'e}l{\'e}my and Yves Caraglio.
   to plant form, structure and ontogeny.
 \newblock \emph{Annals of botany}, 99\penalty0 (3):\penalty0 375--407, 2007.
 
+\bibitem[Borchert and Honda(1984)]{borchert1984control}
+Rolf Borchert and Hisao Honda.
+\newblock Control of development in the bifurcating branch system of tabebuia
+  rosea: a computer simulation.
+\newblock \emph{Botanical Gazette}, 145\penalty0 (2):\penalty0 184--195, 1984.
+
 \bibitem[M{\v{e}}ch and Prusinkiewicz(1996)]{mvech1996visual}
 Radom{\'\i}r M{\v{e}}ch and Przemyslaw Prusinkiewicz.
 \newblock Visual models of plants interacting with their environment.
 \newblock In \emph{Proceedings of the 23rd annual conference on Computer
   graphics and interactive techniques}, pages 397--410, 1996.
 
-\bibitem[Mitchell()]{mitchell}
+\bibitem[Mitchell(2007)]{mitchell}
 Kenny Mitchell.
-\newblock Chapter 13. volumetric light scattering as a post-process.
+\newblock Chapter 13. volumetric light scattering as a post-process, 2007.
 \newblock
   https://developer.nvidia.com/gpugems/gpugems3/part-ii-light-and-shadows/chapter-13-volumetric-light-scattering-post-process.
+
+\bibitem[Palubicki et~al.(2009)Palubicki, Horel, Longay, Runions, Lane,
+  M{\v{e}}ch, and Prusinkiewicz]{palubicki2009self}
+Wojciech Palubicki, Kipp Horel, Steven Longay, Adam Runions, Brendan Lane,
+  Radom{\'\i}r M{\v{e}}ch, and Przemyslaw Prusinkiewicz.
+\newblock Self-organizing tree models for image synthesis.
+\newblock \emph{ACM Transactions on Graphics (TOG)}, 28\penalty0 (3):\penalty0
+  1--10, 2009.
+
+\bibitem[Ragnemalm(2015)]{ragnemalm2015so}
+Ingemar Ragnemalm.
+\newblock \emph{So How Can We Make Them Scream}.
+\newblock Bokakademin, 2015.
+
+\bibitem[Yi et~al.(2018)Yi, Li, Guo, Deussen, and Zhang]{yi2018tree}
+Lei Yi, Hongjun Li, Jianwei Guo, Oliver Deussen, and Xiaopeng Zhang.
+\newblock Tree growth modelling constrained by growth equations.
+\newblock In \emph{Computer Graphics Forum}, volume~37, pages 239--253. Wiley
+  Online Library, 2018.
 
 \end{thebibliography}

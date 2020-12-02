@@ -22,7 +22,6 @@ void main()
     out_color = texture(main_pass, out_tex_coords) + create_godrays();
 }
 
-//https://developer.nvidia.com/gpugems/gpugems3/part-ii-light-and-shadows/chapter-13-volumetric-light-scattering-post-process
 vec4 create_godrays()
 {
     // Calculate vector from pixel to light source in screen space.    

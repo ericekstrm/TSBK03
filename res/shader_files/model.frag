@@ -110,50 +110,9 @@ vec3 calc_light(vec3 normal, vec3 light_dir, vec3 light_color, vec3 view_dir)
 
 float calc_shadow()
 {
-    /*float offset = 0.0004;
-
-    // perform perspective divide
-    vec3 proj_coords = fs_in.fragment_position_light_space.xyz / fs_in.fragment_position_light_space.w;
-
-    // transform to [0,1] range
-    proj_coords = proj_coords * 0.5 + 0.5;
-
-    // get closest depth value from light's perspective (using [0,1] range fragPosLight as coords)
-    float closest_depth = texture(shadow_map, proj_coords.xy).r; 
-
-    // get depth of current fragment from light's perspective
-    float current_depth = proj_coords.z;
-
-	vec3 normal = normalize(fs_in.normal);
-	vec3 light_dir = -normalize(light_pos_dir[3]);
-	float bias = max(0.05 * (1.0 - dot(normal, light_dir)), 0.0005);
-
-	//float shadow = current_depth - bias > closest_depth  ? 1.0 : 0.0;
-
-
-    // check whether current frag pos is in shadow
-    float shadow = 0.0;
-    vec2 texel_size = 1.0 / textureSize(shadow_map, 0);
-    for(int x = -1; x <= 1; ++x)
-    {
-        for(int y = -1; y <= 1; ++y)
-        {
-            float pcf_depth = texture(shadow_map, proj_coords.xy + vec2(x, y) * texel_size).r; 
-            shadow += current_depth - offset > pcf_depth ? 1.0 : 0.0;        
-        }
-    }
-    shadow /= 9.0;
-
-	if(proj_coords.z > 1.0)
-        shadow = 0.0;
-
-    return shadow;*/
-
-
 	vec3 normal = normalize(fs_in.normal);
 	vec3 light_dir = -normalize(light_pos_dir[3]);
 	float bias = max(0.005 * (1.0 - dot(normal, light_dir)), 0.00005);
-
 
 	// perform perspective divide
     vec3 proj_coords = fs_in.fragment_position_light_space.xyz / fs_in.fragment_position_light_space.w;

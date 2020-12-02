@@ -4,8 +4,10 @@
 \contentsline {subsection}{\numberline {2.2}Volumetric Light Scattering}{1}%
 \contentsline {section}{\numberline {3}Method}{2}%
 \contentsline {subsection}{\numberline {3.1}Tree Generation}{2}%
-\contentsline {subsection}{\numberline {3.2}Volumetric Light Scattering}{2}%
-\contentsline {subsection}{\numberline {3.3}Shadow Mapping}{2}%
-\contentsline {section}{\numberline {4}Result}{2}%
-\contentsline {section}{\numberline {5}Discussion}{2}%
-\contentsline {subsection}{\numberline {5.1}Improvements}{2}%
+\contentsline {subsection}{\numberline {3.2}Volumetric Light Scattering}{4}%
+\contentsline {subsection}{\numberline {3.3}Shadow Mapping}{4}%
+\contentsline {section}{\numberline {4}Result}{5}%
+\contentsline {section}{\numberline {5}Discussion}{5}%
+\contentsline {subsection}{\numberline {5.1}Improvements}{5}%
+\contentsline {section}{\numberline {A}Shader code for volumetric light scattering}{7}%
+\contentsline {section}{\numberline {B}Shader code for shadow map calculation}{7}%
