@@ -3,6 +3,7 @@
 #include <string>
 #include <iostream>
 #include <vector>
+#include <map>
 
 #ifdef WIN32
     #include "glad/glad.h"
@@ -48,7 +49,9 @@ namespace model
         Material material {};
     };
 
+    extern std::map<std::string, unsigned> loaded_textures;
     unsigned int load_texture(std::string file_name, bool flip_y = true);
+    unsigned int load_texture_from_file(std::string file_name, bool flip_y = true);
 
     /**
      *  Loads a model from file into a vao by the name of the folder in "res/objects"

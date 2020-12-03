@@ -83,7 +83,24 @@ void model::Vao_Data::reload_buffer_data(Buffer_Data const& data)
     reload_buffer_data(data.vertices, data.normals, data.texture_coords, data.indices);
 }
 
+std::map<std::string, unsigned> model::loaded_textures = {};
+
 unsigned int model::load_texture(std::string file_name, bool flip_y)
+{
+    auto it {loaded_textures.find(file_name)};
+    if ( it != loaded_textures.end())
+    {
+        return it->second;
+    } else
+    {
+        unsigned texture_id {load_texture_from_file(file_name, flip_y)};
+        loaded_textures[file_name] = texture_id;
+        return texture_id;
+    }
+    
+}
+
+unsigned int model::load_texture_from_file(std::string file_name, bool flip_y)
 {
     unsigned int tex_id {0};
 
@@ -117,6 +134,8 @@ unsigned int model::load_texture(std::string file_name, bool flip_y)
 
     return tex_id;
 }
+
+
 
 model::Vao_Data model::load_model_from_file(std::string const& file_name)
 {

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Model.h"
+#include "settings.h"
 
 class Heightmap
 {
@@ -18,19 +19,10 @@ private:
 class Terrain : public Model
 {
 public:
-    Terrain();
+    Terrain(vec2 const& pos = {0,0});
     ~Terrain();
 
 private:
-
-    // Terrain_size is the size that the texture "tile" will take up in the world.
-    float terrain_size = 128;
-    
-    // Terrain_resolution is the number of vertices in each dimension of the texture "tile".
-    // Also then the size in each dimension of the heightmap image file.
-    int terrain_resolution = 512;
-
-    float max_height {20};
 
     void generate_terrain();
     void set_indices();

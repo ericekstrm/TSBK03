@@ -10,11 +10,11 @@ camera_o    = obj/Camera.o obj/Flying_Camera.o obj/Third_Person_Camera.o
 framebuffer = obj/Framebuffer.o obj/Main_Image.o
 gui_o       = obj/Font.o obj/Text.o obj/Word.o obj/Button.o obj/Image.o
 light_o     =  obj/Light.o obj/Shadowmap.o
-model_o     = obj/model_util.o obj/Model.o obj/Skybox.o obj/Terrain.o
+model_o     = obj/model_util.o obj/Model.o obj/Skybox.o obj/Terrain.o obj/Terrain_Container.o
 shader_o    = obj/Shader.o obj/Model_Shader.o obj/Model_Instance_Shader.o obj/Postprocess_Shader.o
 state_o     = obj/Game.o obj/Game_State.o obj/Menu_State.o
 tree_o      = obj/Tree.o obj/Tree_Shadow.o
-util_o      = obj/Matrix.o obj/Vector.o obj/stb_image.o
+util_o      = obj/Matrix.o obj/Vector.o obj/stb_image.o obj/settings.o
 glad_o      = obj/glad.o
 
 ifeq ($(os), Windows_NT)
@@ -92,6 +92,9 @@ obj/Skybox.o: src/model/Skybox.cc src/model/Skybox.h
 obj/Terrain.o: src/model/Terrain.cc src/model/Terrain.h
 	$(cc) -c -o $@ $< $(include_directory) $(libs)
 
+obj/Terrain_Container.o: src/model/Terrain_Container.cc src/model/Terrain_Container.h
+	$(cc) -c -o $@ $< $(include_directory) $(libs)
+
 # Shader
 
 obj/Shader.o: src/shader/Shader.cc src/shader/Shader.h
@@ -131,6 +134,9 @@ obj/Matrix.o: src/util/Matrix.cc src/util/Matrix.h
 	$(cc) -c -o $@ $< $(include_directory) $(libs)
 
 obj/Vector.o: src/util/Vector.cc src/util/Vector.h
+	$(cc) -c -o $@ $< $(include_directory) $(libs)
+
+obj/settings.o: src/util/settings.cc src/util/settings.h
 	$(cc) -c -o $@ $< $(include_directory) $(libs)
 
 # Libs

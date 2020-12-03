@@ -27,6 +27,7 @@ void Camera::check_input(GLFWwindow* window)
     velocity = vec3 {0, 0, 0};
     vec3 fly_dir {direction};
     fly_dir.y = 0;
+    fly_dir.normalize();
     vec3 bi_dir {up_vector.cross(fly_dir)};
 
     if (glfwGetKey(window, GLFW_KEY_I) == GLFW_PRESS)
@@ -45,7 +46,23 @@ void Camera::check_input(GLFWwindow* window)
     {
         velocity -= bi_dir * speed;
     }
+    if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+    {
+        velocity += up_vector * speed;
+    }
+    if (glfwGetKey(window, GLFW_KEY_H) == GLFW_PRESS)
+    {
+        velocity -= up_vector * speed;
+    }
 
+    if (glfwGetKey(window, GLFW_KEY_KP_ADD) == GLFW_PRESS)
+    {
+        speed *= 1.01;
+    }
+    if (glfwGetKey(window, GLFW_KEY_KP_SUBTRACT) == GLFW_PRESS)
+    {
+        speed /= 1.01;
+    }
 
     double xpos, ypos;
     glfwGetCursorPos(window, &xpos, &ypos);

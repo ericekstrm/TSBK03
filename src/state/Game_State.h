@@ -11,6 +11,7 @@
 #include "Shader.h"
 #include "Camera.h"
 #include "Terrain.h"
+#include "Terrain_Container.h"
 #include "Skybox.h"
 #include "Light.h"
 #include "Tree.h"
@@ -43,7 +44,8 @@ private:
 
     Model_Shader shader {};
     std::vector<Model> models {};
-    Terrain terrain {};
+    //Terrain terrain {};
+    Terrain_Container terrain {};
     std::vector<Tree> trees {};
 
     std::unique_ptr<Camera> camera;

@@ -64,8 +64,9 @@ vec3 Heightmap::get_normal(int x, int z) const
 // ===| Terrain |===
 // =================
 
-Terrain::Terrain()
+Terrain::Terrain(vec2 const& pos)
 {
+    position = vec3{pos.x, 0, pos.y};
     generate_terrain();
     model_data.load_buffer_data(vertices, normals, texture_coords, indices);
     model_data.material.texture_id = model::load_texture("res/terrain/textures/grass.jpg");
@@ -86,13 +87,14 @@ void Terrain::generate_terrain()
 
 void Terrain::set_indices()
 {
-    for (int i = 0; i < terrain_resolution - 1; i++)
+    
+    for (int i = 0; i < terrain_resolution; i++)
     {
-        for (int j = 0; j < terrain_resolution - 1; j++)
+        for (int j = 0; j < terrain_resolution; j++)
         {
-            int topLeft = i * (terrain_resolution) +j;
+            int topLeft = i * (terrain_resolution + 1) + j;
             int topRight = topLeft + 1;
-            int bottomLeft = (i + 1) * (terrain_resolution) +j;
+            int bottomLeft = (i + 1) * (terrain_resolution + 1) + j;
             int bottomRight = bottomLeft + 1;
 
             indices.push_back(topRight);
@@ -107,21 +109,21 @@ void Terrain::set_indices()
 
 void Terrain::flat_terrain()
 {
-    for (int i = -terrain_resolution / 2; i < terrain_resolution / 2; i++)
+    for (int i = -terrain_resolution / 2.0; i < terrain_resolution / 2.0 + 1; i++)
     {
-        for (int j = -terrain_resolution / 2; j < terrain_resolution / 2; j++)
+        for (int j = -terrain_resolution / 2.0; j < terrain_resolution / 2.0 + 1; j++)
         {
             float r = 0;
-            vertices.push_back(terrain_size / terrain_resolution * i);
+            vertices.push_back(terrain_size / static_cast<float>(terrain_resolution) * i);
             vertices.push_back(r);
-            vertices.push_back(terrain_size / terrain_resolution * j);
+            vertices.push_back(terrain_size / static_cast<float>(terrain_resolution) * j);
 
             normals.push_back(0);
             normals.push_back(1);
             normals.push_back(0);
 
-            texture_coords.push_back(static_cast<float>(i) / terrain_resolution * 20);
-            texture_coords.push_back(static_cast<float>(j) / terrain_resolution * 20);
+            texture_coords.push_back(static_cast<float>(i) / static_cast<float>(terrain_resolution) * 20);
+            texture_coords.push_back(static_cast<float>(j) / static_cast<float>(terrain_resolution) * 20);
         }
     }
 }
@@ -130,22 +132,22 @@ void Terrain::heightmap_terrain(std::string const& file_name)
 {
     Heightmap hm {file_name};
 
-    for (int i = -terrain_resolution / 2; i < terrain_resolution / 2; i++)
+    for (int i = -terrain_resolution / 2.0; i < terrain_resolution / 2.0; i++)
     {
-        for (int j = -terrain_resolution / 2; j < terrain_resolution / 2; j++)
+        for (int j = -terrain_resolution / 2.0; j < terrain_resolution / 2.0; j++)
         {
             float r = hm.get_height(i, j) / 256;
-            vertices.push_back(terrain_size / terrain_resolution * i);
-            vertices.push_back((r - 0.5) * max_height);
-            vertices.push_back(terrain_size / terrain_resolution * j);
+            vertices.push_back(terrain_size / static_cast<float>(terrain_resolution) * i);
+            vertices.push_back((r - 0.5) * terrain_max_height);
+            vertices.push_back(terrain_size / static_cast<float>(terrain_resolution) * j);
 
             vec3 normal {hm.get_normal(i, j)}; 
             normals.push_back(normal.x);
             normals.push_back(normal.y);
             normals.push_back(normal.z);
 
-            texture_coords.push_back(static_cast<float>(i) / terrain_resolution * 20);
-            texture_coords.push_back(static_cast<float>(j) / terrain_resolution * 20);
+            texture_coords.push_back(static_cast<float>(i) / static_cast<float>(terrain_resolution) * 20);
+            texture_coords.push_back(static_cast<float>(j) / static_cast<float>(terrain_resolution) * 20);
         }
     }
 }
@@ -157,21 +159,21 @@ void Terrain::generate_perlin_terrain()
     //int seed;           //for the random part, (same seed=same output)
 
 
-    for (int i = -terrain_resolution / 2; i < terrain_resolution / 2; i++)
+    for (int i = -terrain_resolution / 2.0; i < terrain_resolution / 2.0; i++)
     {
-        for (int j = -terrain_resolution / 2; j < terrain_resolution / 2; j++)
+        for (int j = -terrain_resolution / 2.0; j < terrain_resolution / 2.0; j++)
         {
             float height {get_perlin_height(i, j)};
-            vertices.push_back(terrain_size / terrain_resolution * i);
+            vertices.push_back(terrain_size / static_cast<float>(terrain_resolution) * i);
             vertices.push_back(height);
-            vertices.push_back(terrain_size / terrain_resolution * j);
+            vertices.push_back(terrain_size / static_cast<float>(terrain_resolution) * j);
 
             normals.push_back(0);
             normals.push_back(1);
             normals.push_back(0);
 
-            texture_coords.push_back(static_cast<float>(i) / terrain_resolution * 20);
-            texture_coords.push_back(static_cast<float>(j) / terrain_resolution * 20);
+            texture_coords.push_back(static_cast<float>(i) / static_cast<float>(terrain_resolution) * 20);
+            texture_coords.push_back(static_cast<float>(j) / static_cast<float>(terrain_resolution) * 20);
         }
     }
 }

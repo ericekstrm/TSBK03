@@ -12,7 +12,7 @@ Game_State::Game_State()
     models.push_back(m);
     models.push_back(Model{"fence"});
 
-    camera = std::make_unique<Flying_Camera>(vec3{20, 30, 20});
+    camera = std::make_unique<Camera>(vec3{20, 30, 20});
 
     trees.push_back(Tree{vec3{10,0,10}});
     //trees.push_back(Tree{vec3{-20,0,-20}});
@@ -39,6 +39,8 @@ void Game_State::update(float delta_time)
 
     lights.update(delta_time);
     shadowmap.set_light_position(lights.get_sun_position());
+
+    terrain.update(camera->get_position());
 }
 
 void Game_State::render() const
@@ -140,12 +142,12 @@ void Game_State::render_to_shadowmap() const
 {
     shadowmap.activate();
     glCullFace(GL_FRONT);
-    shadowmap.render(terrain);
+    //shadowmap.render(terrain);
     for (auto it = models.begin(); it != models.end(); it++)
     {
         shadowmap.render(*it);
     }
-    shadowmap.render(terrain);
+    //shadowmap.render(terrain);
 
     for (auto it = trees.begin(); it != trees.end(); it++)
     {

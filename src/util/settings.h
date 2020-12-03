@@ -3,11 +3,17 @@
 #include "Matrix.h"
 
 // window properties
-static const int window_width {720};
-static const int window_height {720};
+
+extern int window_width;
+extern int window_height;
 
 // OpenGL projection matrix
-static const mat4 projection {fov_projection_matrix(45.0f, 1.0f, 0.1f, 100.0f)};
+extern mat4 projection;
 
-static const int shadow_box_size {50};
-static const mat4 light_projection {ortho_projection_matrix(-shadow_box_size, shadow_box_size, -shadow_box_size, shadow_box_size, 1.0f, 10000.0f)};
+extern int shadow_box_size;
+extern mat4 light_projection;
+
+// Terrain
+extern int terrain_size;            // Size that the texture "tile" will take up in the world.
+extern int terrain_resolution;      // Number of vertices in each dimension of the texture "tile".
+extern float terrain_max_height;
