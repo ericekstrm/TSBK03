@@ -3,6 +3,7 @@
 \setlength{\parindent}{0pt}
 \usepackage[round]{natbib}
 \usepackage{listings}
+\usepackage{array}
 
 \usepackage{graphicx}
 \graphicspath{ {./images/} }
@@ -83,8 +84,6 @@
   					Q = l^{{(T-T_0)}^\sigma}
   				\end{equation}
   				
-  				TODO: vilket sigma gör vad? \\
-  				
   				Each node also has a cost associated with it. This is the amount of resources it takes to keep the node alive as discribed by \cite{mvech1996visual}. The equation for calculating this factor is shown in Equation \ref{eq:nodecost}. \textit{BM} and BE are control parameters. This factor is subtracted from the light resources in each node before the result is propagated to the supporting node. 
   				
   				\begin{equation}
@@ -94,7 +93,7 @@
   				
   			\subsubsection*{Shadow propogation for node light calculation}
   				
-  				The variable \textit{l} in equation \ref{eq:lightres} is the amount if light that reach a node and is calculated by considering the nodes already around it. This is done by dividing the space into \textit{voxels} of fixed size. Each voxel saves a float value describing how shadowed the point is. When a new node is added to the tree, it also updated the voxels around it. Specifically, a pyramid of voxels with the voxel containing the new node are updated according to Equation \ref{eq:shadowprop}. \textit{a} and \textit{b} are controllable parameters and \textit{q} is the number of voxels down from the top of the pyramid. \citep{palubicki2009self}
+  				The variable \textit{l} in equation \ref{eq:lightres} is the amount if light that reach a node and is calculated by considering the nodes already around it. This is done by dividing the space into \textit{voxels} of fixed size. Each voxel saves a float value describing how shadowed the point is. When a new node is added to the tree, it also updated the voxels around it. Specifically, a pyramid of voxels (with the voxel containing the new node at the top) are updated according to Equation \ref{eq:shadowprop}. \textit{a} and \textit{b} are controllable parameters and \textit{q} is the number of voxels down from the top of the pyramid. \citep{palubicki2009self}
   				
   				\begin{equation}
   					\label{eq:shadowprop}
@@ -114,15 +113,26 @@
 	  				v_l = v\frac{(1 - \lambda) Q_l}{\lambda Q_m + (1 - \lambda)Q_l}
 	  			\end{equation}
 	  			
-	  			The number of new metamers created from a bud is the integer part of the amount of resources that reach the bud. \cite{palubicki2009self} \\
+	  			The number of new metamers created from a bud is the integer part of the amount of resources that reach the bud. Three factors are considered when deciding the direction of the new branch; direction of the parent node, the optimal growth direction, and a tropism factor. The tropism factor, $\tau$, simulate how much the branches bend down due to gravity. The optimal growth direction  is found as the neighboring shadow voxel with the lowest value. These three factors are combined to the final growth direction according to Equation \ref{eq:growthdir}. \citep{palubicki2009self}
 	  			
-	  			TODO: vilket lambda gör vad?
-	  			
-	  			TODO: optimal growth direction
+	  			\begin{equation}
+	  				\label{eq:growthdir}
+	  				growth\_dir = 0.8 * parent\_dir + 0.2 * optimal\_dir + \tau
+	  			\end{equation}
 	  			
 	  		\subsubsection*{Update branch radii}
 	  			
+	  			The radius of each branch is updated to support the weight of the branches above it according to Equation \ref{eq:radius}, where $r_m$ and $r_l$ are the new radius of the supported branches. If no supported branch is present, the default branch radius is used. \citep{mvech1996visual}
+	  			
+	  			\begin{equation}
+	  				\label{eq:radius}
+	  				r = \sqrt{r_m^2 + r_l^2}
+	  			\end{equation}
+	  			
 	  		\subsubsection*{Calculate shedding branches}
+	  			
+	  			A branch is shedded if the light resource flowing through it is negative and the number of supported buds are less than a threshold.
+	  			\citep{mvech1996visual}
   			
   		\subsection{Volumetric Light Scattering}
   		
@@ -160,15 +170,47 @@
   				
   	\section{Result}
   		
+  		
+  		
+  		
+  		\subsubsection*{Tree Parameters}
+  		
+  		Table \ref{table:param} shows the parameters that were used and how they affect the look of the tree.
+  		
+  		\begin{table} [!h]
+  			\begin{center}
+  				\begin{tabular}{ | c | m{5cm} | c | } 
+  					\hline
+  					Name & Effect & Reasonable range \\
+  					\hline
+  					\hline
+  					lambda, $\lambda$ & Branch bias. Larger value gives priority to main branches. & 0.4 - 0.5 \\ 
+  					\hline
+  					sigma, $\sigma$ & Light conversion rate. Larger values increase the amount of light an older node can pick up. & 0 - 1\\ 
+  					\hline
+  					tropism, $\tau$ & Larger value bend branches more towards the ground. & 0.01 - 0-5 \\ 
+  					\hline
+  					BM & Branch maintenance coefficient & 0.01 - 0.5 \\ 
+  					\hline
+  					BE & Branch maintenance exponent &  $>$1\\ 
+  					\hline
+  					$N_{min}$ & Threshold for branch shedding. & 20 - 50 \\ 
+  					\hline
+  				\end{tabular}
+  				\caption{Table of used tree parameters.}
+  				\label{table:param}
+  			\end{center}
+  		\end{table}
+  		
   	\section{Discussion}
-  	
-  	
-  	
-  	
-  	
-  	
-  	
-  	
+  		
+  		
+  		
+  		
+  		
+  		
+  		
+  		
   		shadow map - resolution
   		
   	\subsection{Improvements}
