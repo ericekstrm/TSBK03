@@ -449,7 +449,10 @@ void Node::create_buffer_data(model::Buffer_Data & data, vec3 const& parent_posi
     vec3 current_node_postion {parent_position + direction * length};
 
     //upper surounding points
-    if (has_main_branch())
+    if (has_main_branch() && has_lateral_branch())
+    {
+        point = current_node_postion + perpendicular_dir * std::max(main_branch->radius, lateral_branch->radius);
+    } else if (has_main_branch())
     {
         point = current_node_postion + perpendicular_dir * main_branch->radius;
     } else

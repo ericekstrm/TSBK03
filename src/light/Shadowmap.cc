@@ -64,7 +64,7 @@ void Shadowmap::render(Tree const& tree) const
     instance_shader.stop();
 }
 
-void Shadowmap::render(Terrain const& terrain) const
+void Shadowmap::render(Terrain_Container const& terrain) const
 {
 
     shader.start();

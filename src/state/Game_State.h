@@ -44,7 +44,6 @@ private:
 
     Model_Shader shader {};
     std::vector<Model> models {};
-    //Terrain terrain {};
     Terrain_Container terrain {};
     std::vector<Tree> trees {};
 

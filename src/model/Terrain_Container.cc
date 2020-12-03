@@ -37,7 +37,6 @@ void Terrain_Container::update(vec3 const& camera_pos)
                 tiles_to_add.push(vec2{static_cast<float>(i), static_cast<float>(j)});
             }   
         }
-        //add_tile(x, y);
 
         prev_camera_pos = camera_pos;
     }

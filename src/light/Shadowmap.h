@@ -6,6 +6,7 @@
 #include "Shader.h"
 #include "Model_Shader.h"
 #include "Terrain.h"
+#include "Terrain_Container.h"
 
 class Shadowmap
 {
@@ -16,7 +17,7 @@ public:
     void deactivate() const;
 
     void render(Tree const& tree) const;
-    void render(Terrain const& terrain) const;
+    void render(Terrain_Container const& terrain) const;
     void render(Model const& model) const;
 
     unsigned get_texture_id() const { return depth_map; }

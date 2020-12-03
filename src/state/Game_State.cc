@@ -4,25 +4,21 @@
 #include "settings.h"
 
 #include <iostream>
+#include <ctime>
 
 Game_State::Game_State()
 {
-    Model m {"rock1"};
-    m.set_position(vec3{10,0,0});
-    models.push_back(m);
-    models.push_back(Model{"fence"});
+
+    srand(time(0));
 
     camera = std::make_unique<Camera>(vec3{20, 30, 20});
 
-    trees.push_back(Tree{vec3{10,0,10}});
-    //trees.push_back(Tree{vec3{-20,0,-20}});
-    //trees.push_back(Tree{vec3{20,0,20}});
-    //trees.push_back(Tree{vec3{40,0,40}});
-    //trees.push_back(Tree{vec3{20,0,-40}});
-    //trees.push_back(Tree{vec3{-40,0,20}});
-
-    lights.add_pos_light(vec3{0, 5, 5}, vec3{1, 1, 1});
-    lights.add_pos_light(vec3{50, 3, 0}, vec3{1, 0, 0});
+    for (size_t i = 0; i < 1; i++)
+    {
+        int x = rand() % 64 - 32;
+        int y = rand() % 64 - 32;
+        trees.push_back(Tree{vec3{ x, 0, y}});
+    }
 }
 
 Game_State::~Game_State()
@@ -142,12 +138,11 @@ void Game_State::render_to_shadowmap() const
 {
     shadowmap.activate();
     glCullFace(GL_FRONT);
-    //shadowmap.render(terrain);
+    shadowmap.render(terrain);
     for (auto it = models.begin(); it != models.end(); it++)
     {
         shadowmap.render(*it);
     }
-    //shadowmap.render(terrain);
 
     for (auto it = trees.begin(); it != trees.end(); it++)
     {

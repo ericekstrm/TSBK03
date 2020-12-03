@@ -4,6 +4,7 @@
 \usepackage[round]{natbib}
 \usepackage{listings}
 \usepackage{array}
+\newcolumntype{P}[1]{>{\centering\arraybackslash}p{#1}}
 
 \usepackage{graphicx}
 \graphicspath{ {./images/} }
@@ -169,10 +170,7 @@
   				For a full implementation of the shader code used for shadow mapping, see appendix \ref{appendix:shadow}.
   				
   	\section{Result}
-  		
-  		
-  		
-  		
+  	
   		\subsubsection*{Tree Parameters}
   		
   		Table \ref{table:param} shows the parameters that were used and how they affect the look of the tree.
@@ -199,6 +197,49 @@
   				\end{tabular}
   				\caption{Table of used tree parameters.}
   				\label{table:param}
+  			\end{center}
+  		\end{table}
+  		
+  		\begin{figure}[ht!]
+  			\includegraphics[scale=0.25]{treegrowth1}
+  			\includegraphics[scale=0.25]{treegrowth2}
+  			\includegraphics[scale=0.25]{treegrowth3}
+
+  			\caption{The development of a tree.}
+  			\label{fig:treegrowth}
+  		\end{figure}
+  	
+  		Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque ac rutrum lectus. Sed 
+  	
+  		\begin{figure}[ht!]
+  			\includegraphics[scale=0.3]{pine}
+  			\caption{An example of volumetric light scattering. (Sunshine Kodai Kanal, Manoj K Racherla, 2013)}
+  			\label{fig:pine}
+  		\end{figure}
+  	
+  		Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque ac rutrum lectus. Sed 
+  	
+  		\begin{figure}[ht!]
+  			\includegraphics[scale=0.7]{godrays}
+  			\caption{An example of volumetric light scattering. (Sunshine Kodai Kanal, Manoj K Racherla, 2013)}
+  			\label{fig:godrayexample}
+  		\end{figure}
+  	
+  		\begin{table} [!h]
+  			\begin{center}
+  				\caption{Parameters used for trees in this section.}
+  				\begin{tabular}{  m{1cm} | P{0.5cm} P{0.5cm} P{0.5cm} P{0.5cm} P{0.5cm} P{0.5cm} P{0.5cm} P{0.5cm} } 
+  					\hline
+  					Tree & $\lambda$ & $\sigma$ & $\tau$ & BM & BE & $N_{min}$ & a & b \\
+  					\hline
+  					Fig \ref{fig:treegrowth} & 3 & 0.5 & 0.1 & 0.03 & 1.3 & 35 & 0.1 & 1.5 \\ 
+  					Fig \ref{fig:pine}       & 2 & 0.5 & 0.3 & 0.03 & 1.3 & 35 & 0.1 & 1.7 \\ 
+  					Fig \ref{fig:} & & & & & & \\ 
+  					Fig \ref{fig:} & & & & & & \\ 
+  					Fig \ref{fig:} & & & & & & \\ 
+  					\hline
+  				\end{tabular}
+  				\label{table:usedparam}
   			\end{center}
   		\end{table}
   		
