@@ -10,7 +10,7 @@ uniform vec2 sun_pos;
 const float exposure = 0.05f;
 const float decay = 0.99;
 const float density  = 0.9;
-const float weight  = 0.6;
+const float weight  = 1.5;
 const int NUM_SAMPLES = 170;
 
 out vec4 out_color;

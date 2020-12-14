@@ -11,6 +11,7 @@ class Camera
 public:
     Camera();
     Camera(vec3 const& position);
+    Camera(vec3 const& position, vec3 const& direction);
     ~Camera();
 
     virtual void update(float delta_time);

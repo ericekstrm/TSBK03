@@ -11,14 +11,15 @@ Game_State::Game_State()
 
     srand(time(0));
 
-    camera = std::make_unique<Camera>(vec3{20, 30, 20});
-
-    for (size_t i = 0; i < 1; i++)
+    camera = std::make_unique<Camera>(vec3{40, 20, 40}, vec3{-1, 0, -1});
+    
+    trees.push_back(Tree{vec3{0, 0, 0}});
+    for (int i = 0; i < 15; i++)
     {
-        int x = rand() % 64 - 32;
-        int y = rand() % 64 - 32;
-        trees.push_back(Tree{vec3{ x, 0, y}});
+        trees[0].update(0);
     }
+    
+    
 }
 
 Game_State::~Game_State()

@@ -13,6 +13,12 @@ Camera::Camera(vec3 const& position)
     direction.normalize();
 }
 
+Camera::Camera(vec3 const& position, vec3 const& dir)
+    : position {position}, direction {dir}
+{
+    direction.normalize();
+}
+
 Camera::~Camera()
 {
 }
