@@ -9,6 +9,8 @@
 \usepackage{graphicx}
 \graphicspath{ {./images/} }
 
+\usepackage[font={small}, skip=3pt]{caption}
+
 \title{Simulation of Tree Growth}
 \date{2020-12-01}
 \author{Eric Ekström}
@@ -18,24 +20,26 @@
 	\pagenumbering{gobble}
 	\maketitle
 	\newpage
-  	
-  	\section*{Abstract}
-  	
-  	\newpage
   	\tableofcontents
   	\newpage
   	\pagenumbering{arabic}
 
   	\section{Introduction}
+  	
+  	Creating realistic tree assets for computer graphics by hand is a time consuming task. Various methods exist for automating the task. Methods for procedural generation of trees can be divided into two groups. Descriptive methods aim to create trees without considering how a tree might evolve to look a certain way. Mechanistic methods model the growth of a tree over time, considering factors that might affect how a tree evolves. \\
+  	
+  	This project aims to combine previous work on mechanistic tree generation and implement a method for generation of procedural trees in c{\small++} using opengl. This method is largely based on the work by \cite{palubicki2009self} with influences from \cite{mvech1996visual} and \cite{yi2018tree}. \\
+  	
+  	Along with the generation of trees, a number of interesting opengl lighting techniques were implemented, with the most prominent being volumetric light scattering.
   		 
   	\section{Background}
   		
-  		TODO!
+  		This section covers the relevant background information related to the generation of trees and lighting phenomenon. It also covers terminology used throughout the report. 
   		
   		\subsection{Tree Structure and Terminology}
   			This section covers the terminology used when describing trees. The choice of language is based on the description of trees by \citep{barthelemy2007plant}. \\
   			
-  			A tree consists of a number of nodes. Each node supports nodes further out in the tree.
+  			A tree consists of a number of nodes. Each node supports nodes further out in the tree, creating a graph structure of interconnected nodes.
   			
   			\begin{itemize}
   				\item A \textit{node} is the main component of the tree. It supports at least a bud, another node or a leaf. A node combined with an internode is called a \textit{metamer}. \citep{barthelemy2007plant}
@@ -46,9 +50,9 @@
   				
   			\end{itemize}
   			
-  			For this project, a tree grows by shooting a number of new metamers from a bud. This is called rhythmic growth and is the more commonly observed method of growth in nature. \citep{barthelemy2007plant} The fate of a bud and the number of new metamers depends on a number of factors. For this project, only a simulated light resource was considered.\\
+  			For this project, a tree grows by shooting a number of new metamers from a bud for each iteration of growth. This is called rhythmic growth and is the more commonly observed method of growth in nature. \citep{barthelemy2007plant} The fate of a bud and the number of new metamers depends on a number of factors. For this project, only a simulated light resource was considered.\\
   			
-  			A node is given an order based on the number of node below it. A node without a supporting node has order 1.
+  			A node is given an order based on the number of node below it. A node without a supporting node has order one.
   		\subsection{Volumetric Light Scattering}
   			Volumetric light scattering (also called "godrays" or "crepuscular rays") is a light phenomenon that occurs when the mixture of gas and molecules in the air is just right. This causes light to be rayleigh-scattered and creates visual sun beams through the air. (Figure \ref{fig:godrayexample})
   			
@@ -64,7 +68,7 @@
   	\section{Method}
   		\subsection{Tree Generation}
   			
-  			TODO: vad är ett träd dååå
+  			The tree generation algorithm is an iterative process where each iteration grows the tree an amount. Each step in the algorithm outline below is implemented as a recursion of the node structure which changes each node or collect information.
   			
   			\subsubsection*{Algorithm outline}
   			
@@ -72,9 +76,9 @@
   			
   			\begin{enumerate}
   				\item Calculate the amount of light resources available in the tree.
-  				\item Redistribute light resource and create new nodes.
+  				\item Redistribute light resources and create new nodes.
   				\item Update the branch radii for each node.
-  				\item Calculate which nodes are a liability, and shed these.
+  				\item Calculate which nodes are a liability, and shed those.
   			\end{enumerate}
   		
   			\subsubsection*{Calculation of light resources}
@@ -139,15 +143,14 @@
 	  		
 	  		\subsubsection*{Tree Parameters}
 	  		
-	  		Table \ref{table:param} shows the parameters that are available in the tree generation and how they affect the look of the tree. 
+	  		Table \ref{table:param} shows the parameters that are available in the tree generation and how they affect the look of the tree. The most important parameters for controling the apperance of a tree is the branch bias factor, $\lambda$ and the tropism factor, $\tau$.
 	  		
 	  		\begin{table} [!h]
 	  			\begin{center}
 	  				\caption{Table of used tree parameters.}
 	  				\begin{tabular}{ | c | m{6.5cm} | c | } 
 	  					\hline
-	  					Name & Effect & Reasonable range \\
-	  					\hline
+	  					\textbf{Name} & \textbf{Effect} & \textbf{Reasonable range} \\
 	  					\hline
 	  					lambda, $\lambda$ & Branch bias. Larger value gives priority to main branches. & 0.4 - 0.5 \\ 
 	  					\hline
@@ -166,6 +169,11 @@
 	  				\label{table:param}
 	  			\end{center}
 	  		\end{table}
+  		
+  		
+  			\subsubsection*{Tree rendering and OpenGL}
+  			
+  				The tree stem is rendered as cylinders with a different radius in each end. The bottom radius is the radius of the current node, while the top radius is the max radius of the two supported nodes. Each leaf uses the same mode which is then rotated to fit the position of the branch. All leafs in a tree are rendered as a part of one instanced draw call. This optimizes the rendering quite substantially. 
   			
   		\subsection{Volumetric Light Scattering}
   		
@@ -203,9 +211,11 @@
   				
   	\section{Result}
   		
-  		The growth process of a tree can be seen in Figure \ref{fig:treegrowth}. Notice the branch to the lower left. It clearly shows the growth of an individual branch over time. 
+  		This sections present selected results of the tree generation and lighting effects. A list of all parameters used for various trees can be found in Table \ref{table:usedparam}. \\
   		
-  		\begin{figure}[h!]
+  		The growth process of a tree can be seen in Figure \ref{fig:treegrowth}. Notice the branch to the lower left. It clearly shows the growth of an individual branch over time. \\
+  		
+  		\begin{figure}[t]
   			\centering
   			\includegraphics[height=6cm]{treegrowth1}
   			\includegraphics[height=6cm]{treegrowth2}
@@ -215,25 +225,37 @@
   			\label{fig:treegrowth}
   		\end{figure}
   	
-  		Figure \ref{fig:pinebush} shows the versatility of the algorithm. It shows two trees that look quite different because of the choice of parameters. The first tree looks more like a pine tree because of a higher \textit{alpha } value. The bushier tree to the right has a lower \textit{tropism} factor giving it the ability to reach higher and not be dragged down by gravity.
+  		Figure \ref{fig:pinebush} shows the versatility of the algorithm. It shows two trees that look quite different due to of the choice of parameters. The first tree looks more like a pine tree because of a higher \textit{alpha } value. The bushier tree to the right has a lower \textit{tropism} factor giving it the ability to reach higher and not be dragged down by gravity. A full list of differences between the two trees can be found in Table \ref{table:usedparam}. \\
   	
   		\begin{figure}[h!]
   			\centering
- 			\includegraphics[height=7cm]{pine} 
- 			\includegraphics[height=7cm]{bush}
+ 			\includegraphics[height=6cm]{pine} 
+ 			\includegraphics[height=6cm]{bush}
  			
   			\caption{Two trees with slightly different parameters. \textit{a.} A pine tree. b. A bush like tree.}
   			\label{fig:pinebush}
   		\end{figure}
   	
-  		\begin{figure}[h!]
-  			\centering
-  			\includegraphics[height=10cm]{godrays}
-  			\caption{}
-  			\label{fig:godrays}
-  		\end{figure}
+  		Figure \ref{fig:forest} shows a forest consisting of a number of trees. Each tree affect the growth of trees around them since they all share the same set of shadow voxels. Notice that the left tree in Figure \ref{fig:forest}a has been forces to grow to the left to find an area with more light. Both of the trees in Figure \ref{fig:forest}a has been grown the same number of iterations, but since the right tree was first, it received most of the available space. This shown the severe impact the shadow propagation system has on tree growth. \\
   	
-  		\begin{table} [!h]
+	  	\begin{figure}[h!]
+	  		\centering
+	  		\includegraphics[height=6cm]{benttree}
+	  		\includegraphics[height=6cm]{forrest}
+	  		\caption{Example of a forest of many trees. 100 trees were placed randomly in the world.}
+	  		\label{fig:forest}
+	  	\end{figure}
+	 
+	 	The result of the volumetric light scattering postprocess can be seen in Figure \ref{fig:godrays}. The sun is mainly blocked by the branches passing through it. Leafs also block the light, but are made slightly transparent to generate a more realistic result. 
+	 
+		\begin{figure}[h!]
+			\centering
+		 	\includegraphics[height=10cm]{godrays}
+		 	\caption{Sun shining through a tree resulting in volumetric light scattering. Parameters used in the postprocess: $exposure=0.05$, $decay=0.99$, $density=0.9$, $weight=1.5$, \textit{number of samples} $=170$.}
+		 	\label{fig:godrays}
+		\end{figure}
+  	
+  		\begin{table} [h!]
   			\begin{center}
   				\caption{Parameters used for trees in results.}
   				\begin{tabular}{  m{1cm} | P{0.5cm} P{0.5cm} P{0.5cm} P{0.5cm} P{0.5cm} P{0.5cm} P{0.5cm} P{0.5cm} P{0.5cm} } 
@@ -243,8 +265,6 @@
   					Fig \ref{fig:treegrowth} & 3 & 0.52 & 0.5 & 0.1 & 0.03 & 1.3 & 35 & 0.1 & 1.5 \\ 
   					Fig \ref{fig:pinebush}a & 2 & 0.5 & 0.1 & 0.3 & 0.03 & 1.3 & 35 & 0.1 & 1.7 \\ 
   					Fig \ref{fig:pinebush}b & 3 & 0.46 & 0.1 &  0.2 & 0.02 & 1.3 & 35 & 0.2 & 1.3\\ 
-  					Fig \ref{} & & & & & & \\ 
-  					Fig \ref{} & & & & & & \\ 
   					\hline
   				\end{tabular}
   				\label{table:usedparam}
@@ -253,11 +273,33 @@
   		
   	\section{Discussion}
   		
+  		My method generates good looking given the right parameters. Finding good parameters is quite difficult and not suitable as the user interface for a finished product. This makes it hard to use the program in a more general way. The currently available parameters should be mapped to a set of more appropriate parameters for an end user. \\
   		
-  		- shadow map - resolution
-  		- different leaves needed
+  		There are a number of problems with the tree generation that are worth discussing. The calculation of new branch directions is a combination of cure approximations of how real trees work. If realism is the goal, more research on the behavior of real trees is needed. Currently, a lot of branches has a nice curly look (see Figure \ref{fig:treegrowth}). While this looks pretty, I have yet to find a tree in nature that looks quite like that. \\
   		
-  		\subsection{Improvements}
+  		The default length of a metamer is also a simplification that has been made. In this project, the metamer length is 50 cm, which is far larger that for most real trees. This simplification was made to decrease the number of nodes in a tree. Some tweaking is probably needed there. \\
+  		
+  		Speed is a relevant topic to discuss since the goal was to create real time growth of trees. Depending on the parameters, a tree with 25 iterations behind it can take up to 5 seconds to generate on a current mid range processor. Extrapolated to a whole scene, this might not be enough to realistically use the algorithm in a real time application. The speed could be increased by optimizing the algorithm and remove unnecessary recursions, or by doing parts of the recursion in parallel. \\
+  		
+  		On the topic of performance, the rendering speed should be addressed. On my system with only a few trees, the rendering is very smooth. More trees with more iterations could pose a problem for a real application. The optimizing  of leafs using instancing might not be enough to ensure a stable frame rate. Further optimizations could be implemented to increase performance. Level of details could be used and would likely have a large impact for large scenes. \\
+  		
+  		Figure \ref{fig:pinebush}a, while having the shape of a pine tree, does not look remotely like a pine tree. For this, more leaf assets and tree bark textures would be needed. This is something that would be quite easy to do (the infrastructure is in place to create trees with different assets) but I lacked the time (and skill) to create more models for leaves. \\
+  		
+  		Shadow mapping is a relatively cheap way to create good looking shadows. There are certainly more accurate methods, but you get what you pay for. Other methods such as shadow volumes or ray tracing give better results, but are a lot more demanding. Further discussions of shadow mapping has been done before, so I will leave that for more interesting problems. \\
+  		
+  		The post process volumetric light scattering gives impressive results for a relatively easy and fast implementation. Having sun bream constantly changing as the run pass through the treetops makes the scene come alive. Combined with the ever changing shadows, the scene feels real. There are still improvements that could be made. While the post process solution is cheap, it does not give perfect results. A more realistic volumetric approach could be implemented. We could calculate which part of the scene is lit by the sun and how much light should be reflected based on how much of the sun volume we pass through. This could quite easily be combined with the shadow volumes mentioned earlier. \\
+  		
+  		\subsection{Future Work}
+  		
+  			I see three areas for continued development for this project.\\
+  			
+  			Firstly, the algorithm needs to be optimized. As mentioned before, this could be done by calculating parts of the tree in parallel or by more traditional computer graphics solutions. \\
+  			
+  			Secondly, there are a number of topics concerning how real trees grow that are not addressed in the project. For example, the tropism factor is a crude simplification of the impact of gravity on three growth. A more robust system for handling the effect of external forces would be worth exploring.  \\
+  			
+  			Finally, it would be awesome of the current world is expanded with more visual improvements along the line of volumetric light scattering. I propose shadow volumes, lens flare and volumetric fog as areas to improve. There is a need for improved modeling of trees. As mentioned earlier, more leaf models and bark textures are needed. There is also room for improvement in the skinning of tree stems to handle more edge cases. \\
+  	
+  			I would also live to add that the rendering of leafs have a lot of room for improvement. In this project, leafs are rendered as solid object with a front side and a back side. This is not very realistic since the sun light shines through leafs most of the time. From what I can tell, there seams to be a lack of research into this topic.
 
 	\newpage
 	\bibliographystyle{plainnat}

@@ -13,13 +13,24 @@ Game_State::Game_State()
 
     camera = std::make_unique<Camera>(vec3{40, 20, 40}, vec3{-1, 0, -1});
     
+    //lights.add_pos_light(vec3{0, 5, 0}, vec3{1, 0.85, 0.7});
+
     trees.push_back(Tree{vec3{0, 0, 0}});
-    for (int i = 0; i < 15; i++)
+        
+    for (int j = 0; j < 10; j++)
     {
         trees[0].update(0);
     }
-    
-    
+
+    /*for(int i = 0; i < 128; i++)
+    {
+        trees.push_back(Tree{vec3{rand() % 128 - 64, 0, rand() % 128 - 64}});
+        
+        for (int j = 0; j < 10; j++)
+        {
+            trees[i].update(0);
+        }
+    }*/
 }
 
 Game_State::~Game_State()
