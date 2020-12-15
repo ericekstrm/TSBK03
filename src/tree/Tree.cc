@@ -400,16 +400,16 @@ int Node::get_supporting_terminals() const
     if (has_lateral_branch())
     {
         sum += lateral_branch->get_supporting_terminals();
+    } else
+    {
+        sum++;
     }
     if (has_main_branch())
     {
         sum += main_branch->get_supporting_terminals();
-    }
-
-    if (sum == 0)
+    } else
     {
-        //is terminal
-        return 1;
+        sum++;
     }
     return sum;
 }
